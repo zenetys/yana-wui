@@ -1,0 +1,169 @@
+<template>
+    <div>
+        <!-- ================== NAV BAR ============== -->
+        <v-app-bar app elevation="0" height="48">
+            <v-toolbar-title>
+                <router-link to="/">
+                    <img
+                        class="py-1 pl-0 d-flex justify-start align-center"
+                        src="../assets/images/zenetys-fg-black-bg-full-transparent_LD.png"
+                        height="40"
+                    />
+                </router-link>
+            </v-toolbar-title>            
+            <v-spacer></v-spacer>
+
+            <v-btn v-if="entityChooserDisplayMode=='grid'" @click="setEntityChooserDisplayMode('table')" icon fab dark x-small color="primary" class="view-type-button">
+                <v-icon dark> mdi-table </v-icon>
+            </v-btn>
+            <v-btn v-if="entityChooserDisplayMode=='table'" @click="setEntityChooserDisplayMode('grid')" icon fab dark x-small color="primary" class="view-type-button">
+                <v-icon dark> mdi-view-grid </v-icon>
+            </v-btn>
+        </v-app-bar>
+
+        <!-- ================== MAIN CONTENT =========== -->
+        <v-main>
+            <v-container id="search-field">
+                <v-row class="justify-center py-8">
+                    <!-- Filter field -->
+                    <v-col cols="12" sm="6" md="4">
+                        <v-text-field
+                            v-model="entitySearch"
+                            ref="entitySearch"
+                            rounded
+                            outlined
+                            dense
+                            prepend-inner-icon="mdi-magnify"
+                            :hide-details="true"
+                        ></v-text-field>
+                    </v-col>
+                </v-row>
+            </v-container>
+
+            <!-- Message component -->
+            <v-container>
+                <v-row class="justify-center">
+                    <Message/>
+                </v-row>
+            </v-container>
+
+            <!-- Grid Display Mode -->
+            <v-container v-if="entityChooserDisplayMode=='grid' && filteredEntities.length!=0">
+                <v-row class="row justify-center align-center">
+                    <!-- Entities -->
+                    <v-col :key="`entity-${index}`" v-for="(element, index) in filteredEntities" cols="6" sm="4" md="3" lg="2" xl="1">
+                        <router-link class="entity" :to="'/main'">
+                            <v-card class="d-flex align-center justify-center px-3 entity-card" color="#17b8ce" min-height="100" @click="updateStoreEntity(element.name)">
+                                    <v-card-actions class="">
+                                        <span style="color:#ffffff;text-align:center"> {{element.name}}</span>
+                                    </v-card-actions>
+                            </v-card>
+                        </router-link>
+                    </v-col>
+                </v-row>
+            </v-container>
+
+            <!-- Table Display Mode -->
+            <v-container v-if="entityChooserDisplayMode=='table' && filteredEntities.length!=0" id="table-view">
+                <v-row class="row justify-center align-center">
+                    <!-- Entities -->
+                    <v-col cols="12" sm="6" md="6" lg="4" xl="4">
+                        <v-data-table :headers="headers" :items="filteredEntities" class="elevation-2" mobile-breakpoint="0" width="" :height="tableHeight" fixed-header :footer-props="{'items-per-page-options': [10, 20, -1]}" :items-per-page="-1">
+                            <template v-for="(h, index) in headers" v-slot:[`item.${h.value}`]="{item}" class="">
+                                <div :key="`entity-${index}`">
+                                    <router-link :to="'/main'">
+                                        <span v-if="h.value=='name'" @click="updateStoreEntity(item.name)">
+                                            {{item.name}}
+                                        </span>
+                                    </router-link>
+                                </div>
+                            </template>
+                        </v-data-table>
+                    </v-col>
+                </v-row>
+            </v-container>
+        </v-main>
+    </div>
+</template>
+
+<style lang="scss" scoped>
+.v-main {
+    padding: 0px !important;
+}
+
+a {
+    text-decoration: none;
+}
+
+.entity-card {
+    &:hover {
+        cursor: pointer;
+        background-image: linear-gradient(to left bottom, rgba(16, 110, 132, 1), rgba(30, 184, 206, 1));
+    }
+}
+
+.view-type-button::before {
+    background-color: transparent !important;
+}
+</style>
+
+<script>
+import Message from '@/components/Message.vue';
+import * as queries from "@/plugins/queries";
+import { mapActions, mapGetters } from 'vuex';
+
+export default {
+    name: 'ViewEntityChooser',
+    components:{
+        Message,
+    },
+    data() {
+        return {
+            headers: [
+                { text: 'Entity Name', value: 'name' }
+            ],
+            entityChooserDisplayMode: "grid",
+            entitySearch: '',
+            tableHeight: 0,
+        }
+    },
+    computed: {
+        ...mapGetters([
+            'storeEntities',
+        ]),
+        allEntities() {
+            return this.storeEntities.map((el) => ({ name: el }));
+        },
+        filteredEntities() {
+            return this.allEntities.filter((el) =>
+                el.name.toLowerCase().indexOf(
+                    this.entitySearch.toLowerCase()) != -1);
+        },
+    },
+    methods: {
+        ...mapActions([
+            'updateStoreEntity',
+        ]),
+        setEntityChooserDisplayMode(type) {
+            this.entityChooserDisplayMode = type;
+        },
+        setTableHeight() {
+            let hedear = document.querySelector('header');
+            let searchField = document.getElementById('search-field');
+            if (hedear && searchField) {
+                this.tableHeight = window.innerHeight - (hedear.clientHeight + searchField.clientHeight + 136);
+            }
+        },
+    },
+    mounted() {
+        if (this.storeEntities.length == 0)
+            queries.fetchUpdateStoreEntities();
+        this.setTableHeight();
+        this.$refs.entitySearch.$refs.input.focus();
+        window.addEventListener('resize', this.setTableHeight);
+    },
+    destroyed() {
+        window.removeEventListener('resize', this.setTableHeight);
+    },
+}
+</script>
