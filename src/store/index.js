@@ -5,11 +5,16 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
     state: {
+        storeDatabase: '',
         storeEntities: [],
         storeEntity: '',
         storeInfoMessage: {},
     },
     mutations: {
+        EDIT_STORE_DATABASE(state, value) {
+            console.log('from store: mutation EDIT_STORE_DATABASE', value);
+            state.storeDatabase = value;
+        },
         EDIT_STORE_ENTITIES(state, value) {
             console.log('from store: mutation EDIT_STORE_ENTITIES', value);
             state.storeEntities = value;
@@ -24,6 +29,9 @@ export default new Vuex.Store({
         }
     },
     actions: {
+        updateStoreDatabase({ commit }, value) {
+            commit('EDIT_STORE_DATABASE', value);
+        },
         updateStoreEntities({ commit }, value) {
             commit('EDIT_STORE_ENTITIES', value);
         },
@@ -35,6 +43,9 @@ export default new Vuex.Store({
         }
     },
     getters: {
+        storeDatabase: state => {
+            return state.storeDatabase;
+        },
         storeEntities: state => {
             return state.storeEntities;
         },
