@@ -142,7 +142,7 @@ export default {
     },
     methods: {
         ...mapActions([
-            'updateStoreEntity',
+            'updateStoreEntity', 'updateStoreSearch'
         ]),
         setEntityChooserDisplayMode(type) {
             this.entityChooserDisplayMode = type;
@@ -161,6 +161,7 @@ export default {
         this.setTableHeight();
         this.$refs.entitySearch.$refs.input.focus();
         window.addEventListener('resize', this.setTableHeight);
+        this.updateStoreSearch('');
     },
     destroyed() {
         window.removeEventListener('resize', this.setTableHeight);

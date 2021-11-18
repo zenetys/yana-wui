@@ -3,6 +3,30 @@
     <!-- ================== NAV BAR ============== -->
     <v-app-bar id="navbar" height="48" app class="" elevation="0" color="#ffffff">
       <v-app-bar-nav-icon v-if="$vuetify.breakpoint.mdAndDown" @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
+        <v-col cols="9" sm="5" md="4" lg="4" xl="5" class="pl-0 d-inline-flex">
+          <v-text-field
+              label="Search..."
+              placeholder="Search..."
+              v-model="search"
+              solo
+              dense
+              flat
+              background-color="#e8e8e8d6"
+              prepend-inner-icon="mdi-magnify"
+              :hide-details="true"
+              clearable
+              @click:clear="clearSearch"
+              @mouseup.middle="onClickMouseMiddle(search)"
+              @keyup="updateStoreSearchOnAnyKeyUp(search)"
+              @keyup.enter="updateStoreSearchOnEnterPress(search)"
+          ></v-text-field>
+          <v-btn icon small @click="updateKeepSearch" class="mt-1 ml-1" title="keep / disable your search">
+            <v-icon class="pt-1">
+              {{keepSearch ? 'mdi-pin' : 'mdi-pin-off'}}
+            </v-icon>
+          </v-btn>
+        </v-col>
+
         <v-col cols="12" sm="3" md="3" lg="4" xl="2" class="d-flex">
           <v-autocomplete
               class="choose-entity-menu"
@@ -155,9 +179,18 @@ export default {
     },
     data() {
         return {
+            search: '',
             drawer: true,
             timeLineKey: 0,
+            searchUpdateTimeOut: 500,
+            searchTimeOutId: 0,
+            keepSearch: true,
             menuSide: [
+                {
+                    "name": "Inventory",
+                    "url": "/main/inventory",
+                    "icon": "mdi-grid",
+                },
             ],
         }
     },
@@ -170,8 +203,16 @@ export default {
             get() { return this.$store.getters.storeEntity },
             set(v) { this.$store.commit('EDIT_STORE_ENTITY', v) },
         },
+        /* like mapGetters + mapActions to be able to use v-model */
+        storeSearch: {
+            get() { return this.$store.getters.storeSearch },
+            set(v) { this.$store.commit('EDIT_STORE_SEARCH', v) },
+        }
     },
     methods: {
+        onClickMouseMiddle(){
+          setTimeout( () => this.updateStoreSearchOnAnyKeyUp(this.search), 100 );
+        },
         ...mapActions([
             'updateStoreDatabase',
         ]),
@@ -187,9 +228,26 @@ export default {
                 ? 'padding-left:5px;padding-right:5px;'
                 : 'padding-left:261px;padding-right:5px;';
         },
+        updateStoreSearchOnEnterPress(searchValue) {
+          clearTimeout(this.searchTimeOutId);
+          this.$store.commit('EDIT_STORE_SEARCH', searchValue);
+        },
+        updateStoreSearchOnAnyKeyUp(searchValue) {
+          clearTimeout(this.searchTimeOutId);
+          this.searchTimeOutId = setTimeout(() => {
+            this.$store.commit('EDIT_STORE_SEARCH', searchValue);
+          }, this.searchUpdateTimeOut);
+        },
         onErrorOccurs(payload) {
           this.$store.commit('EDIT_STORE_INFO_MESSAGE', payload);
           console.log(this.$store.state.storeInfoMessage);
+        },
+        updateKeepSearch() {
+          this.keepSearch = !this.keepSearch;
+        },
+        clearSearch() {
+          this.search = '';
+          this.$store.commit('EDIT_STORE_SEARCH', this.search);
         },
      },
     watch: {
@@ -197,7 +255,20 @@ export default {
          * for the AutoTable. */
         storeEntity() {
             this.updateStoreDatabase('');
+            // Reset search field
+            if (!this.keepSearch) {
+              this.search = '';
+              this.$store.commit('EDIT_STORE_SEARCH', '');
+            }
             this.timeLineKey++;
+        },
+        '$route'(to) {
+          if(to.path!='/main/inventory') {
+            if (!this.keepSearch) {
+              this.search = '';
+              this.$store.commit('EDIT_STORE_SEARCH', '');
+            }
+          }
         },
     },
     mounted() {
