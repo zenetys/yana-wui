@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 
 import ViewEntityChooser from '../views/ViewEntityChooser.vue'
+import ViewHost from '../views/ViewHost.vue'
 import ViewInventory from '../views/ViewInventory.vue'
 import ViewMain from '../views/ViewMain.vue'
 import ViewSwitch from '../views/ViewSwitch.vue'
@@ -33,6 +34,11 @@ const routes = [
         name: 'ViewInventory',
         component: ViewInventory,
         children: [
+          {
+            path: 'host/:id',
+            name: 'ViewHost',
+            component: ViewHost,
+          },
           {
             path: 'switch/:id',
             name: 'ViewSwitch',

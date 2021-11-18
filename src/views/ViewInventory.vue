@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div v-if="this.$route.name!='ViewSwitch'">
+        <div v-if="this.$route.name!='ViewSwitch' && this.$route.name!='ViewHost'">
             <ViewInventoryDevices/>
         </div>
         <div v-else>

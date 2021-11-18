@@ -118,7 +118,7 @@ export default {
                                 if (type.toLowerCase().indexOf('switch') > -1)
                                     return '<a href="#/main/inventory/switch/'+o.id+'">' + v + '</a>';
                             }
-                            return '<a href="javascript:;">' + v + '</a>';
+                            return '<a href="#/main/inventory/host/'+o.id+'">' + v + '</a>';
                         }
                         return '';
                     },
@@ -144,7 +144,7 @@ export default {
                                 if (type.toLowerCase().indexOf('switch') > -1)
                                     return '<a href="#/main/inventory/switch/'+o.id+'">' + v + '</a>';
                             }
-                            return '<a href="javascript:;">' + v + '</a>';
+                            return '<a href="#/main/inventory/host/'+o.id+'">' + v + '</a>';
                         }
                         return '';
                     },
