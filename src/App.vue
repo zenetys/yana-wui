@@ -19,6 +19,9 @@ a {
 a:hover {
   text-decoration: underline;
 }
+.nowrap {
+    white-space: nowrap;
+}
 </style>
 
 <script>

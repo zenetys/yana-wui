@@ -4,6 +4,7 @@ import VueRouter from 'vue-router'
 import ViewEntityChooser from '../views/ViewEntityChooser.vue'
 import ViewInventory from '../views/ViewInventory.vue'
 import ViewMain from '../views/ViewMain.vue'
+import ViewSwitch from '../views/ViewSwitch.vue'
 
 Vue.use(VueRouter)
 
@@ -31,6 +32,13 @@ const routes = [
         path: 'inventory',
         name: 'ViewInventory',
         component: ViewInventory,
+        children: [
+          {
+            path: 'switch/:id',
+            name: 'ViewSwitch',
+            component: ViewSwitch,
+          },
+        ],
       },
     ]
   },

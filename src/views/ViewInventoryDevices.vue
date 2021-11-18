@@ -116,7 +116,7 @@ export default {
                             let type = Array.isArray(o.type) ? o.type[0] : o.type;
                             if (type) {
                                 if (type.toLowerCase().indexOf('switch') > -1)
-                                    return '<a href="javascript:;">' + v + '</a>';
+                                    return '<a href="#/main/inventory/switch/'+o.id+'">' + v + '</a>';
                             }
                             return '<a href="javascript:;">' + v + '</a>';
                         }
@@ -142,7 +142,7 @@ export default {
                             let type = Array.isArray(o.type) ? o.type[0] : o.type;
                             if (type) {
                                 if (type.toLowerCase().indexOf('switch') > -1)
-                                    return '<a href="javascript:;">' + v + '</a>';
+                                    return '<a href="#/main/inventory/switch/'+o.id+'">' + v + '</a>';
                             }
                             return '<a href="javascript:;">' + v + '</a>';
                         }
@@ -177,7 +177,7 @@ export default {
                         let first = Array.isArray(v) ? v[0] : v;
                         let out = '<span class="nowrap">';
                         if (first) {
-                            out += '<span class="mdi mdi-swap-horizontal-bold"></span> <a href="javascript:;">' + first.name + '</a> ' + first.iface;
+                            out += '<span class="mdi mdi-swap-horizontal-bold"></span> <a href="#/main/inventory/switch/' + first.id +'">' + first.name + '</a> ' + first.iface;
                             if (total > 1)
                                 out += ` <span class="more">(+${total-1})</span>`;
                         }

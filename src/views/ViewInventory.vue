@@ -1,7 +1,10 @@
 <template>
     <div>
-        <div>
+        <div v-if="this.$route.name!='ViewSwitch'">
             <ViewInventoryDevices/>
+        </div>
+        <div v-else>
+            <router-view></router-view>
         </div>
     </div>
 </template>
