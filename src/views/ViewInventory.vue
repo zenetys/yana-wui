@@ -1,7 +1,8 @@
 <template>
     <div>
         <div v-if="this.$route.name!='ViewSwitch' && this.$route.name!='ViewHost'">
-            <ViewInventoryDevices/>
+            <ViewInventoryDevices v-if="this.$store.getters.storeInventoryMode=='devices'"/>
+            <ViewInventoryFdb v-if="this.$store.getters.storeInventoryMode=='fdb'"/>
         </div>
         <div v-else>
             <router-view></router-view>
@@ -12,11 +13,13 @@
 <script>
 import { mapGetters } from 'vuex';
 import ViewInventoryDevices from '../views/ViewInventoryDevices.vue'
+import ViewInventoryFdb from './ViewInventoryFdb.vue'
 
 export default {
     name: 'ViewInventory',
     components: {
         ViewInventoryDevices,
+        ViewInventoryFdb,
     },
     computed: {
         ...mapGetters([

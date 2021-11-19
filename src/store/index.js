@@ -8,6 +8,7 @@ export default new Vuex.Store({
         storeDatabase: '',
         storeEntities: [],
         storeEntity: '',
+        storeInventoryMode: '',
         storeSearch: '',
         storeInfoMessage: {},
     },
@@ -23,6 +24,10 @@ export default new Vuex.Store({
         EDIT_STORE_ENTITY(state, value) {
             console.log('from store: mutation EDIT_STORE_ENTITY', value);
             state.storeEntity = value;
+        },
+        EDIT_STORE_INVENTORY_MODE(state, value) {
+            console.log('from store: mutation EDIT_STORE_INVENTORY_MODE', value);
+            state.storeInventoryMode = value;
         },
         EDIT_STORE_SEARCH(state, value) {
             console.log('from store: mutation EDIT_STORE_SEARCH', value);
@@ -46,6 +51,9 @@ export default new Vuex.Store({
         updateStoreEntity({ commit }, value) {
             commit('EDIT_STORE_ENTITY', value);
         },
+        updateStoreInventoryMode({ commit }, value) {
+            commit('EDIT_STORE_INVENTORY_MODE', value);
+        },
         updateStoreSearch({ commit }, value) {
             commit('EDIT_STORE_SEARCH', value);
         },
@@ -63,6 +71,9 @@ export default new Vuex.Store({
         storeEntity: state => {
             return state.storeEntity;
         },
+        storeInventoryMode: state => {
+            return state.storeInventoryMode;
+        }, 
         storeSearch: state => {
             return state.storeSearch;
         },

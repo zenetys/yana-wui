@@ -26,6 +26,20 @@
             </v-icon>
           </v-btn>
         </v-col>
+        <v-col cols="12" sm="3" md="4" lg="3" xl="4" class="d-flex justify-end">
+          <div v-if="this.$route.path=='/main/inventory'" style="display:flex;background-color:#e8e8e8d6;height:38px;" class="pt-2 rounded">
+            <v-checkbox
+              v-for="(item, index) in inventoryModes" :key="index"
+              v-model="storeInventoryMode"
+              :label="item"
+              :value="item"
+              hide-details=""
+              :ripple="false"
+              tile
+              class="px-3 font-weight-light"
+            ></v-checkbox>
+          </div>
+        </v-col>
 
         <v-col cols="12" sm="3" md="3" lg="4" xl="2" class="d-flex">
           <v-autocomplete
@@ -179,6 +193,8 @@ export default {
     },
     data() {
         return {
+            inventoryModes: ['devices', 'fdb' ],
+            defaultInventoryMode: 'devices',
             search: '',
             drawer: true,
             timeLineKey: 0,
@@ -202,6 +218,11 @@ export default {
         storeEntity: {
             get() { return this.$store.getters.storeEntity },
             set(v) { this.$store.commit('EDIT_STORE_ENTITY', v) },
+        },
+        /* like mapGetters + mapActions to be able to use v-model */
+        storeInventoryMode: {
+            get() { return this.$store.getters.storeInventoryMode },
+            set(v) { this.$store.commit('EDIT_STORE_INVENTORY_MODE', v) },
         },
         /* like mapGetters + mapActions to be able to use v-model */
         storeSearch: {
@@ -279,6 +300,8 @@ export default {
         });
     },
     beforeMount() {
+        if (this.inventoryModes.indexOf(this.storeInventoryMode) == -1)
+            this.storeInventoryMode = this.defaultInventoryMode;
         /* redirect to the entity-chooser if none is set, at least for now */
         if (!this.storeEntity)
             this.$router.push('/entity-chooser');
