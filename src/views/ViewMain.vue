@@ -207,6 +207,11 @@ export default {
                     "url": "/main/inventory",
                     "icon": "mdi-grid",
                 },
+                {
+                    "name": "OUI lookup",
+                    "url": "/main/oui",
+                    "icon": "mdi-help-network-outline",
+                },
             ],
         }
     },

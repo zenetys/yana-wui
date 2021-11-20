@@ -5,6 +5,7 @@ import ViewEntityChooser from '../views/ViewEntityChooser.vue'
 import ViewHost from '../views/ViewHost.vue'
 import ViewInventory from '../views/ViewInventory.vue'
 import ViewMain from '../views/ViewMain.vue'
+import ViewOui from '../views/ViewOui.vue'
 import ViewSwitch from '../views/ViewSwitch.vue'
 
 Vue.use(VueRouter)
@@ -45,6 +46,11 @@ const routes = [
             component: ViewSwitch,
           },
         ],
+      },
+      {
+        path: 'oui',
+        name: 'ViewOui',
+        component: ViewOui,
       },
     ]
   },
