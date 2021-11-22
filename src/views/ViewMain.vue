@@ -208,6 +208,10 @@ export default {
                     "icon": "mdi-grid",
                 },
                 {
+                    "name": "L2 schema",
+                    "icon": "mdi-graph",
+                },
+                {
                     "name": "OUI lookup",
                     "url": "/main/oui",
                     "icon": "mdi-help-network-outline",
