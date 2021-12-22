@@ -7,6 +7,7 @@ import ViewInventory from '../views/ViewInventory.vue'
 import ViewMain from '../views/ViewMain.vue'
 import ViewOui from '../views/ViewOui.vue'
 import ViewSwitch from '../views/ViewSwitch.vue'
+import ViewVlanMatrix from '../views/ViewVlanMatrix.vue'
 
 Vue.use(VueRouter)
 
@@ -46,6 +47,11 @@ const routes = [
             component: ViewSwitch,
           },
         ],
+      },
+      {
+        path: 'vlan-matrix',
+        name: 'ViewVlanMatrix',
+        component: ViewVlanMatrix,
       },
       {
         path: 'oui',

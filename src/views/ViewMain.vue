@@ -208,6 +208,11 @@ export default {
                     "icon": "mdi-grid",
                 },
                 {
+                    "name": "VLAN matrix",
+                    "url": "/main/vlan-matrix",
+                    "icon": "mdi-table",
+                },
+                {
                     "name": "L2 schema",
                     "icon": "mdi-graph",
                 },
@@ -289,6 +294,9 @@ export default {
             if (!this.keepSearch) {
               this.search = '';
               this.$store.commit('EDIT_STORE_SEARCH', '');
+            }
+            if (this.$route.name!="ViewVlanMatrix") {
+              this.$router.push('/main/inventory').catch(() => {});
             }
             this.timeLineKey++;
         },
