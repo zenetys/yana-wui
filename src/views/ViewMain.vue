@@ -55,6 +55,11 @@
               background-color="#e8e8e8d6"
               prepend-inner-icon="mdi-server-network"
           ></v-autocomplete>
+          <v-btn icon small @click="setBookmarks" class="mt-1 ml-1" title="Add to favorite">
+            <v-icon class="">
+              mdi-bookmark
+            </v-icon>
+          </v-btn>
         </v-col>
 
         <v-spacer></v-spacer>
@@ -97,6 +102,61 @@
                   <v-list-item-title v-text="link.name" />
               </v-list-item>
           </div>
+        </v-list>
+        <v-spacer></v-spacer>
+        <v-list dense class="mt-5 mb-2">
+          <p class="ml-5 mb-1 font-weight-light">Recent queries</p>
+          <v-divider></v-divider>
+          <v-list
+            color=""
+            class="mt-0"
+            v-if="recentQueries.length>0"
+          >
+            <v-list-item
+              v-for="(item, i) in recentQueries"
+              :key="i"
+              active-class="black"
+              class="list-item"
+            >
+              <v-list-item-icon class="mr-0 align-start item-icon">
+                <v-icon size="14" class="">mdi-history</v-icon>
+              </v-list-item-icon>
+              <v-list-item-content>
+                <v-list-item-title @click="loadRecentQuery(item)" class="font-weight-regular" :title="item.query.inventoryMode+' / '+item.query.search" v-text="item.query.inventoryMode+' / '+item.query.search"></v-list-item-title>
+              </v-list-item-content>
+              <v-icon @click="removeRecentQuery(item)" size="14" class="list-item-remove-icon algin-end justify-end">mdi-close</v-icon>
+            </v-list-item>
+          </v-list>
+          <span v-else class="ml-5 caption">
+            Empty list
+          </span>
+        </v-list>
+
+        <v-list dense>
+          <p class="ml-5 mb-1 font-weight-light">Bookmarks</p>
+          <v-divider></v-divider>
+          <v-list
+            color=""
+            class="mt-0"
+            v-if="bookMarks.length>0"
+          >
+            <v-list-item
+              v-for="(item, i) in bookMarks"
+              :key="i"
+              class="list-item"
+            >
+              <v-list-item-icon class="mr-0 align-start item-icon">
+                <v-icon size="14">mdi-bookmark-outline</v-icon>
+              </v-list-item-icon>
+              <v-list-item-content @click="loadRecentQuery(item)">
+                <v-list-item-title class="font-weight-regular" :title="item.query.inventoryMode + (item.query.search ? ' / '+item.query.search : '') + (item.label ? ' / '+item.label : '')" v-text="item.query.inventoryMode + (item.query.search ? ' / '+item.query.search : '') + (item.label ? ' / '+item.label : '')"></v-list-item-title>
+              </v-list-item-content>
+              <v-icon @click="removeBookmark(item)" size="14" class="list-item-remove-icon algin-end justify-end">mdi-close</v-icon>
+            </v-list-item>
+          </v-list>
+          <span v-else class="ml-5 caption">
+            Empty list
+          </span>
         </v-list>
     </v-navigation-drawer>
 
@@ -222,6 +282,8 @@ export default {
                     "icon": "mdi-help-network-outline",
                 },
             ],
+            recentQueries: [],
+            bookMarks: [],
         }
     },
     computed: {
@@ -271,6 +333,7 @@ export default {
           clearTimeout(this.searchTimeOutId);
           this.searchTimeOutId = setTimeout(() => {
             this.$store.commit('EDIT_STORE_SEARCH', searchValue);
+            this.setRecentQueries();
           }, this.searchUpdateTimeOut);
         },
         onErrorOccurs(payload) {
@@ -284,6 +347,93 @@ export default {
           this.search = '';
           this.$store.commit('EDIT_STORE_SEARCH', this.search);
         },
+        loadRecentQuery(item) {
+          if (item.url=='/main/inventory') {
+            this.storeSearch = this.search = item.query.search;
+            this.storeInventoryMode = item.query.inventoryMode;
+            this.$router.push('/main/inventory').catch(() => {});
+          } else {
+            this.storeSearch = this.search = item.query.search;
+            this.$router.push(''+item.url).catch(() => {});
+          }
+        },
+        getRecentQueries() {
+          let rQueries = JSON.parse(localStorage.getItem('recent-queries'));
+          let bookmarks = JSON.parse(localStorage.getItem('bookmarks'));
+          rQueries ? this.recentQueries = this.filterQueries(rQueries) : localStorage.setItem('recent-queries', JSON.stringify([]));
+          bookmarks ? this.bookMarks = this.filterQueries(bookmarks) : localStorage.setItem('bookmarks', JSON.stringify([]));
+        },
+        setRecentQueries() {
+          let tab = JSON.parse(localStorage.getItem('recent-queries'));
+          localStorage.setItem('recent-queries', JSON.stringify(this.newRecentQuery(tab)));
+          this.getRecentQueries();
+        },
+        setBookmarks() {
+          let bookmarks = JSON.parse(localStorage.getItem('bookmarks'));
+          localStorage.setItem('bookmarks', JSON.stringify(this.newBookmark(bookmarks)));
+          this.getRecentQueries();
+        },
+        newRecentQuery(tab) {
+          let allQueries = tab;
+          let currentEntityQueries = this.filterQueries(tab);
+          let newQuery = {
+            "entity": this.storeEntity,
+            "query": {
+              "inventoryMode": this.storeInventoryMode,
+              "search": this.search,
+            },
+            "url": this.search ? '/main/inventory' : this.$route.path,
+            "id": this.$route.params.id,
+            "label": document.querySelector('#device-name') ? document.querySelector('#device-name').textContent : '',
+            "index": new Date().getTime(),
+          };
+          if (this.search) {
+            if (currentEntityQueries.findIndex(el => el.query.search==this.search && el.query.inventoryMode==this.storeInventoryMode)==-1) {
+              if (currentEntityQueries.length>=5) {
+                currentEntityQueries.pop();
+              }
+              currentEntityQueries.push(newQuery);
+            }
+          }
+          return allQueries.filter(el => el.entity != this.storeEntity).concat(currentEntityQueries);
+        },
+        newBookmark(tab) {
+          let allQueries = tab;
+          let currentEntityQueries = this.filterQueries(tab);
+          let newQuery = {
+            "entity": this.storeEntity,
+            "query": {
+              "inventoryMode": this.$route.path == '/main/inventory' ? this.storeInventoryMode : this.$route.path.includes('switch') ? 'switch' : 'host',
+              "search": (this.$route.path=='/main/inventory') ? this.storeSearch : '',
+            },
+            "url": this.$route.path,
+            "id": this.$route.params.id,
+            "label": document.querySelector('#device-name') ? document.querySelector('#device-name').textContent : '',
+            "index": new Date().getTime(),
+          };
+          if (currentEntityQueries.findIndex(el => el.url==this.$route.path && el.query.search==this.search && el.id==this.$route.params.id && el.query.inventoryMode==newQuery.query.inventoryMode)==-1) {
+            if (currentEntityQueries.length>=10) {
+              currentEntityQueries.pop();
+            }
+            currentEntityQueries.push(newQuery);
+          }
+          return allQueries.filter(el => el.entity != this.storeEntity).concat(currentEntityQueries);
+        },
+        removeBookmark(item) {
+          let bookmarks = JSON.parse(localStorage.getItem('bookmarks'));
+          bookmarks.splice(bookmarks.findIndex(el=>el.index==item.index), 1);
+          localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
+          this.getRecentQueries()
+        },
+        removeRecentQuery(item) {
+          let rQueries = JSON.parse(localStorage.getItem('recent-queries'));
+          rQueries.splice(rQueries.findIndex(el=>el.index==item.index), 1);
+          localStorage.setItem('recent-queries', JSON.stringify(rQueries));
+          this.getRecentQueries()
+        },
+        filterQueries(queriesArray) {
+          return queriesArray.filter( el => el.entity == this.storeEntity ).sort( (a, b) => b.index - a.index );
+        }
      },
     watch: {
         /* FIXME: We could pass and update the api url to TimeLine like
@@ -299,6 +449,7 @@ export default {
               this.$router.push('/main/inventory').catch(() => {});
             }
             this.timeLineKey++;
+            this.setRecentQueries();
         },
         '$route'(to) {
           if(to.path!='/main/inventory') {
@@ -315,6 +466,7 @@ export default {
         this.$nextTick(function () {
             this.drawerValueByBreakpoint();
         });
+        this.getRecentQueries();
     },
     beforeMount() {
         if (this.inventoryModes.indexOf(this.storeInventoryMode) == -1)
