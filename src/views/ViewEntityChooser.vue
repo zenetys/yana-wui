@@ -148,10 +148,10 @@ export default {
             this.entityChooserDisplayMode = type;
         },
         setTableHeight() {
-            let hedear = document.querySelector('header');
+            let header = document.querySelector('header');
             let searchField = document.getElementById('search-field');
-            if (hedear && searchField) {
-                this.tableHeight = window.innerHeight - (hedear.clientHeight + searchField.clientHeight + 136);
+            if (header && searchField) {
+                this.tableHeight = window.innerHeight - (header.clientHeight + searchField.clientHeight + 136);
             }
         },
     },
