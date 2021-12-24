@@ -131,13 +131,11 @@ export default {
         ...mapGetters([
             'storeEntities',
         ]),
-        allEntities() {
-            return this.storeEntities.map((el) => ({ name: el }));
-        },
         filteredEntities() {
-            return this.allEntities.filter((el) =>
-                el.name.toLowerCase().indexOf(
-                    this.entitySearch.toLowerCase()) != -1);
+            return this.storeEntities.map((entity) =>
+                ({ name: entity })).filter((el) =>
+                    el.name.toLowerCase().indexOf(
+                        this.entitySearch.toLowerCase()) != -1);
         },
     },
     methods: {
