@@ -68,7 +68,7 @@
                 <v-row class="row justify-center align-center">
                     <!-- Entities -->
                     <v-col cols="12" sm="6" md="6" lg="4" xl="4">
-                        <v-data-table :headers="headers" :items="filteredEntities" class="elevation-2" mobile-breakpoint="0" width="" :height="tableHeight" fixed-header :footer-props="{'items-per-page-options': [10, 20, -1]}" :items-per-page="-1">
+                        <v-data-table :headers="headers" :items="filteredEntities" class="elevation-2" mobile-breakpoint="0" width="" :height="tableHeight" fixed-header :footer-props="entityTableProps.itemPerPageOptions" :items-per-page="-1">
                             <template v-for="(h, index) in headers" v-slot:[`item.${h.value}`]="{item}" class="">
                                 <div :key="`entity-${index}`">
                                     <router-link :to="'/main'">
@@ -124,6 +124,9 @@ export default {
             ],
             entityChooserDisplayMode: "grid",
             entitySearch: '',
+            entityTableProps: {
+                itemPerPageOptions: {'items-per-page-options': [10, 20, -1]},
+            },
             tableHeight: 0,
         }
     },
