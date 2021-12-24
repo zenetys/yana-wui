@@ -22,7 +22,7 @@
         </v-app-bar>
 
         <!-- ================== MAIN CONTENT =========== -->
-        <v-main>
+        <v-main class="pa-0">
             <v-container id="search-field">
                 <v-row class="justify-center py-8">
                     <!-- Filter field -->
@@ -53,9 +53,9 @@
                     <!-- Entities -->
                     <v-col :key="`entity-${index}`" v-for="(element, index) in filteredEntities" cols="6" sm="4" md="3" lg="2" xl="1">
                         <router-link class="entity" :to="'/main'">
-                            <v-card class="d-flex align-center justify-center px-3 entity-card" color="#17b8ce" min-height="100" @click="updateStoreEntity(element.name)">
+                            <v-card class="d-flex align-center justify-center px-3 entity-card" color="secondary" min-height="100" @click="updateStoreEntity(element.name)">
                                     <v-card-actions class="">
-                                        <span style="color:#ffffff;text-align:center"> {{element.name}}</span>
+                                        <span class="entity_name"> {{element.name}}</span>
                                     </v-card-actions>
                             </v-card>
                         </router-link>
@@ -87,9 +87,6 @@
 </template>
 
 <style lang="scss" scoped>
-.v-main {
-    padding: 0px !important;
-}
 
 a {
     text-decoration: none;
@@ -102,8 +99,13 @@ a {
     }
 }
 
+.entity_name {
+    color: #ffffff;
+    text-align: center;
+}
+
 .view-type-button::before {
-    background-color: transparent !important;
+    background-color: transparent;
 }
 </style>
 
