@@ -233,10 +233,10 @@ export default {
                 url: this.$props.api,
             })
             .then( (response) => {
-                let path = this.$props.arrayData.split(".");
+                const path = this.$props.arrayData.split(".");
                 let pointer = response.data;
 
-                if (path!="") {
+                if (path != "") {
                     for (let i = 0; i < path.length; i++) {
                         if (pointer[path[i]]) {
                             pointer = pointer[path[i]];
@@ -256,7 +256,6 @@ export default {
                 this.tableItems = [];
                 console.log('data from autoTable error', error);
                 this.$emit('error', { type: 'error', content: 'Cannot load data, problem with the query.', error: error });
-                this.loading = true;
             });
         },
         setTableHeight() {
@@ -266,17 +265,17 @@ export default {
                 this.tableHeight = this.$props.height;
         },
         computeAutoTableHeight() {
-            let table = document.getElementById(this.id);
+            const table = document.getElementById(this.id);
             let tableHeight = 0;
             if (table) {
-                let footer = table.getElementsByClassName('v-data-footer');
-                let footerHeight = footer.length ? footer[0].clientHeight : 0;
+                const footer = table.getElementsByClassName('v-data-footer');
+                const footerHeight = footer.length ? footer[0].clientHeight : 0;
                 if (table.parentElement && table.parentElement.style.height != '') {
                     tableHeight += table.parentElement.style.height;
                     console.log('mode parent', table.parentElement.style.height)
                 }
                 else {
-                    let tableRect = table.getBoundingClientRect();
+                    const tableRect = table.getBoundingClientRect();
                     tableHeight += (window.innerHeight - tableRect.top);
                 }
                 tableHeight -= footerHeight;
@@ -299,10 +298,10 @@ export default {
             let elCopy = document.getElementsByClassName(`${value}`)[index].innerText;
             copyToClipboard(elCopy)
                 .then(() => {
-                    let tooltip = document.querySelector('.cp-span:hover .cell-copied-tooltip');
-                    if (tooltip) {
-                        tooltip.style = "visibility:visible;";
-                        setTimeout(() => { tooltip.style = ""; }, 400);
+                    const tooltipElement = document.querySelector('.cp-span:hover .cell-copied-tooltip');
+                    if (tooltipElement) {
+                        tooltipElement.style = "visibility:visible;";
+                        setTimeout(() => { tooltipElement.style = ""; }, 400);
                     }
                 });
         }
