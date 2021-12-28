@@ -3,20 +3,18 @@
         <v-data-table
             :id="id"
             :headers="headers"
-            :items="data"
+            :items="tableData"
             class="auto-table elevation-0"
             :item-class="item_class"
             dense
             item-key="id"
             fixed-header
             :height="tableHeight"
-            :footer-props="{
-                'items-per-page-options': [50, 100, 150, -1]
-            }"
+            :footer-props="tablefooterProps"
             disable-sort
             mobile-breakpoint="0"
-            :disable-pagination="!this.pagination"
-            :hide-default-footer="!this.pagination"
+            :disable-pagination="!this.isPaginated"
+            :hide-default-footer="!this.isPaginated"
         >
 
         <template v-slot:body="{ items, headers }">
@@ -145,10 +143,10 @@ export default {
             type: Object,
             default: () => ({}),
         },
-        pagination: {
+        isPaginated: {
             type: Boolean,
         },
-        table_height: {
+        height: {
             /* type String, Number, Function or undefined */
         },
         auto_table_height_extra: {
@@ -175,7 +173,7 @@ export default {
             /* acquire header keys from data */
             let headers = [];
             let seenKeys = {};
-            this.items.forEach(element => {
+            this.tableItems.forEach(element => {
                 for (const key in element) {
                     if (seenKeys[key])
                         continue;
@@ -201,8 +199,8 @@ export default {
             }
             return headers;
         },
-        data() {
-            return this.items.map((item, index) => ({
+        tableData() {
+            return this.tableItems.map((item, index) => ({
                 id: index,
                 ...item
             }));
@@ -210,16 +208,17 @@ export default {
     },
     data() {
         return {
-            items: [],
+            tableItems: [],
             tableHeight: '',
             loading: false,
+            tablefooterProps: {'items-per-page-options': [50, 100, 150, -1]},
         }
     },
     watch: {
-        api() { this.getItems(); }
+        api() { this.getTableItems(); }
     },
     methods: {
-        getItems() {
+        getTableItems() {
             console.log('autotable getItems apiUrl', this.$props.api)
             this.loading = true;
             axios({
@@ -228,36 +227,36 @@ export default {
             })
             .then( (response) => {
                 let path = this.$props.array_data.split(".");
-                let ptr = response.data;
+                let pointer = response.data;
 
                 if (path!="") {
                     for (let i = 0; i < path.length; i++) {
-                        if (ptr[path[i]]) {
-                            ptr = ptr[path[i]];
+                        if (pointer[path[i]]) {
+                            pointer = pointer[path[i]];
                         } else {
-                            ptr = null;
+                            pointer = null;
                             break;
                         }
                     }
-                    if (ptr==null) {
+                    if (pointer==null) {
                         this.$emit('error', 'Error occurs in data path.');
                     }
                 }
-                this.items = ptr;
+                this.tableItems = pointer;
                 this.loading = false;
                 this.$emit('error', {});
             }).catch( (error) => {
-                this.items = [];
+                this.tableItems = [];
                 console.log('data from autoTable error', error);
                 this.$emit('error', { type: 'error', content: 'Cannot load data, problem with the query.', error: error });
                 this.loading = true;
             });
         },
         setTableHeight() {
-            if (this.table_height == 'auto')
+            if (this.$props.height == 'auto')
                 this.tableHeight = this.computeAutoTableHeight();
-            else if (this.table_height !== undefined)
-                this.tableHeight = this.table_height;
+            else if (this.$props.height !== undefined)
+                this.tableHeight = this.$props.height;
         },
         computeAutoTableHeight() {
             let table = document.getElementById(this.id);
@@ -302,7 +301,7 @@ export default {
         }
     },
     mounted() {
-        this.getItems();
+        this.getTableItems();
         this.setTableHeight();
         window.addEventListener('resize', this.setTableHeight);
     },
