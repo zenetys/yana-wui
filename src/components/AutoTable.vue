@@ -135,9 +135,11 @@ export default {
         },
         api:{
             type: String,
+            required: true,
         },
         arrayData: {
             type: String,
+            default: '',
         },
         columnDefinition: {
             type: Object,
@@ -145,16 +147,21 @@ export default {
         },
         isPaginated: {
             type: Boolean,
+            default: false,
         },
         height: {
             /* type String, Number, Function or undefined */
+            type: [String, Number],
+            default: 'auto',
         },
         autoTableHeightExtra: {
             type: Array,
+            default: () => ([]),
             /* array of dom ids to substract of +/- numbers */
         },
         itemClass: {
-
+            type: [String, Function],
+            default: () => (''),
         },
         headersComputation: {
             type: Function,
