@@ -5,11 +5,11 @@
             id="table-inventory-devices"
             :pagination="true"
             :api="apiUrl"
-            array_data=""
-            table_height="auto"
-            :auto_table_height_extra="[-120]"
-            :column_definition="columnDefinition"
-            :on_headers_computation="onHeadersComputation"
+            array-data=""
+            height="auto"
+            :auto-table-height-extra="[-120]"
+            :column-definition="columnDefinition"
+            :headers-computation="onHeadersComputation"
             @error="onErrorOccurs">
         </auto-table>
     </div>

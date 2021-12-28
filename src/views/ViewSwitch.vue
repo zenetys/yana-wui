@@ -24,11 +24,11 @@
             id="table-switch"
             :pagination="false"
             :api="apiUrl"
-            array_data=""
-            table_height="auto"
-            :auto_table_height_extra="[-120]"
-            :column_definition="columnDefinition"
-            :item_class="itemClass"
+            array-data=""
+            height="auto"
+            :auto-table-height-extra="[-120]"
+            :column-definition="columnDefinition"
+            :item-class="itemClass"
              />
     </div>
 </template>
