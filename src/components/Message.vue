@@ -11,7 +11,7 @@
                 ref="messageOverlay"
                 id="messageSnackbar"
             >
-                <span style="color:rgba(0, 0, 0, 0.87);"> {{this.message.content + (this.message.error ? ('\nError detail: '+this.message.error.message) : '')}} </span>
+                <span class="message"> {{this.message.content + (this.message.error ? ('\nError detail: '+this.message.error.message) : '')}} </span>
                 <template v-slot:action="{ attrs }">
                     <v-btn
                         icon
@@ -19,7 +19,7 @@
                         top
                         @click="closeSnackbarOnButtonClick()"
                         >
-                        <v-icon size="20" style="color:rgba(0, 0, 0, 0.87);">mdi-close</v-icon>
+                        <v-icon class="message">mdi-close</v-icon>
                     </v-btn>
                 </template>
             </v-snackbar>
@@ -27,7 +27,11 @@
     </div>
 </template>
 
-
+<style lang="scss">
+    .message {
+        color: rgba(0, 0, 0, 0.87) !important;
+    }
+</style>
 
 <script>
 import { mapState } from 'vuex';
