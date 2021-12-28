@@ -5,12 +5,12 @@
             :headers="headers"
             :items="tableData"
             class="auto-table elevation-0"
-            :item-class="item_class"
+            :item-class="itemClass"
             dense
             item-key="id"
             fixed-header
             :height="tableHeight"
-            :footer-props="tablefooterProps"
+            :footer-props="tableFooterProps"
             disable-sort
             mobile-breakpoint="0"
             :disable-pagination="!this.isPaginated"
@@ -20,7 +20,7 @@
         <template v-slot:body="{ items, headers }">
             <tbody>
                 <template v-for="(item, i) in items">
-                    <tr :key="i" :class="typeof item_class=='function' ? item_class(item) : item_class">
+                    <tr :key="i" :class="typeof itemClass=='function' ? itemClass(item) : itemClass">
                         <template v-for="(h, j) in headers">
                             <td :key="j" :title="h.cdef.tdTooltip(item[h.value], item)" :class="h.cdef.tdClass(item[h.value], item) + ' v-data-table__divider col_' + h.value">
                                 <template v-if="h.cdef.html">
@@ -29,7 +29,7 @@
                                 <template v-else>
                                     <span :key="h.id" :title="h.cdef.tooltip(item[h.value], item)" :style="h.cdef.style(item[h.value], item)">{{h.cdef.format(item[h.value], item)}}</span>
                                 </template>
-                                <span v-if="copy_cell_content && h.cdef.format(item[h.value], item)" class="cp-span mdi mdi-content-copy" @click="copyCellContent('col_'+h.value, i, $event)">
+                                <span v-if="activeCopyCellContent && h.cdef.format(item[h.value], item)" class="cp-span mdi mdi-content-copy" @click="copyCellContent('col_'+h.value, i, $event)">
                                     <span class="cell-copied-tooltip">Copied!</span>
                                 </span>
                             </td>
@@ -136,10 +136,10 @@ export default {
         api:{
             type: String,
         },
-        array_data: {
+        arrayData: {
             type: String,
         },
-        column_definition: {
+        columnDefinition: {
             type: Object,
             default: () => ({}),
         },
@@ -149,18 +149,18 @@ export default {
         height: {
             /* type String, Number, Function or undefined */
         },
-        auto_table_height_extra: {
+        autoTableHeightExtra: {
             type: Array,
             /* array of dom ids to substract of +/- numbers */
         },
-        item_class: {
+        itemClass: {
 
         },
-        on_headers_computation: {
+        headersComputation: {
             type: Function,
             default: () => ({}),
         },
-        copy_cell_content: {
+        activeCopyCellContent: {
             type: Boolean,
             default: true,
         }
@@ -182,12 +182,12 @@ export default {
                 }
             });
             /* hook before final column setup */
-            this.on_headers_computation(headers, this.items);
+            this.headersComputation(headers, this.items);
             /* setup columns and potentially discard hidden ones (splice), hence the reverse loop */
             let i = headers.length;
             while (i--) {
                 let h = headers[i];
-                let cdef = Object.assign({}, default_column_definition, this.column_definition[h.value]);
+                let cdef = Object.assign({}, default_column_definition, this.$props.columnDefinition[h.value]);
                 if (cdef.hidden) {
                     headers.splice(i, 1);
                     continue;
@@ -211,7 +211,7 @@ export default {
             tableItems: [],
             tableHeight: '',
             loading: false,
-            tablefooterProps: {'items-per-page-options': [50, 100, 150, -1]},
+            tableFooterProps: {'items-per-page-options': [50, 100, 150, -1]},
         }
     },
     watch: {
@@ -226,7 +226,7 @@ export default {
                 url: this.$props.api,
             })
             .then( (response) => {
-                let path = this.$props.array_data.split(".");
+                let path = this.$props.arrayData.split(".");
                 let pointer = response.data;
 
                 if (path!="") {
@@ -273,8 +273,8 @@ export default {
                     tableHeight += (window.innerHeight - tableRect.top);
                 }
                 tableHeight -= footerHeight;
-                if (this.auto_table_height_extra) {
-                    for (let i of this.auto_table_height_extra) {
+                if (this.autoTableHeightExtra) {
+                    for (let i of this.autoTableHeightExtra) {
                         if (typeof i == 'number')
                             tableHeight += i;
                         else {
