@@ -19,17 +19,17 @@
 
         <template v-slot:body="{ items, headers }">
             <tbody>
-                <template v-for="(item, i) in items">
-                    <tr :key="i" :class="typeof itemClass=='function' ? itemClass(item) : itemClass">
-                        <template v-for="(h, j) in headers">
-                            <td :key="j" :title="h.cdef.tdTooltip(item[h.value], item)" :class="h.cdef.tdClass(item[h.value], item) + ' v-data-table__divider col_' + h.value">
-                                <template v-if="h.cdef.html">
-                                    <span :key="h.id" :title="h.cdef.tooltip(item[h.value], item)" :style="h.cdef.style(item[h.value], item)" v-html="h.cdef.format(item[h.value], item)"></span>
+                <template v-for="(item, index) in items">
+                    <tr :key="index" :class="typeof itemClass=='function' ? itemClass(item) : itemClass">
+                        <template v-for="(headerItem, headerIndex) in headers">
+                            <td :key="headerIndex" :title="headerItem.cdef.tdTooltip(item[headerItem.value], item)" :class="headerItem.cdef.tdClass(item[headerItem.value], item) + ' v-data-table__divider col_' + headerItem.value">
+                                <template v-if="headerItem.cdef.html">
+                                    <span :key="headerItem.id" :title="headerItem.cdef.tooltip(item[headerItem.value], item)" :style="headerItem.cdef.style(item[headerItem.value], item)" v-html="headerItem.cdef.format(item[headerItem.value], item)"></span>
                                 </template>
                                 <template v-else>
-                                    <span :key="h.id" :title="h.cdef.tooltip(item[h.value], item)" :style="h.cdef.style(item[h.value], item)">{{h.cdef.format(item[h.value], item)}}</span>
+                                    <span :key="headerItem.id" :title="headerItem.cdef.tooltip(item[headerItem.value], item)" :style="headerItem.cdef.style(item[headerItem.value], item)">{{headerItem.cdef.format(item[headerItem.value], item)}}</span>
                                 </template>
-                                <span v-if="activeCopyCellContent && h.cdef.format(item[h.value], item)" class="cp-span mdi mdi-content-copy" @click="copyCellContent('col_'+h.value, i, $event)">
+                                <span v-if="activeCopyCellContent && headerItem.cdef.format(item[headerItem.value], item)" class="cp-span mdi mdi-content-copy" @click="copyCellContent('col_'+headerItem.value, index, $event)">
                                     <span class="cell-copied-tooltip">Copied!</span>
                                 </span>
                             </td>
