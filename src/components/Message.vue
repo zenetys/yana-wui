@@ -11,7 +11,7 @@
                 ref="messageOverlay"
                 id="messageSnackbar"
             >
-                <span class="message"> {{this.message.content + (this.message.error ? ('\nError detail: '+this.message.error.message) : '')}} </span>
+                <span class="message"> {{this.messageContent}} </span>
                 <template v-slot:action="{ attrs }">
                     <v-btn
                         icon
@@ -59,6 +59,9 @@ export default {
                 return 'orange lighten-4';
             }
             return 'primary';
+        },
+        messageContent() {
+            return this.message.content + (this.message.error ? ('\nError detail: '+this.message.error.message) : '');
         }
     },
     watch: {
