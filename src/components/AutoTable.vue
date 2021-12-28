@@ -256,7 +256,6 @@ export default {
                 this.tableItems = [];
                 console.log('data from autoTable error', error);
                 this.$emit('error', { type: 'error', content: 'Cannot load data, problem with the query.', error: error });
-                this.loading = true;
             });
         },
         setTableHeight() {
