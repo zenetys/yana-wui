@@ -3,12 +3,12 @@
         <AutoTable
             v-if="apiUrl != '' && storeSearch!==''"
             id="table-inventory-fdb"
-            :pagination="true"
+            :isPaginated="true"
             :api="apiUrl"
-            array_data=""
-            table_height="auto"
-            :auto_table_height_extra="[-120]"
-            :column_definition="columnDefinition" />
+            array-data=""
+            height="auto"
+            :auto-table-height-extra="[-120]"
+            :column-definition="columnDefinition" />
             <span v-if="storeSearch==''">Please enter something to search</span>
     </div>
 </template>
