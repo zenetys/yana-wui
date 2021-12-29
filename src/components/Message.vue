@@ -51,14 +51,16 @@ export default {
             message: 'storeInfoMessage'
         }),
         messageColor() {
-            if (this.message.type=='error') {
-                return '#FFADAD';
-            } else if (this.message.type=='info') {
-                return 'primary';
-            } else if (this.message.type=='warning') {
-                return 'orange lighten-4';
+            switch (this.message.type) {
+                case 'error':
+                    return '#FFADAD';
+                case 'info':
+                    return 'primary';
+                case 'warning':
+                    return 'orange lighten-4';
+                default:
+                    return 'primary';
             }
-            return 'primary';
         },
         messageContent() {
             return this.message.content + (this.message.error ? ('\nError detail: '+this.message.error.message) : '');
