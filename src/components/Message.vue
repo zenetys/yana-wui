@@ -1,9 +1,9 @@
 <template>
     <div>
-        <v-overlay :value="snackbar" :z-index="99" :opacity="0.5" color="#ffffff" @click="closeSnackbarOnButtonClick()">
+        <v-overlay :value="snackbarIsDisplayed" :z-index="99" :opacity="0.5" color="#ffffff" @click="closeSnackbar()">
             <v-snackbar
                 :timeout="-1"
-                v-model="snackbar"
+                v-model="snackbarIsDisplayed"
                 :color="messageColor"
                 :elevation="5"
                 style="white-space: pre-line;"
@@ -17,7 +17,7 @@
                         icon
                         v-bind="attrs"
                         top
-                        @click="closeSnackbarOnButtonClick()"
+                        @click="closeSnackbar()"
                         >
                         <v-icon class="message">mdi-close</v-icon>
                     </v-btn>
@@ -42,7 +42,7 @@ export default {
     },
     data() {
         return {
-            snackbar: false,
+            snackbarIsDisplayed: false,
             snackbarTimeOut: 5000,
         }
     },
@@ -67,20 +67,20 @@ export default {
     watch: {
         message() {
             if(Object.keys(this.message)!=0){
-                this.snackbar = true;
+                this.snackbarIsDisplayed = true;
             } else {
-                this.snackbar = false;
+                this.snackbarIsDisplayed = false;
             }
         }
     },
     methods: {
-        closeSnackbarOnButtonClick() {
-            this.snackbar = false;
+        closeSnackbar() {
+            this.snackbarIsDisplayed = false;
             this.$store.commit('EDIT_STORE_INFO_MESSAGE', {});
         },
         closeSnackbarOnWindowKeyUp(e) {
             if (e.key == 'Escape')
-                this.closeSnackbarOnButtonClick();
+                this.closeSnackbar();
         }
     },
     mounted() {
