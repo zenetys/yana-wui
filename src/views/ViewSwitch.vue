@@ -6,7 +6,7 @@
                     <th class="text-left px-2">Name</th>
                     <td class="text-left pl-2">
                         <router-link :to="'/main/inventory/host/'+this.device.id" id="device-name">{{ this.deviceName }}</router-link>
-                        <span class="name2">{{ this.deviceSecondaryNames ? ', ' + this.deviceSecondaryNames : '' }}</span>
+                        <span class="name2">{{ this.deviceSecondaryNames }}</span>
                     </td>
                 </tr>
                 <tr class="">
@@ -189,7 +189,7 @@ export default {
         },
         deviceSecondaryNames() {
             if (Array.isArray(this.device.name) && this.device.name.length > 1)
-                return this.device.name.slice(1).join(', ');
+                return ', ' + this.device.name.slice(1).join(', ');
             return '';
         },
         deviceDescription() {
@@ -224,7 +224,7 @@ export default {
         },
         getTdClass(k, v, o) {
             if (o._meta && o._meta[k])
-                return 'level-' + o._meta[k].level; /* may give undefined */
+                return (o._meta[k].level != undefined) ? 'level-' + o._meta[k].level : '';
             return '';
         },
         getTdTooltip(k, v, o) {
