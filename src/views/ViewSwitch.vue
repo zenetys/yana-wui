@@ -224,7 +224,7 @@ export default {
         },
         getTdClass(k, v, o) {
             if (o._meta && o._meta[k])
-                return 'level-' + o._meta[k].level; /* may give undefined */
+                return (o._meta[k].level != undefined) ? 'level-' + o._meta[k].level : '';
             return '';
         },
         getTdTooltip(k, v, o) {
