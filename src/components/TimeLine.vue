@@ -54,9 +54,6 @@ export default {
                         {
                             type: "time",
                             time: {
-                                // unit: "day",
-                                // stepSize: 6,
-                                // minUnit: 'day',
                                 displayFormats: {
                                     millisecond: 'hh:mm:ss.SSS',
                                     second: 'hh:mm:ss',
@@ -77,7 +74,6 @@ export default {
                                 fontSize: 10,
                                 fontFamily: 'Roboto, sans-serif'
                             },
-                            // distribution: 'series',
                         }
                     ],
                     yAxes: [
@@ -144,7 +140,6 @@ export default {
             this.chartdata.datasets[0].pointBackgroundColor = () => this.colorOnClick();
             this.chartdata.datasets[0].pointBorderColor = () => this.colorOnClick();
             this.$data._chart.update();
-            //this.renderChart(this.chartdata, this.options);
         },
         colorOnClick() {
             let colors = [];
