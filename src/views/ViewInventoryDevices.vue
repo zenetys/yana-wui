@@ -77,27 +77,27 @@ export default {
             columnDefinition: {
                 flag: {
                     format: (v, o) => {
-                        v = Array.isArray(v) ? v[0] : v;
-                        let type = Array.isArray(o.type) ? o.type[0] : o.type;
-                        let descr = Array.isArray(o.description) ? o.description[0] : o.description;
+                        v = this.getArrayContent(v);
+                        const type = this.getArrayContent(o.type) ? this.getArrayContent(o.type).toLowerCase() : '';
+                        const descr = this.getArrayContent(o.description) ? this.getArrayContent(o.description).toLowerCase() : '';
                         if (type) {
-                            if (type.toLowerCase().indexOf('switch') > -1)
+                            if (type.indexOf('switch') > -1)
                                 return '<span class="mdi mdi-swap-horizontal-bold"></span>';
-                            if (type.toLowerCase().indexOf('router') > -1)
+                            if (type.indexOf('router') > -1)
                                 return '<span class="mdi mdi-router"></span>';
-                            if (type.toLowerCase().indexOf('wlan') > -1)
+                            if (type.indexOf('wlan') > -1)
                                 return '<span class="mdi mdi-wifi"></span>';
-                            if (type.toLowerCase().indexOf('phone') > -1)
+                            if (type.indexOf('phone') > -1)
                                 return '<span class="mdi mdi-phone"></span>';
-                            if (type.toLowerCase().indexOf('print') > -1)
+                            if (type.indexOf('print') > -1)
                                 return '<span class="mdi mdi-printer"></span>';
                         }
                         if (descr) {
-                            if (descr.toLowerCase().indexOf('linux') > -1)
+                            if (descr.indexOf('linux') > -1)
                                 return '<span class="mdi mdi-linux"></span>';
-                            if (descr.toLowerCase().indexOf('windows') > -1)
+                            if (descr.indexOf('windows') > -1)
                                 return '<span class="mdi mdi-microsoft-windows"></span>';
-                            if (descr.toLowerCase().indexOf('print') > -1)
+                            if (descr.indexOf('print') > -1)
                                 return '<span class="mdi mdi-printer"></span>';
                         }
                         return '<span class="mdi mdi-monitor-small"></span>';
@@ -106,24 +106,22 @@ export default {
                     tdClass: () => 'nocp'
                 },
                 id: {
-                    format: (v) => Array.isArray(v) ? v[0] : v,
+                    format: (v) => this.getArrayContent(v),
                     hidden: true,
                 },
                 ip: {
                     format: (v, o) => {
-                        v = Array.isArray(v) ? v[0] : v;
+                        v = this.getArrayContent(v);
                         if (v) {
-                            let type = Array.isArray(o.type) ? o.type[0] : o.type;
-                            if (type) {
-                                if (type.toLowerCase().indexOf('switch') > -1)
-                                    return '<a href="#/main/inventory/switch/'+o.id+'">' + v + '</a>';
-                            }
+                            const type = this.getArrayContent(o.type);
+                            if (type && type.toLowerCase().indexOf('switch') > -1)
+                                return '<a href="#/main/inventory/switch/'+o.id+'">' + v + '</a>';
                             return '<a href="#/main/inventory/host/'+o.id+'">' + v + '</a>';
                         }
                         return '';
                     },
                     onHover: (value) => {
-                        if (Array.isArray(value)) {
+                        if (this.getArrayContent(value)) {
                             let res = '';
                             for (let i = 0; i < value.length; i++) {
                                 res+= value[i]+'\n'
@@ -137,13 +135,11 @@ export default {
                 },
                 name: {
                     format: (v, o) => {
-                        v = Array.isArray(v) ? v[0] : v;
+                        v = this.getArrayContent(v);
                         if (v) {
-                            let type = Array.isArray(o.type) ? o.type[0] : o.type;
-                            if (type) {
-                                if (type.toLowerCase().indexOf('switch') > -1)
-                                    return '<a href="#/main/inventory/switch/'+o.id+'">' + v + '</a>';
-                            }
+                            const type = this.getArrayContent(o.type);
+                            if (type && type.toLowerCase().indexOf('switch') > -1)
+                                return '<a href="#/main/inventory/switch/'+o.id+'">' + v + '</a>';
                             return '<a href="#/main/inventory/host/'+o.id+'">' + v + '</a>';
                         }
                         return '';
@@ -151,11 +147,11 @@ export default {
                     html: true,
                 },
                 location: {
-                    format: (v) => Array.isArray(v) ? v[0] : v,
+                    format: (v) => this.getArrayContent(v),
                 },
                 description: {
                     format: (v) => {
-                        v = Array.isArray(v) ? v[0] : v;
+                        v = this.getArrayContent(v);
                         return v;
                     },
                     tooltip: (v) => {
@@ -163,18 +159,18 @@ export default {
                     }
                 },
                 type: {
-                    format: (v) => Array.isArray(v) ? v[0] : v,
+                    format: (v) => this.getArrayContent(v),
                 },
                 mac: {
-                    format: (v) => Array.isArray(v) ? v[0] : v,
+                    format: (v) => this.getArrayContent(v),
                 },
                 capabilities: {
-                    format: (v) => Array.isArray(v) ? v[0] : v,
+                    format: (v) => this.getArrayContent(v),
                 },
                 swPort: {
                     format: (v) => {
-                        let total = Array.isArray(v) ? v.length : (v ? 1 : 0);
-                        let first = Array.isArray(v) ? v[0] : v;
+                        const total = Array.isArray(v) ? v.length : (v ? 1 : 0);
+                        const first = this.getArrayContent(v);
                         let out = '<span class="nowrap">';
                         if (first) {
                             out += '<span class="mdi mdi-swap-horizontal-bold"></span> <a href="#/main/inventory/switch/' + first.id +'">' + first.name + '</a> ' + first.iface;
@@ -186,11 +182,11 @@ export default {
                     },
                     tooltip: (v) => {
                         let out = [];
-                        // v = Array.isArray(v) ? v[0] : v;
+                        // v = this.getArrayContent(v);
                         if (v) {
                             for (let i of v) {
-                                var current = i.name+ ' ' + i.iface;
-                                if (i.count!==undefined)
+                                let current = i.name+ ' ' + i.iface;
+                                if (i.count !== undefined)
                                     current+=' ('+i.count+' mac'+ (i.count>1?'s':'') +')';
                                 out.push(current);
                             }
@@ -200,7 +196,7 @@ export default {
                     html: true,
                 },
                 macVendor: {
-                    format: (v) => Array.isArray(v) ? v[0] : v,
+                    format: (v) => this.getArrayContent(v),
                 }
             },
         }
