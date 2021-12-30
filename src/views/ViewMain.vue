@@ -27,7 +27,7 @@
           </v-btn>
         </v-col>
         <v-col cols="12" sm="3" md="4" lg="3" xl="4" class="d-flex justify-end">
-          <div v-if="this.$route.path=='/main/inventory'" style="display:flex;background-color:#e8e8e8d6;height:38px;" class="pt-2 rounded">
+          <div v-if="this.$route.path=='/main/inventory'" class="pt-2 rounded select_inventory_mode">
             <v-checkbox
               v-for="(item, index) in inventoryModes" :key="index"
               v-model="storeInventoryMode"
@@ -170,7 +170,7 @@
     <v-bottom-navigation id="bottombar" fixed hide-on-scroll grow height="" :style="this.bottomBarStyle()">
           <v-col cols="12" class="">
             <v-card>
-              <TimeLine :key="timeLineKey" @error="onErrorOccurs" style="height:80px"/>
+              <TimeLine :key="timeLineKey" @error="onErrorOccurs" class="bottom_timeline"/>
             </v-card>
           </v-col>
     </v-bottom-navigation>
@@ -222,6 +222,16 @@
 
 header {
   border-bottom: solid 1px rgba(0,0,0,.12) !important;
+}
+
+.select_inventory_mode {
+  display:flex;
+  background-color:#e8e8e8d6;
+  height:38px;
+}
+
+.bottom_timeline {
+  height:80px;
 }
 
 .aside-navigation {
