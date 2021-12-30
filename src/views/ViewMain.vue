@@ -89,7 +89,6 @@
           <div v-for="(link, i) in menuSide" :key="i">
               <v-list-item
                   v-if="!link.subMenus"
-                  :key="i"
                   :to="link.url"
                   active-class="deep-cyan--text text--accent-4"
                   class="v-list-item"
