@@ -46,8 +46,8 @@
               class="choose-entity-menu"
               :items="storeEntities"
               v-model="storeEntity"
-              label="Chose Entitiy"
-              placeholder="Chose Entitiy"
+              label="Chose Entity"
+              placeholder="Chose Entity"
               solo
               dense
               hide-details=""
@@ -89,7 +89,6 @@
           <div v-for="(link, i) in menuSide" :key="i">
               <v-list-item
                   v-if="!link.subMenus"
-                  :key="i"
                   :to="link.url"
                   active-class="deep-cyan--text text--accent-4"
                   class="v-list-item"
@@ -314,11 +313,7 @@ export default {
             'updateStoreDatabase',
         ]),
         drawerValueByBreakpoint() {
-            if (this.$vuetify.breakpoint.mdAndDown) {
-                this.drawer = false;
-            } else if(!this.$vuetify.breakpoint.mdAndDown) {
-                this.drawer = true;
-            }
+          this.drawer = !this.$vuetify.breakpoint.mdAndDown;
         },
         bottomBarStyle() {
             return (this.$vuetify.breakpoint.mdAndDown)
