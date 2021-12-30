@@ -268,8 +268,8 @@ export default {
             const table = document.getElementById(this.id);
             let tableHeight = 0;
             if (table) {
-                const footer = table.getElementsByClassName('v-data-footer');
-                const footerHeight = footer.length ? footer[0].clientHeight : 0;
+                const tableFooterElement = table.getElementsByClassName('v-data-footer');
+                const footerHeight = tableFooterElement.length ? tableFooterElement[0].clientHeight : 0;
                 if (table.parentElement && table.parentElement.style.height != '') {
                     tableHeight += table.parentElement.style.height;
                     console.log('mode parent', table.parentElement.style.height)
