@@ -116,6 +116,10 @@ export default {
         };
     },
     methods: {
+        /**
+         * Update the timeline with our data
+         * @param {Array} data - Data array fetched from api
+         */
         updateTimeLine(data) {
             this.chartdata.datasets[0].data = data.map(
                 function (d) {
@@ -141,12 +145,24 @@ export default {
             this.chartdata.datasets[0].pointBorderColor = () => this.colorOnClick();
             this.$data._chart.update();
         },
+        /**
+         * Return colors array
+         * The array returned is used to match the selected timeline point to be different
+         * @returns {Array}
+         */
         colorOnClick() {
             let colors = [];
             colors[this.selectedIndex] = '#D100E4';
             return colors;
         },
+        /**
+         * Update store datbase value
+         * @param {Object} point - PointerEvent
+         * @param {Array} event - ChartElement
+         */
         handleClick(point, event) {
+            console.log(point);
+            console.log(event);
             if (Array.isArray(event))
                 var item = event[0];
             if (!item) {
