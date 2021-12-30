@@ -294,6 +294,11 @@ export default {
             console.log('auto-table computeAutoTableHeight()', tableHeight);
             return tableHeight;
         },
+        /**
+         * Copy cell content to clipboard
+         * @param {string} value - Cell class name
+         * @param {number} index - item index
+         */
         copyCellContent(value, index) {
             let elCopy = document.getElementsByClassName(`${value}`)[index].innerText;
             copyToClipboard(elCopy)
