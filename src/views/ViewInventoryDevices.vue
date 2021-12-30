@@ -202,6 +202,9 @@ export default {
         }
     },
     methods: {
+        /**
+         * Update the query api link to make the query
+         */
         updateApiUrl() {
             let params = this.apiStateParams;
             let url = '';
@@ -212,11 +215,30 @@ export default {
             console.log('updateApiUrl', url);
             this.apiUrl = url;
         },
+        /**
+         * Let edit the headers
+         * @param {array} headerArray
+         */
         onHeadersComputation(headerArray/*, items*/) {
             headerArray.unshift({ text: '', value: 'flag' });
         },
+        /**
+         * Add error object in the store
+         * @param {object} payload
+         */
         onErrorOccurs(payload) {
             this.$store.commit('EDIT_STORE_INFO_MESSAGE', payload);
+        },
+        /**
+         *
+         * Check in the parameter is array
+         * If it is an array, return the first value of the array
+         * Else return the parameter as is
+         * @param {array} value - The value to check
+         * @returns {array}
+         */
+        getArrayContent(value) {
+            return Array.isArray(value) ? value[0] : value;
         }
     },
     computed: {
