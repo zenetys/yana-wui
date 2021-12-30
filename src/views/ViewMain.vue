@@ -46,8 +46,8 @@
               class="choose-entity-menu"
               :items="storeEntities"
               v-model="storeEntity"
-              label="Chose Entitiy"
-              placeholder="Chose Entitiy"
+              label="Chose Entity"
+              placeholder="Chose Entity"
               solo
               dense
               hide-details=""
