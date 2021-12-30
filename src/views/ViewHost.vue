@@ -290,7 +290,6 @@ export default {
                 let hostCardRect = hostCard.getBoundingClientRect();
                 this.cardHeight = window.innerHeight - hostCardRect.top - extraHeight;
             }
-
         },
         /**
          * Expand information panel for the targeted item
@@ -342,7 +341,6 @@ export default {
         },
     },
     mounted() {
-
         this.getDeviceInfo();
         this.setCardHeight();
         window.addEventListener('resize', this.setCardHeight);
