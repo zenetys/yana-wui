@@ -256,17 +256,16 @@ export default {
         },
     },
     watch: {
-        apiStateParams(cur, prev) {
-            console.log('watch apiStateParams', cur, prev);
-            if (cur.entity != prev.entity) {
-                console.log('watch apiStateParams: entity changed, discard event');
-                return;
+        apiStateParams: {
+            immediate: true,
+            handler(cur, prev) {
+                console.log('watch apiStateParams', cur, prev);
+                this.updateApiUrl();
             }
-            this.updateApiUrl();
         }
     },
     mounted() {
-        this.updateApiUrl();
+
     }
 }
 </script>
