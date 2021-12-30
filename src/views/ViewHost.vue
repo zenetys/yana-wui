@@ -292,6 +292,10 @@ export default {
             }
 
         },
+        /**
+         * Expand information panel for the targeted item
+         * @param {string} val - The item object key label
+         */
         openExpand(val) {
             let expandedPanel = document.querySelector('.expand_panel__'+val);
             if (expandedPanel) {
@@ -306,6 +310,12 @@ export default {
         checkIfObject(item) {
             return typeof item === 'object';
         },
+        /**
+         * Return the cell's color
+         * @param {string} element - Object's key value
+         * @param {string} item - Object's key label
+         * @returns {string} Cell's color
+         */
         cellClass(element, item) {
             if (element && item=='status') {
                 if (element.includes('down')) {
@@ -318,6 +328,11 @@ export default {
         cellContent(element, item) {
             return element[item];
         },
+        /**
+         * Return the ip list
+         * @param {string} ifname - Element name
+         * @returns {string|array} The equivalent ip format
+         */
         formatIfaceIp(ifname) {
             if (this.device.iface && this.device.iface[ifname] && this.device.iface[ifname].ip)
                 return Array.isArray(this.device.iface[ifname].ip)
