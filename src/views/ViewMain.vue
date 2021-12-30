@@ -313,11 +313,7 @@ export default {
             'updateStoreDatabase',
         ]),
         drawerValueByBreakpoint() {
-            if (this.$vuetify.breakpoint.mdAndDown) {
-                this.drawer = false;
-            } else if(!this.$vuetify.breakpoint.mdAndDown) {
-                this.drawer = true;
-            }
+          this.drawer = !this.$vuetify.breakpoint.mdAndDown;
         },
         bottomBarStyle() {
             return (this.$vuetify.breakpoint.mdAndDown)
