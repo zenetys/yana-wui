@@ -24,7 +24,7 @@
                                             </template>
                                             <!-- Array and object -- route -->
                                             <template v-if="checkIfObject(item[0]) && index=='route'">
-                                                <div>
+                                                <div v-if="item[0].dest">
                                                     dest {{item[0].dest}}
                                                     <template v-if="item[0].via">
                                                         via {{item[0].via}}
@@ -37,7 +37,7 @@
                                                 <div v-if="item[0]" :class="'expand_panel__'+index">
                                                     <template v-for="(element, index) in item">
                                                         <template v-if="index!=0">
-                                                            <p :key="index" class="mb-0">
+                                                            <p :key="index" v-if="element.dest" class="mb-0">
                                                                 dest {{element.dest}}
                                                                 <template v-if="element.via">
                                                                     via {{element.via}}
