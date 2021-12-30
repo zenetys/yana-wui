@@ -285,9 +285,10 @@ export default {
         },
         setCardHeight() {
             let hostCard = document.getElementById('host-card');
+            const extraHeight = 120;
             if (hostCard) {
                 let hostCardRect = hostCard.getBoundingClientRect();
-                this.cardHeight = window.innerHeight - hostCardRect.top - 120;
+                this.cardHeight = window.innerHeight - hostCardRect.top - extraHeight;
             }
 
         },
