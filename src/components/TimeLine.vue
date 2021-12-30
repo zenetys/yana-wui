@@ -135,7 +135,7 @@ export default {
                 return element.databaseId == this.database;
             });
 
-            if (findIndex == -1)
+            if (findIndex == -1 && this.chartdata.datasets[0].data)
                 this.selectedIndex = this.chartdata.datasets[0].data.length - 1;
             else
                 this.selectedIndex = findIndex;
@@ -152,7 +152,8 @@ export default {
             return colors;
         },
         handleClick(point, event) {
-            const item = event[0];
+            if (Array.isArray(event))
+                var item = event[0];
             if (!item) {
                 console.log('timeline: cancel click, not on a point');
                 return;
