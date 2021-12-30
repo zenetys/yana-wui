@@ -304,9 +304,7 @@ export default {
             }
         },
         checkIfObject(item) {
-            if (typeof item === 'object')
-                return true;
-            return false;
+            return typeof item === 'object';
         },
         cellClass(element, item) {
             if (element && item=='status') {
