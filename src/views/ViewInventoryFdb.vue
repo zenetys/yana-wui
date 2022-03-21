@@ -9,14 +9,14 @@
             height="auto"
             :auto-table-height-extra="[-120]"
             :column-definition="columnDefinition" />
-            <span v-if="storeSearch==''">Please enter something to search</span>
+        <span v-if="storeSearch==''">Please enter something to search</span>
     </div>
 </template>
 
 <style  scoped>
-    ::v-deep .v-data-table__divider {
-        position: relative;
-    }
+::v-deep .v-data-table__divider {
+    position: relative;
+}
 </style>
 
 <script>

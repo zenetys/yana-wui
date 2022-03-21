@@ -29,7 +29,7 @@
             :auto-table-height-extra="[-120]"
             :column-definition="columnDefinition"
             :item-class="itemClass"
-             />
+            />
     </div>
 </template>
 

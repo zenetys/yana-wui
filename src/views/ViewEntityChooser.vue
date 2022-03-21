@@ -8,7 +8,7 @@
                         class="py-1 pl-0 d-flex justify-start align-center"
                         src="../assets/images/zenetys-fg-black-bg-full-transparent_LD.png"
                         height="40"
-                    />
+                        />
                 </router-link>
             </v-toolbar-title>            
             <v-spacer></v-spacer>
@@ -35,7 +35,7 @@
                             dense
                             prepend-inner-icon="mdi-magnify"
                             :hide-details="true"
-                        ></v-text-field>
+                            ></v-text-field>
                     </v-col>
                 </v-row>
             </v-container>
@@ -54,9 +54,9 @@
                     <v-col :key="`entity-${index}`" v-for="(element, index) in filteredEntities" cols="6" sm="4" md="3" lg="2" xl="1">
                         <router-link class="entity" :to="'/main'">
                             <v-card class="d-flex align-center justify-center px-3 entity-card" color="secondary" min-height="100" @click="updateStoreEntity(element.name)">
-                                    <v-card-actions class="">
-                                        <span class="entity_name"> {{element.name}}</span>
-                                    </v-card-actions>
+                                <v-card-actions class="">
+                                    <span class="entity_name"> {{element.name}}</span>
+                                </v-card-actions>
                             </v-card>
                         </router-link>
                     </v-col>
