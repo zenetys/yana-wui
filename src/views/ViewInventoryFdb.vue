@@ -1,123 +1,133 @@
 <template>
-    <div>
-        <AutoTable
-            v-if="apiUrl != '' && storeSearch!==''"
-            id="table-inventory-fdb"
-            :isPaginated="true"
-            :api="apiUrl"
-            array-data=""
-            height="auto"
-            :auto-table-height-extra="[-120]"
-            :column-definition="columnDefinition" />
-            <span v-if="storeSearch==''">Please enter something to search</span>
-    </div>
+  <div>
+    <AutoTable
+      v-if="apiUrl !== '' && storeSearch !== ''"
+      id="table-inventory-fdb"
+      :isPaginated="true"
+      :api="apiUrl"
+      array-data=""
+      height="auto"
+      :auto-table-height-extra="[-120]"
+      :column-definition="columnDefinition"
+    />
+    <span v-if="storeSearch === ''">Please enter something to search</span>
+  </div>
 </template>
 
-<style  scoped>
-    ::v-deep .v-data-table__divider {
-        position: relative;
-    }
+<style scoped>
+::v-deep .v-data-table__divider {
+  position: relative;
+}
 </style>
 
 <script>
 import AutoTable from '@/components/AutoTable';
 import { mapGetters } from 'vuex';
+import { unArray } from '@/plugins/utils';
 
 export default {
-    name: 'ViewInventoryFdb',
-    components: {
-        AutoTable,
-    },
-    data() {
-        return {
-            apiUrl: '',
-            columnDefinition: {
-                swId: {
-                    hidden: true,
-                },
-                fdbMacDid: {
-                    hidden: true,
-                },
-                fdbMacDip: {
-                    format: (v) => {
-                        return Array.isArray(v) ? v[0] : v;
-                    },
-                    tooltip: (v) => {
-                        if (Array.isArray(v)) {
-                            return v.join('\n');
-                        }
-                        else if (v) {
-                            return v;
-                        }
-                        return '';
-                    },
-                    style: () => 'color: #666;'
-                },
-                swName: {
-                    format: (v, o) => {
-                        v = Array.isArray(v) ? v[0] : v;
-                        return '<a href="#/main/inventory/switch/'+o.swId+'"> '+ v +' </a>';
-                    },
-                    html: true,
-                },
-                swIfUplink: {
-                    format: (v) => {
-                        v = Array.isArray(v) ? v[0] : v;
-                        if (v) {
-                            return '<a href="#/main/inventory/switch/'+ v.id +'"> '+ v.name +'</a> ' + v.iface;
-                        }
-                        return v;
-                    },
-                    tooltip: (v) => {
-                        let out = [];
-                        if (v) {
-                            for (let i of v) {
-                                var current = i.name+ ' ' + i.iface;
-                                out.push(current);
-                            }
-                        }
-                        return out.join('\n');
-                    },
-                    html: true,
-                },
-            },
-        }
-    },
-    methods: {
-        updateApiUrl() {
-            let params = this.apiStateParams;
-            let url = '';
-            if (params.entity && params.database)
-                url += '/entity/' + encodeURIComponent(params.entity) +
-                    '/fdb?database=' + encodeURIComponent(params.database) +
-                    '&q=' + encodeURIComponent(params.search);
-            this.apiUrl = url;
+  name: 'ViewInventoryFdb',
+  components: {
+    AutoTable,
+  },
+  data() {
+    return {
+      apiUrl: '',
+      columnDefinition: {
+        swId: {
+          hidden: true,
         },
-    },
-    computed: {
-        ...mapGetters([
-            'storeEntity',
-            'storeDatabase',
-            'storeSearch',
-        ]),
-        apiStateParams() {
-            return {
-                entity: this.storeEntity,
-                database: this.storeDatabase,
-                search: this.storeSearch,
-            };
+        fdbMacDid: {
+          hidden: true,
         },
-    },
-    watch: {
-        apiStateParams(cur, prev) {
-            if (cur.entity != prev.entity) {
-                return;
+        fdbMacDip: {
+          format: (v) => {
+            return unArray(v);
+          },
+          getTooltip: (v) => {
+            if (Array.isArray(v)) {
+              return v.join('\n');
+            } else if (v) {
+              return v;
             }
-            this.updateApiUrl();
-        }
+            return '';
+          },
+          getStyle: () => 'color: #666;',
+        },
+        swName: {
+          format: (v, o) => {
+            v = unArray(v);
+            return (
+              '<a href="#/main/inventory/switch/' + o.swId + '"> ' + v + ' </a>'
+            );
+          },
+          isHtml: true,
+        },
+        swIfUplink: {
+          format: (v) => {
+            v = unArray(v);
+            if (v) {
+              return (
+                '<a href="#/main/inventory/switch/' +
+                v.id +
+                '"> ' +
+                v.name +
+                '</a> ' +
+                v.iface
+              );
+            }
+            return v;
+          },
+          getTooltip: (v) => {
+            let out = [];
+            if (v) {
+              for (let i of v) {
+                var current = i.name + ' ' + i.iface;
+                out.push(current);
+              }
+            }
+            return out.join('\n');
+          },
+          isHtml: true,
+        },
+      },
+    };
+  },
+  methods: {
+    updateApiUrl() {
+      let params = this.apiStateParams;
+      let url = '';
+      if (params.entity && params.database)
+        url +=
+          '/entity/' +
+          encodeURIComponent(params.entity) +
+          '/fdb?database=' +
+          encodeURIComponent(params.database) +
+          '&q=' +
+          encodeURIComponent(params.search);
+      this.apiUrl = url;
     },
-    mounted() {
-        this.updateApiUrl();
-    }
-}
+  },
+  computed: {
+    ...mapGetters(['storeEntity', 'storeDatabase', 'storeSearch']),
+    apiStateParams() {
+      return {
+        entity: this.storeEntity,
+        database: this.storeDatabase,
+        search: this.storeSearch,
+      };
+    },
+  },
+  watch: {
+    apiStateParams(cur, prev) {
+      if (cur.entity !== prev.entity) {
+        return;
+      }
+      this.updateApiUrl();
+    },
+  },
+  mounted() {
+    this.updateApiUrl();
+  },
+};
 </script>

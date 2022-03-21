@@ -1,17 +1,17 @@
 <template>
   <v-app>
     <v-main>
-      <router-view/>
+      <router-view />
     </v-main>
   </v-app>
 </template>
 
 <style>
 html {
-    overflow-y: auto !important;
+  overflow-y: auto !important;
 }
 * {
-    transition: none !important;
+  transition: none !important;
 }
 a {
   text-decoration: none;
@@ -20,7 +20,7 @@ a:hover {
   text-decoration: underline;
 }
 .nowrap {
-    white-space: nowrap;
+  white-space: nowrap;
 }
 </style>
 
