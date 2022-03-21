@@ -1,9 +1,9 @@
 <template>
-  <v-app>
-    <v-main>
-      <router-view/>
-    </v-main>
-  </v-app>
+    <v-app>
+        <v-main>
+            <router-view/>
+        </v-main>
+    </v-app>
 </template>
 
 <style>
@@ -14,10 +14,10 @@ html {
     transition: none !important;
 }
 a {
-  text-decoration: none;
+    text-decoration: none;
 }
 a:hover {
-  text-decoration: underline;
+    text-decoration: underline;
 }
 .nowrap {
     white-space: nowrap;
@@ -26,10 +26,10 @@ a:hover {
 
 <script>
 export default {
-  name: 'App',
+    name: 'App',
 
-  data: () => ({
-    //
-  }),
+    data: () => ({
+        //
+    }),
 };
 </script>

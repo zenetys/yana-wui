@@ -10,7 +10,7 @@
                 centered
                 ref="messageOverlay"
                 id="messageSnackbar"
-            >
+                >
                 <span class="message"> {{this.messageContent}} </span>
                 <template v-slot:action="{ attrs }">
                     <v-btn
@@ -28,9 +28,9 @@
 </template>
 
 <style lang="scss">
-    .message {
-        color: rgba(0, 0, 0, 0.87) !important;
-    }
+.message {
+    color: rgba(0, 0, 0, 0.87) !important;
+}
 </style>
 
 <script>

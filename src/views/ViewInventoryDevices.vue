@@ -37,14 +37,14 @@
 ::v-deep .v-data-table__divider.col_swPort { max-width: inherit; }
 
 @media (min-width: 1200px) {
-::v-deep .v-data-table__divider.col_name { max-width:200px; }
-::v-deep .v-data-table__divider.col_description { max-width: 200px; }
-::v-deep .v-data-table__divider.col_macVendor { max-width: 100px; }
-::v-deep .v-data-table__divider.col_type { max-width: 100px; }
+    ::v-deep .v-data-table__divider.col_name { max-width:200px; }
+    ::v-deep .v-data-table__divider.col_description { max-width: 200px; }
+    ::v-deep .v-data-table__divider.col_macVendor { max-width: 100px; }
+    ::v-deep .v-data-table__divider.col_type { max-width: 100px; }
 }
 
 @media (min-width: 1500px) {
-::v-deep .v-data-table__divider.col_description { max-width: 500px; }
+    ::v-deep .v-data-table__divider.col_description { max-width: 500px; }
 }
 
 

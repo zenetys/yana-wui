@@ -202,7 +202,7 @@ export default {
 /*
 Notes:
 - Force update the grph: 
-*/
+ */
 </script>
 
 <style>

@@ -38,13 +38,13 @@
                                                     <template v-for="(element, index) in item">
                                                         <template v-if="index!=0">
                                                             <p :key="index" v-if="element.dest" class="mb-0">
-                                                                dest {{element.dest}}
-                                                                <template v-if="element.via">
-                                                                    via {{element.via}}
-                                                                </template>
-                                                                <template v-if="element.iface">
-                                                                    dev {{element.iface}}
-                                                                </template>
+                                                            dest {{element.dest}}
+                                                            <template v-if="element.via">
+                                                                via {{element.via}}
+                                                            </template>
+                                                            <template v-if="element.iface">
+                                                                dev {{element.iface}}
+                                                            </template>
                                                             </p>
                                                         </template>
                                                     </template>
@@ -100,131 +100,131 @@
 </template>
 
 <style lang="scss" scoped>
-    * {
+* {
+    font-size: 12.8px;
+}
+
+.cell-green {
+    // background-color: #a2d6b8;
+    background-color: #B1E8B6;
+}
+
+.cell-red {
+    // background-color: #f9cecc;
+    background-color: #FAC8D1;
+}
+
+.cell-ip {
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#host-card, #host-ifaces-card{
+    overflow-y: auto;
+}
+
+th {
+    vertical-align: top;
+}
+
+// host table
+#host-ifaces-card {
+
+    table {
         font-size: 12.8px;
+        width: 99.99%;
+        overflow: auto;
+        display: block;
+        white-space: nowrap;
+        border-collapse: collapse;
     }
 
-    .cell-green {
-        // background-color: #a2d6b8;
-        background-color: #B1E8B6;
+    tr td:last-child {
+        width: 1%;
     }
 
-    .cell-red {
-        // background-color: #f9cecc;
-        background-color: #FAC8D1;
+    td {
+        text-align: left;
+        padding: 1px 5px 1px 5px;
+        box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        -webkit-box-sizing: border-box;
+        box-shadow: inset 0 -1px 0 rgb(0 0 0 / 12%);
+        box-shadow: inset 1px -1px 0 rgb(0 0 0 / 12%);
     }
 
-    .cell-ip {
-        max-width: 200px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-    #host-card, #host-ifaces-card{
-        overflow-y: auto;
-    }
-
-    th {
-        vertical-align: top;
-    }
-
-    // host table
-    #host-ifaces-card {
-        
-        table {
-            font-size: 12.8px;
-            width: 99.99%;
-            overflow: auto;
-            display: block;
-            white-space: nowrap;
-            border-collapse: collapse;
-        }
-
-        tr td:last-child {
-            width: 1%;
-        }
-
-        td {
-            text-align: left;
-            padding: 1px 5px 1px 5px;
-            box-sizing: border-box;
-            -moz-box-sizing: border-box;
-            -webkit-box-sizing: border-box;
-            box-shadow: inset 0 -1px 0 rgb(0 0 0 / 12%);
-            box-shadow: inset 1px -1px 0 rgb(0 0 0 / 12%);
-        }
-
-        // Header left
-        table > tbody > tr > th:nth-child(1) {
-            left: 0;
-            text-align: left;
-            vertical-align: middle;
-            padding-left: 5px;
-            padding-right: 15px;
-            color: rgba(0, 0, 0, 0.6);
-            background: #FCFCFC;
-            box-shadow: inset 0px -1px rgb(0 0 0 / 12%);
-        }
-
-        // Header top
-        table > tbody > tr:nth-child(2) > th {
-            position: sticky;
-            position: -webkit-sticky;
-            top: 0;
-            padding: 5px;
-            z-index: 7;
-            color: rgba(0, 0, 0, 0.6);
-            text-align: left;
-            background: #FCFCFC;
-            box-shadow: inset 0 -1px 0 rgb(0 0 0 / 12%);
-            box-shadow: inset 1px -1px 0 rgb(0 0 0 / 12%);
-            box-sizing: border-box;
-        }
-
-        // top left cell
-        table > tbody > tr:nth-child(1) > th {
-            position: sticky;
-            position: -webkit-sticky ;
-            top: 0;
-            left: 0;
-            // z-index: 8;
-            background: rgb(255, 255, 255);
-        }
-    }
-
-    ::v-deep .v-expansion-panels {
-        z-index: inherit;
-
-        .v-expansion-panel-header {
-            padding-left: 0px;
-            padding-top: 0px;
-        }
-    }
-
-    .device-info th {
-        background-color: #FCFCFC !important;
+    // Header left
+    table > tbody > tr > th:nth-child(1) {
+        left: 0;
+        text-align: left;
+        vertical-align: middle;
+        padding-left: 5px;
+        padding-right: 15px;
         color: rgba(0, 0, 0, 0.6);
+        background: #FCFCFC;
+        box-shadow: inset 0px -1px rgb(0 0 0 / 12%);
     }
 
-    .accordion {
-        cursor: pointer;
+    // Header top
+    table > tbody > tr:nth-child(2) > th {
+        position: sticky;
+        position: -webkit-sticky;
+        top: 0;
+        padding: 5px;
+        z-index: 7;
+        color: rgba(0, 0, 0, 0.6);
+        text-align: left;
+        background: #FCFCFC;
+        box-shadow: inset 0 -1px 0 rgb(0 0 0 / 12%);
+        box-shadow: inset 1px -1px 0 rgb(0 0 0 / 12%);
+        box-sizing: border-box;
     }
 
-    .ifaces, .iface-row {
-        background-color: #f1f1f1 !important;
+    // top left cell
+    table > tbody > tr:nth-child(1) > th {
+        position: sticky;
+        position: -webkit-sticky ;
+        top: 0;
+        left: 0;
+        // z-index: 8;
+        background: rgb(255, 255, 255);
     }
+}
 
-    .icon-chevron, .icon-chevron:focus {
-        position: relative;
-        vertical-align: top;
-        background-color: none !important;
-    }
+::v-deep .v-expansion-panels {
+    z-index: inherit;
 
-    .expand_panel {
-        &__ip, &__mac {
-            display: none;
-        }
+    .v-expansion-panel-header {
+        padding-left: 0px;
+        padding-top: 0px;
     }
+}
+
+.device-info th {
+    background-color: #FCFCFC !important;
+    color: rgba(0, 0, 0, 0.6);
+}
+
+.accordion {
+    cursor: pointer;
+}
+
+.ifaces, .iface-row {
+    background-color: #f1f1f1 !important;
+}
+
+.icon-chevron, .icon-chevron:focus {
+    position: relative;
+    vertical-align: top;
+    background-color: none !important;
+}
+
+.expand_panel {
+    &__ip, &__mac {
+        display: none;
+    }
+}
 </style>
 
 <script>
@@ -270,18 +270,18 @@ export default {
                 '&id=' + encodeURIComponent(this.$route.params.id);
 
             axios.all([axios.get(deviceUrl), axios.get(ifaceUrl)])
-                    .then(axios.spread((deviceResult, ifaceResult) => {
-                        console.log(deviceResult, ifaceResult);
-                        this.device = deviceResult.data;
-                        if (this.device.vlan) {
-                            this.device.vlan = Object.values(this.device.vlan);
-                        }
-                        this.iface = ifaceResult.data;
-                    }))
-                    .catch((error) => {
-                        console.log(error);
-                        this.$store.commit('EDIT_STORE_INFO_MESSAGE', {type: 'error', content: 'Can not load host informations, problem with the query.', error: error });
-                    });
+                .then(axios.spread((deviceResult, ifaceResult) => {
+                    console.log(deviceResult, ifaceResult);
+                    this.device = deviceResult.data;
+                    if (this.device.vlan) {
+                        this.device.vlan = Object.values(this.device.vlan);
+                    }
+                    this.iface = ifaceResult.data;
+                }))
+                .catch((error) => {
+                    console.log(error);
+                    this.$store.commit('EDIT_STORE_INFO_MESSAGE', {type: 'error', content: 'Can not load host informations, problem with the query.', error: error });
+                });
         },
         setCardHeight() {
             let hostCard = document.getElementById('host-card');

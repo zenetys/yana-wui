@@ -33,9 +33,9 @@ async function init() {
     }
 
     console.log('axios baseURL: ' + (axios.defaults.baseURL
-            ? axios.defaults.baseURL : '<empty>'));
+        ? axios.defaults.baseURL : '<empty>'));
     console.log('axios timeout: ' + (axios.defaults.timeout
-            ? axios.defaults.timeout : '<empty>'));
+        ? axios.defaults.timeout : '<empty>'));
 
 
     new Vue({
@@ -44,7 +44,7 @@ async function init() {
         store,
         render: (h) => h(App)
     })
-    .$mount("#app");
+        .$mount("#app");
 }
 
 init();

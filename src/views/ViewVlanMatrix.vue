@@ -32,7 +32,7 @@
                     indeterminate
                     size="64"
                     color="#a2a2a2"
-                ></v-progress-circular>
+                    ></v-progress-circular>
             </v-overlay>
         </v-card>
     </div>
@@ -152,7 +152,7 @@ export default {
 
     },
     computed: {
-      ...mapGetters([
+        ...mapGetters([
             'storeDatabase',
             'storeEntity',
             'storeSearch',
