@@ -13,10 +13,10 @@
             </v-toolbar-title>            
             <v-spacer></v-spacer>
 
-            <v-btn v-if="entityChooserDisplayMode=='grid'" @click="setEntityChooserDisplayMode('table')" icon fab dark x-small color="primary" class="view-type-button">
+            <v-btn v-if="entityPickerDisplayMode=='grid'" @click="setEntityPickerDisplayMode('table')" icon fab dark x-small color="primary" class="view-type-button">
                 <v-icon dark> mdi-table </v-icon>
             </v-btn>
-            <v-btn v-if="entityChooserDisplayMode=='table'" @click="setEntityChooserDisplayMode('grid')" icon fab dark x-small color="primary" class="view-type-button">
+            <v-btn v-if="entityPickerDisplayMode=='table'" @click="setEntityPickerDisplayMode('grid')" icon fab dark x-small color="primary" class="view-type-button">
                 <v-icon dark> mdi-view-grid </v-icon>
             </v-btn>
         </v-app-bar>
@@ -48,7 +48,7 @@
             </v-container>
 
             <!-- Grid Display Mode -->
-            <v-container v-if="entityChooserDisplayMode=='grid' && filteredEntities.length!=0">
+            <v-container v-if="entityPickerDisplayMode=='grid' && filteredEntities.length!=0">
                 <v-row class="row justify-center align-center">
                     <!-- Entities -->
                     <v-col :key="`entity-${index}`" v-for="(element, index) in filteredEntities" cols="6" sm="4" md="3" lg="2" xl="1">
@@ -64,7 +64,7 @@
             </v-container>
 
             <!-- Table Display Mode -->
-            <v-container v-if="entityChooserDisplayMode=='table' && filteredEntities.length!=0" id="table-view">
+            <v-container v-if="entityPickerDisplayMode=='table' && filteredEntities.length!=0" id="table-view">
                 <v-row class="row justify-center align-center">
                     <!-- Entities -->
                     <v-col cols="12" sm="6" md="6" lg="4" xl="4">
@@ -115,7 +115,7 @@ import * as queries from "@/plugins/queries";
 import { mapActions, mapGetters } from 'vuex';
 
 export default {
-    name: 'ViewEntityChooser',
+    name: 'ViewEntityPicker',
     components:{
         Message,
     },
@@ -124,7 +124,7 @@ export default {
             headers: [
                 { text: 'Entity Name', value: 'name' }
             ],
-            entityChooserDisplayMode: "grid",
+            entityPickerDisplayMode: "grid",
             entitySearch: '',
             entityTableProps: {
                 itemPerPageOptions: {'items-per-page-options': [10, 20, -1]},
@@ -147,8 +147,8 @@ export default {
         ...mapActions([
             'updateStoreEntity', 'updateStoreSearch'
         ]),
-        setEntityChooserDisplayMode(type) {
-            this.entityChooserDisplayMode = type;
+        setEntityPickerDisplayMode(type) {
+            this.entityPickerDisplayMode = type;
         },
         setTableHeight() {
             let header = document.querySelector('header');

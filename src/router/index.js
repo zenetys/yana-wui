@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
-import ViewEntityChooser from '../views/ViewEntityChooser.vue'
+import ViewEntityPicker from '../views/ViewEntityPicker.vue'
 import ViewHost from '../views/ViewHost.vue'
 import ViewInventory from '../views/ViewInventory.vue'
 import ViewMain from '../views/ViewMain.vue'
@@ -15,13 +15,13 @@ const routes = [
     {
         path: '/',
         redirect: {
-            name: 'ViewEntityChooser'
+            name: 'ViewEntityPicker'
         }
     },
     {
         path: '/entity-chooser',
-        name: 'ViewEntityChooser',
-        component: ViewEntityChooser,
+        name: 'ViewEntityPicker',
+        component: ViewEntityPicker,
     },
     {
         path: '/main',
