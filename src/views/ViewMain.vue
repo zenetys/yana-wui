@@ -1,14 +1,7 @@
 <template>
   <div>
     <!-- ================== NAV BAR ============== -->
-    <v-app-bar
-      id="navbar"
-      height="48"
-      app
-      class=""
-      elevation="0"
-      color="#ffffff"
-    >
+    <v-app-bar id="navbar" height="48" app elevation="0" color="#ffffff">
       <v-app-bar-nav-icon
         v-if="$vuetify.breakpoint.mdAndDown"
         @click.stop="drawer = !drawer"
@@ -45,7 +38,7 @@
       <v-col cols="12" sm="3" md="4" lg="3" xl="4" class="d-flex justify-end">
         <div
           v-if="this.$route.path === '/main/inventory'"
-          class="pt-2 rounded select_inventory_mode"
+          class="pt-2 rounded select-inventory-mode"
         >
           <v-checkbox
             v-for="(item, index) in inventoryModes"
@@ -82,7 +75,7 @@
           class="mt-1 ml-1"
           title="Add to favorite"
         >
-          <v-icon class=""> mdi-bookmark </v-icon>
+          <v-icon> mdi-bookmark </v-icon>
         </v-btn>
       </v-col>
 
@@ -97,7 +90,7 @@
 
     <!-- ================== SIDE BAR ============== -->
     <v-navigation-drawer class="aside-navigation" app v-model="drawer">
-      <v-toolbar-title class="">
+      <v-toolbar-title>
         <router-link to="/">
           <img
             class="py-1 pl-4 d-flex justify-start align-center"
@@ -136,7 +129,7 @@
             class="list-item"
           >
             <v-list-item-icon class="mr-0 align-start item-icon">
-              <v-icon size="14" class="">mdi-history</v-icon>
+              <v-icon size="14">mdi-history</v-icon>
             </v-list-item-icon>
             <v-list-item-content>
               <v-list-item-title
@@ -212,12 +205,12 @@
       height=""
       :style="this.bottomBarStyle()"
     >
-      <v-col cols="12" class="">
+      <v-col cols="12">
         <v-card>
           <TimeLine
             :key="timeLineKey"
             @error="onErrorOccurs"
-            class="bottom_timeline"
+            class="bottom-timeline"
           />
         </v-card>
       </v-col>
@@ -272,13 +265,13 @@ header {
   border-bottom: solid 1px rgba(0, 0, 0, 0.12) !important;
 }
 
-.select_inventory_mode {
+.select-inventory-mode {
   display: flex;
   background-color: #e8e8e8d6;
   height: 38px;
 }
 
-.bottom_timeline {
+.bottom-timeline {
   height: 80px;
 }
 

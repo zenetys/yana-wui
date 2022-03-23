@@ -10,10 +10,10 @@
               id="device-name"
               >{{ this.deviceName }}</router-link
             >
-            <span class="name2">{{ this.deviceSecondaryNames }}</span>
+            <span class="secondary-names">{{ this.deviceSecondaryNames }}</span>
           </td>
         </tr>
-        <tr class="">
+        <tr>
           <th class="text-left px-2">Description</th>
           <td class="text-left pl-2">{{ this.deviceDescription }}</td>
         </tr>
@@ -52,7 +52,7 @@
     vertical-align: top;
   }
 
-  span.name2 {
+  span.secondary-names {
     color: #666;
   }
 }

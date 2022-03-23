@@ -21,7 +21,7 @@
       hide-details="true"
       v-model="ouiSearch"
     ></v-textarea>
-    <v-btn color="#17B8CE" class="white--text" @click="_onOuiLookupClick()">
+    <v-btn color="#17B8CE" class="white--text" @click="handleOuiLookupClick()">
       Find
     </v-btn>
     <div class="pt-8">
@@ -36,14 +36,15 @@
   </v-col>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
 ::v-deep .v-textarea * {
   background: #e8e8e8d6 !important;
-}
-::v-deep .v-textarea textarea {
-  line-height: 1.4em;
-  font-weight: 300;
-  height: 110px;
+
+  textarea {
+    line-height: 1.4em;
+    font-weight: 300;
+    height: 110px;
+  }
 }
 </style>
 
@@ -57,7 +58,7 @@ export default {
     };
   },
   methods: {
-    _onOuiLookupClick() {
+    handleOuiLookupClick() {
       if (!this.ouiSearch) {
         this.ouiResponse = 'Please enter MAC addresses to search';
         return;

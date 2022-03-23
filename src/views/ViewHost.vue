@@ -68,7 +68,6 @@
                       <div
                         v-if="propertyValue[0]"
                         :class="'expand_panel__' + propertyKey"
-                        class="testu"
                       >
                         <div
                           v-for="(subValue, subKey) in propertyValue"
