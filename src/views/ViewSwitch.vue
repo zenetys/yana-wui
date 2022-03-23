@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <table class="device-info mb-3">
+  <div class="device-info">
+    <table class="mb-3">
       <tbody>
         <tr>
           <th class="text-left px-2">Name</th>
@@ -37,46 +37,46 @@
   </div>
 </template>
 
-<style scoped>
-table.device-info {
+<style scoped lang="scss">
+.device-info table {
   font-size: 12.8px;
   border-collapse: collapse;
   line-height: 1.4;
+
+  th {
+    border-right: thin solid rgba(0, 0, 0, 0.12);
+    background-color: #fcfcfc !important;
+    font-size: 12px;
+    color: rgba(0, 0, 0, 0.6);
+    font-weight: 700;
+    vertical-align: top;
+  }
+
+  span.name2 {
+    color: #666;
+  }
 }
 
-table.device-info th {
-  border-right: thin solid rgba(0, 0, 0, 0.12);
-  background-color: #fcfcfc !important;
-  font-size: 12px;
-  color: rgba(0, 0, 0, 0.6);
-  font-weight: 700;
-}
+::v-deep {
+  #table-switch tr:not(.status-up---up) td {
+    color: #aaa;
+  }
 
-table.device-info span.name2 {
-  color: #666;
-}
+  .level-1 {
+    /* orange */
+    background-color: #ffe4a8 !important;
+    border-color: #f2dfab !important;
+  }
 
-::v-deep #table-switch tr:not(.status-up---up) td {
-  color: #aaa;
-}
+  .level-2 {
+    /* red */
+    background-color: #fac8d1 !important;
+    border-color: #ebbfbb !important;
+  }
 
-::v-deep .level-1 {
-  /* orange */
-  background-color: #ffe4a8 !important;
-  border-color: #f2dfab !important;
-}
-::v-deep .level-2 {
-  /* red */
-  background-color: #fac8d1 !important;
-  border-color: #ebbfbb !important;
-}
-
-::v-deep .col_peers .mdi:not(.cp-span) {
-  color: #1eb8ce;
-}
-
-.device-info th {
-  vertical-align: top;
+  .col_peers .mdi:not(.cp-span) {
+    color: #1eb8ce;
+  }
 }
 </style>
 
@@ -138,35 +138,36 @@ export default {
           getStyle: () => {
             return 'white-space: normal;';
           },
-          format: (v) => {
-            let out = [];
-            if (v) {
-              for (let i of v) {
-                var label = i.label;
-                if (i.type && i.type.indexOf('switch') > -1) {
-                  if (i.id)
-                    label = `<a href="#/main/inventory/switch/${i.id}">${label}</a>`;
-                  label =
-                    '<span class="mdi mdi-swap-horizontal-bold"></span> ' +
-                    label;
+          format: (values) => {
+            const formatted = values.map((value) => {
+              let label = value.label;
+
+              if (value.type?.includes('switch')) {
+                if (value.id) {
+                  label = `<a href="#/main/inventory/switch/${value.id}">${label}</a>`;
                 }
 
-                let tab = [];
-                for (let j in i) {
-                  if (j !== 'label' && j !== 'id') {
-                    tab.push(j + ': ' + i[j]);
-                  }
-                }
-                out.push(
-                  '<span class="nowrap" title="' +
-                    tab.join('\n') +
-                    '">' +
-                    label +
-                    '</span>'
-                );
+                label =
+                  '<span class="mdi mdi-swap-horizontal-bold"></span> ' + label;
               }
-            }
-            return out.join(', ');
+
+              const tab = [];
+              Object.keys(value).forEach((key) => {
+                if (key !== 'label' && key !== 'id') {
+                  tab.push(key + ': ' + value[key]);
+                }
+              });
+
+              return (
+                '<span class="nowrap" title="' +
+                tab.join('\n') +
+                '">' +
+                label +
+                '</span>'
+              );
+            });
+
+            return formatted.join(', ');
           },
           isHtml: true,
         },
@@ -210,7 +211,7 @@ export default {
   },
   methods: {
     getDeviceInfo() {
-      let url =
+      const url =
         '/entity/' +
         encodeURIComponent(this.storeEntity) +
         '/' +
@@ -233,11 +234,12 @@ export default {
         });
     },
     itemClass(item) {
-      let classz = '';
+      let classes = '';
+
       if (item.status)
-        classz +=
+        classes +=
           'status-' + item.status.toLowerCase().replace(/[^a-z0-9]/g, '-');
-      return classz;
+      return classes;
     },
     getClass(itemKey, tableItem) {
       if (tableItem && tableItem._meta && tableItem._meta[itemKey])

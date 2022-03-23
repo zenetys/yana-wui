@@ -79,14 +79,14 @@ export default {
             return v;
           },
           getTooltip: (v) => {
-            let out = [];
+            const tooltip = [];
             if (v) {
               for (let i of v) {
-                var current = i.name + ' ' + i.iface;
-                out.push(current);
+                const current = i.name + ' ' + i.iface;
+                tooltip.push(current);
               }
             }
-            return out.join('\n');
+            return tooltip.join('\n');
           },
           isHtml: true,
         },
@@ -95,7 +95,7 @@ export default {
   },
   methods: {
     updateApiUrl() {
-      let params = this.apiStateParams;
+      const params = this.apiStateParams;
       let url = '';
       if (params.entity && params.database)
         url +=

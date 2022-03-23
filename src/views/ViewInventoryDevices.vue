@@ -1,84 +1,77 @@
 <template>
-  <div>
-    <auto-table
-      v-if="apiUrl !== ''"
-      id="table-inventory-devices"
-      :pagination="true"
-      :api="apiUrl"
-      array-data=""
-      height="auto"
-      :auto-table-height-extra="[-120]"
-      :column-definition="columnDefinition"
-      :custom-headers-computation="computeHeaders"
-      @error="onErrorOccurs"
-    >
-    </auto-table>
-  </div>
+  <auto-table
+    v-if="apiUrl !== ''"
+    id="table-inventory-devices"
+    :pagination="true"
+    :api="apiUrl"
+    array-data=""
+    height="auto"
+    :auto-table-height-extra="[-120]"
+    :column-definition="columnDefinition"
+    :custom-headers-computation="computeHeaders"
+    @error="onErrorOccurs"
+  >
+  </auto-table>
 </template>
 
 <style lang="scss" scoped>
-/* color of icons in column flag */
-::v-deep .col_flag .mdi:not(.cp-span) {
-  color: gray;
-}
-
-/* color of icons in swport column */
-::v-deep .col_swPort .mdi:not(.cp-span) {
-  color: #1eb8ce;
-}
-
-/* column default max width */
-::v-deep .v-data-table__divider {
-  max-width: 100px;
-}
-
-::v-deep .v-data-table__divider.col_flag {
-  width: 1px;
-}
-::v-deep .v-data-table__divider.col_ip {
-  max-width: 130px;
-  width: 130px;
-}
-::v-deep .v-data-table__divider.col_mac {
-  max-width: 130px;
-  width: 130px;
-}
-::v-deep .v-data-table__divider.col_swPort {
-  max-width: inherit;
-}
-
-@media (min-width: 1200px) {
-  ::v-deep .v-data-table__divider.col_name {
-    max-width: 200px;
+::v-deep {
+  /* color of icons in column flag */
+  .col_flag .mdi:not(.cp-span) {
+    color: gray;
   }
-  ::v-deep .v-data-table__divider.col_description {
-    max-width: 200px;
+
+  /* color of icons in swport column */
+  .col_swPort .mdi:not(.cp-span) {
+    color: #1eb8ce;
   }
-  ::v-deep .v-data-table__divider.col_macVendor {
+
+  /* column default max width */
+  .v-data-table__divider {
     max-width: 100px;
-  }
-  ::v-deep .v-data-table__divider.col_type {
-    max-width: 100px;
-  }
-}
 
-@media (min-width: 1500px) {
-  ::v-deep .v-data-table__divider.col_description {
-    max-width: 500px;
+    &.col_flag {
+      width: 1px;
+    }
+
+    &.col_ip,
+    &.col_mac {
+      max-width: 130px;
+      width: 130px;
+    }
+
+    &.col_swPort {
+      max-width: inherit;
+    }
+
+    > span:not(.cp-span) {
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    @media (min-width: 1200px) {
+      &.col_name,
+      &.col_description {
+        max-width: 200px;
+      }
+
+      &.col_macVendor,
+      &.col_type {
+        max-width: 100px;
+      }
+    }
+
+    @media (min-width: 1500px) {
+      &.col_description {
+        max-width: 500px;
+      }
+    }
   }
-}
-
-/* truncate text in columns */
-::v-deep .v-data-table__divider > span:not(.cp-span) {
-  /* nowrap is set by default in autotable */
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-::v-deep .more {
-  font-size: 10px;
-  font-style: italic;
-  color: #666;
+  .additional-ports-counter {
+    font-size: 10px;
+    font-style: italic;
+    color: #666;
+  }
 }
 </style>
 
@@ -148,12 +141,8 @@ export default {
             return '';
           },
           onHover: (value) => {
-            if (unArray(value)) {
-              let res = '';
-              for (let i = 0; i < value.length; i++) {
-                res += value[i] + '\n';
-              }
-              return res;
+            if (Array.isArray(value)) {
+              return value.map((v) => v + '\n').join('');
             }
             return '' + value;
           },
@@ -198,24 +187,26 @@ export default {
         swPort: {
           format: (v) => {
             const total = Array.isArray(v) ? v.length : v ? 1 : 0;
-            const first = unArray(v);
-            let out = '<span class="nowrap">';
-            if (first) {
-              out +=
+            const firstValue = unArray(v);
+            let formatted = '<span class="nowrap">';
+            if (firstValue) {
+              formatted +=
                 '<span class="mdi mdi-swap-horizontal-bold"></span> <a href="#/main/inventory/switch/' +
-                first.id +
+                firstValue.id +
                 '">' +
-                first.name +
+                firstValue.name +
                 '</a> ' +
-                first.iface;
+                firstValue.iface;
               if (total > 1)
-                out += ` <span class="more">(+${total - 1})</span>`;
+                formatted += ` <span class="additional-ports-counter">(+${
+                  total - 1
+                })</span>`;
             }
-            out += '</span>';
-            return out;
+            formatted += '</span>';
+            return formatted;
           },
           getTooltip: (v) => {
-            let out = [];
+            const tooltip = [];
 
             if (v) {
               for (let i of v) {
@@ -223,10 +214,10 @@ export default {
                 if (i.count !== undefined)
                   current +=
                     ' (' + i.count + ' mac' + (i.count > 1 ? 's' : '') + ')';
-                out.push(current);
+                tooltip.push(current);
               }
             }
-            return out.join('\n');
+            return tooltip.join('\n');
           },
           isHtml: true,
         },
@@ -241,7 +232,7 @@ export default {
      * Update the query api link to make the query
      */
     updateApiUrl() {
-      let params = this.apiStateParams;
+      const params = this.apiStateParams;
       let url = '';
       if (params.entity && params.database)
         url +=
@@ -252,12 +243,11 @@ export default {
           '&q=' +
           encodeURIComponent(params.search) +
           '&short';
-      console.log('updateApiUrl', url);
       this.apiUrl = url;
     },
     /**
-     * Let edit the headers
-     * @param {array} headers
+     * Compute the headers
+     * @param {array<object>} headers
      */
     computeHeaders(headers) {
       headers.unshift({ value: 'flag' });
@@ -283,8 +273,7 @@ export default {
   watch: {
     apiStateParams: {
       immediate: true,
-      handler(cur, prev) {
-        console.log('watch apiStateParams', cur, prev);
+      handler() {
         this.updateApiUrl();
       },
     },

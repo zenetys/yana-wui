@@ -1,172 +1,160 @@
 <template>
-  <div>
-    <v-row>
-      <v-col cols="6">
-        <v-card :height="cardHeight" id="host-card">
-          <table class="device-info mb-3">
-            <tbody>
-              <tr
-                v-for="(propertyValue, propertyKey) in device"
-                :key="propertyKey"
-              >
-                <template v-if="propertyKey !== 'iface'" class="testu">
-                  <th class="text-left px-2">
-                    {{
-                      propertyKey.charAt(0).toUpperCase() + propertyKey.slice(1)
-                    }}
-                  </th>
-                  <td class="text-left px-2" :id="'device-' + propertyKey">
-                    <!-- Array -->
-                    <template v-if="Array.isArray(propertyValue)">
-                      <!-- Array and not object -->
-                      <template v-if="!checkIfObject(propertyValue[0])">
-                        <div>
-                          <div>
-                            {{ propertyValue[0] }}
-                            <v-icon
-                              v-if="propertyValue.length > 1"
-                              size="18"
-                              class="icon-chevron"
-                              @click="openExpand(propertyKey)"
-                              >mdi-chevron-down</v-icon
-                            >
-                          </div>
-                          <div
-                            v-if="propertyValue[0]"
-                            :class="'expand_panel__' + propertyKey"
-                          >
-                            <template
-                              v-for="(subValue, subKey) in propertyValue"
-                            >
-                              <p
-                                class="mb-0"
-                                v-if="subKey !== 0"
-                                :key="subValue + `-${subKey}`"
-                              >
-                                {{ subValue }}
-                              </p>
-                            </template>
-                          </div>
-                        </div>
-                      </template>
-                      <!-- Array and object -- route -->
-                      <template
-                        v-if="
-                          checkIfObject(propertyValue[0]) &&
-                          propertyKey === 'route'
-                        "
-                      >
-                        <div v-if="propertyValue[0].dest">
-                          dest {{ propertyValue[0].dest }}
-                          <template v-if="propertyValue[0].via">
-                            via {{ propertyValue[0].via }}
-                          </template>
-                          <template v-if="propertyValue[0].iface">
-                            dev {{ propertyValue[0].iface }}
-                          </template>
-                          <v-icon
-                            v-if="propertyValue.length > 1"
-                            size="18"
-                            class="icon-chevron"
-                            @click="openExpand(index)"
-                            >mdi-chevron-down</v-icon
-                          >
-                        </div>
-                        <div
-                          v-if="propertyValue[0]"
-                          :class="'expand_panel__' + propertyKey"
-                        >
-                          <template v-for="(subValue, subKey) in propertyValue">
-                            <template v-if="subKey !== 0">
-                              <p
-                                :key="subKey"
-                                v-if="subValue.dest"
-                                class="mb-0"
-                              >
-                                dest {{ subValue.dest }}
-                                <template v-if="subValue.via">
-                                  via {{ subValue.via }}
-                                </template>
-                                <template v-if="subValue.iface">
-                                  dev {{ subValue.iface }}
-                                </template>
-                              </p>
-                            </template>
-                          </template>
-                        </div>
-                      </template>
-                      <!-- Array and object -- vlan -->
-                      <template
-                        v-if="
-                          checkIfObject(propertyValue[0]) &&
-                          propertyKey === 'vlan'
-                        "
-                      >
-                        <div class="">
-                          {{ propertyValue[0].id }} {{ propertyValue[0].name }}
-                          <v-icon
-                            v-if="propertyValue.length > 1"
-                            size="18"
-                            class="icon-chevron"
-                            @click="openExpand(propertyKey)"
-                            >mdi-chevron-down</v-icon
-                          >
-                        </div>
-                        <div :class="'expand_panel__' + propertyKey">
-                          <template v-for="(subValue, subKey) in propertyValue">
-                            <p class="mb-0" v-if="subKey !== 0" :key="subKey">
-                              {{ subValue.id }} {{ subValue.name }}
-                            </p>
-                          </template>
-                        </div>
-                      </template>
-                    </template>
-                    <!-- Not Array -->
-                    <template v-else>
-                      <template v-if="!checkIfObject(propertyValue)">
-                        <span>{{ propertyValue }}</span>
-                      </template>
-                    </template>
-                  </td>
-                </template>
-              </tr>
-            </tbody>
-          </table>
-        </v-card>
-      </v-col>
-      <v-col cols="6">
-        <v-card :height="cardHeight" id="host-ifaces-card">
-          <table v-if="interfaces.length > 0">
-            <tbody>
-              <tr>
-                <th rowspan="2"></th>
-              </tr>
-              <tr>
-                <th v-for="header in interfaceHeaders" :key="header">
-                  {{ header }}
+  <v-row>
+    <v-col cols="6">
+      <v-card :height="cardHeight" id="host-card">
+        <table class="device-info mb-3">
+          <tbody>
+            <tr
+              v-for="(propertyValue, propertyKey) in device"
+              :key="propertyKey"
+            >
+              <template v-if="propertyKey !== 'iface'">
+                <th class="text-left px-2">
+                  {{
+                    propertyKey.charAt(0).toUpperCase() + propertyKey.slice(1)
+                  }}
                 </th>
-              </tr>
-              <tr v-for="(iface, ifaceIndex) in interfaces" :key="ifaceIndex">
-                <th>{{ iface.name }}</th>
-                <td
-                  v-for="(header, headerIndex) in interfaceHeaders"
-                  :key="headerIndex"
-                  :class="cellClass(header, iface.status)"
-                >
-                  <span v-if="header !== 'ip'">
-                    {{ iface[header] }}
-                  </span>
-                  <span v-else>
-                    {{ formatIfaceIp(iface.name) }}
-                  </span>
+                <td class="text-left px-2" :id="'device-' + propertyKey">
+                  <!-- Array -->
+                  <template v-if="Array.isArray(propertyValue)">
+                    <!-- Array and not object -->
+                    <template v-if="!checkIfObject(propertyValue[0])">
+                      {{ propertyValue[0] }}
+                      <v-icon
+                        v-if="propertyValue.length > 1"
+                        size="18"
+                        class="icon-chevron"
+                        @click="openExpand(propertyKey)"
+                        >mdi-chevron-down</v-icon
+                      >
+                      <div
+                        v-if="propertyValue[0]"
+                        :class="'expand_panel__' + propertyKey"
+                      >
+                        <template v-for="(subValue, subKey) in propertyValue">
+                          <p
+                            class="mb-0"
+                            v-if="subKey !== 0"
+                            :key="subValue + `-${subKey}`"
+                          >
+                            {{ subValue }}
+                          </p>
+                        </template>
+                      </div>
+                    </template>
+                    <!-- Array and object -- route -->
+                    <template
+                      v-if="
+                        checkIfObject(propertyValue[0]) &&
+                        propertyKey === 'route'
+                      "
+                    >
+                      <div v-if="propertyValue[0].dest">
+                        dest {{ propertyValue[0].dest }}
+                        <span v-if="propertyValue[0].via">
+                          via {{ propertyValue[0].via }}
+                        </span>
+                        <span v-if="propertyValue[0].iface">
+                          dev {{ propertyValue[0].iface }}
+                        </span>
+                        <v-icon
+                          v-if="propertyValue.length > 1"
+                          size="18"
+                          class="icon-chevron"
+                          @click="openExpand(propertyKey)"
+                          >mdi-chevron-down</v-icon
+                        >
+                      </div>
+                      <div
+                        v-if="propertyValue[0]"
+                        :class="'expand_panel__' + propertyKey"
+                        class="testu"
+                      >
+                        <div
+                          v-for="(subValue, subKey) in propertyValue"
+                          :key="subKey"
+                        >
+                          <p v-if="subKey !== 0 && subValue.dest" class="mb-0">
+                            dest {{ subValue.dest }}
+                            <span v-if="subValue.via">
+                              via {{ subValue.via }}
+                            </span>
+                            <span v-if="subValue.iface">
+                              dev {{ subValue.iface }}
+                            </span>
+                          </p>
+                        </div>
+                      </div>
+                    </template>
+                    <!-- Array and object -- vlan -->
+                    <template
+                      v-if="
+                        checkIfObject(propertyValue[0]) &&
+                        propertyKey === 'vlan'
+                      "
+                    >
+                      {{ propertyValue[0].id }} {{ propertyValue[0].name }}
+                      <v-icon
+                        v-if="propertyValue.length > 1"
+                        size="18"
+                        class="icon-chevron"
+                        @click="openExpand(propertyKey)"
+                        >mdi-chevron-down</v-icon
+                      >
+                      <div :class="'expand_panel__' + propertyKey">
+                        <template v-for="(subValue, subKey) in propertyValue">
+                          <p class="mb-0" v-if="subKey !== 0" :key="subKey">
+                            {{ subValue.id }} {{ subValue.name }}
+                          </p>
+                        </template>
+                      </div>
+                    </template>
+                  </template>
+                  <!-- Not Array -->
+                  <template v-else>
+                    <span v-if="!checkIfObject(propertyValue)">{{
+                      propertyValue
+                    }}</span>
+                  </template>
                 </td>
-              </tr>
-            </tbody>
-          </table>
-        </v-card>
-      </v-col>
-    </v-row>
-  </div>
+              </template>
+            </tr>
+          </tbody>
+        </table>
+      </v-card>
+    </v-col>
+    <v-col cols="6">
+      <v-card :height="cardHeight" id="host-ifaces-card">
+        <table v-if="interfaces.length > 0">
+          <tbody>
+            <tr>
+              <th rowspan="2"></th>
+            </tr>
+            <tr>
+              <th v-for="header in interfaceHeaders" :key="header">
+                {{ header }}
+              </th>
+            </tr>
+            <tr v-for="(iface, ifaceIndex) in interfaces" :key="ifaceIndex">
+              <th>{{ iface.name }}</th>
+              <td
+                v-for="(header, headerIndex) in interfaceHeaders"
+                :key="headerIndex"
+                :class="cellClass(header, iface.status)"
+              >
+                <span v-if="header !== 'ip'">
+                  {{ iface[header] }}
+                </span>
+                <span v-else>
+                  {{ formatIfaceIp(iface.name) }}
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </v-card>
+    </v-col>
+  </v-row>
 </template>
 
 <style lang="scss" scoped>
@@ -197,7 +185,6 @@ th {
   vertical-align: top;
 }
 
-// host table
 #host-ifaces-card {
   table {
     font-size: 12.8px;
@@ -222,41 +209,42 @@ th {
     box-shadow: inset 1px -1px 0 rgb(0 0 0 / 12%);
   }
 
-  // Header left
-  table > tbody > tr > th:nth-child(1) {
-    left: 0;
-    text-align: left;
-    vertical-align: middle;
-    padding-left: 5px;
-    padding-right: 15px;
-    color: rgba(0, 0, 0, 0.6);
-    background: #fcfcfc;
-    box-shadow: inset 0px -1px rgb(0 0 0 / 12%);
-  }
+  table > tbody > {
+    // Header left
+    tr > th:nth-child(1) {
+      left: 0;
+      text-align: left;
+      vertical-align: middle;
+      padding-left: 5px;
+      padding-right: 15px;
+      color: rgba(0, 0, 0, 0.6);
+      background: #fcfcfc;
+      box-shadow: inset 0px -1px rgb(0 0 0 / 12%);
+    }
 
-  // Header top
-  table > tbody > tr:nth-child(2) > th {
-    position: sticky;
-    position: -webkit-sticky;
-    top: 0;
-    padding: 5px;
-    z-index: 7;
-    color: rgba(0, 0, 0, 0.6);
-    text-align: left;
-    background: #fcfcfc;
-    box-shadow: inset 0 -1px 0 rgb(0 0 0 / 12%);
-    box-shadow: inset 1px -1px 0 rgb(0 0 0 / 12%);
-    box-sizing: border-box;
-  }
+    // Header top
+    tr:nth-child(2) > th {
+      position: sticky;
+      position: -webkit-sticky;
+      top: 0;
+      padding: 5px;
+      z-index: 7;
+      color: rgba(0, 0, 0, 0.6);
+      text-align: left;
+      background: #fcfcfc;
+      box-shadow: inset 0 -1px 0 rgb(0 0 0 / 12%);
+      box-shadow: inset 1px -1px 0 rgb(0 0 0 / 12%);
+      box-sizing: border-box;
+    }
 
-  // top left cell
-  table > tbody > tr:nth-child(1) > th {
-    position: sticky;
-    position: -webkit-sticky;
-    top: 0;
-    left: 0;
-    // z-index: 8;
-    background: rgb(255, 255, 255);
+    // top left cell
+    tr:nth-child(1) > th {
+      position: sticky;
+      position: -webkit-sticky;
+      top: 0;
+      left: 0;
+      background: rgb(255, 255, 255);
+    }
   }
 }
 
@@ -326,13 +314,16 @@ export default {
     storeSearch() {
       this.$router.push('/main/inventory');
     },
-    '$route.params.id': function () {
-      this.getDeviceInfo();
+    '$route.params.id': {
+      immediate: true,
+      handler() {
+        this.getDeviceInfo();
+      },
     },
   },
   methods: {
     getDeviceInfo() {
-      let deviceUrl =
+      const deviceUrl =
         '/entity/' +
         encodeURIComponent(this.storeEntity) +
         '/' +
@@ -340,7 +331,7 @@ export default {
         encodeURIComponent(this.storeDatabase) +
         '&id=' +
         encodeURIComponent(this.$route.params.id);
-      let ifaceUrl =
+      const ifaceUrl =
         '/entity/' +
         encodeURIComponent(this.storeEntity) +
         '/' +
@@ -354,7 +345,6 @@ export default {
         .then(
           this.$api.spread((deviceResponse, interfaceResponse) => {
             this.device = deviceResponse.data;
-            console.log('DEVICE', this.device);
             if (this.device.vlan) {
               this.device.vlan = Object.values(this.device.vlan);
             }
@@ -371,10 +361,10 @@ export default {
         });
     },
     setCardHeight() {
-      let hostCard = document.getElementById('host-card');
+      const hostCard = document.getElementById('host-card');
       const extraHeight = 120;
       if (hostCard) {
-        let hostCardRect = hostCard.getBoundingClientRect();
+        const hostCardRect = hostCard.getBoundingClientRect();
         this.cardHeight = window.innerHeight - hostCardRect.top - extraHeight;
       }
     },
@@ -383,7 +373,7 @@ export default {
      * @param {string} val - The item object key label
      */
     openExpand(val) {
-      let expandedPanel = document.querySelector('.expand_panel__' + val);
+      const expandedPanel = document.querySelector('.expand_panel__' + val);
       if (expandedPanel) {
         const displayValue = window
           .getComputedStyle(expandedPanel)
@@ -432,7 +422,6 @@ export default {
     },
   },
   mounted() {
-    this.getDeviceInfo();
     this.setCardHeight();
     window.addEventListener('resize', this.setCardHeight);
   },

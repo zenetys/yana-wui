@@ -128,7 +128,7 @@ export default {
         };
       });
 
-      let findIndex = this.chartdata.datasets[0].data.findIndex((element) => {
+      const findIndex = this.chartdata.datasets[0].data.findIndex((element) => {
         return element.databaseId === this.database;
       });
 
@@ -149,24 +149,27 @@ export default {
      * @returns {Array}
      */
     colorOnClick() {
-      let colors = [];
+      const colors = [];
       colors[this.selectedIndex] = '#D100E4';
       return colors;
     },
     /**
-     * Update store datbase value
+     * Update store database value
      * @param {Object} point - PointerEvent
      * @param {Array} event - ChartElement
      */
     handleClick(point, event) {
-      if (Array.isArray(event)) var item = event[0];
-      if (!item) {
+      let clickedItem = null;
+      if (Array.isArray(event)) clickedItem = event[0];
+      if (!clickedItem) {
         return;
+      } else {
+        this.selectedIndex = clickedItem._index;
+        this.database =
+          this.chartdata.datasets[0].data[clickedItem._index].databaseId;
+        this.updateStoreDatabase(this.database);
+        this.$data._chart.update();
       }
-      this.selectedIndex = item._index;
-      this.database = this.chartdata.datasets[0].data[item._index].databaseId;
-      this.updateStoreDatabase(this.database);
-      this.$data._chart.update();
     },
     ...mapActions(['updateStoreDatabase', 'updateStoreInfoMessage']),
   },

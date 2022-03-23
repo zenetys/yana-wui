@@ -208,8 +208,8 @@ export default {
       this.entityPickerDisplayMode = type;
     },
     setTableHeight() {
-      let header = document.querySelector('header');
-      let searchField = document.getElementById('search-field');
+      const header = document.querySelector('header');
+      const searchField = document.getElementById('search-field');
       if (header && searchField) {
         this.tableHeight =
           window.innerHeight -

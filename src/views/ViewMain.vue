@@ -419,8 +419,8 @@ export default {
       }
     },
     getRecentQueries() {
-      let rQueries = JSON.parse(localStorage.getItem('recent-queries'));
-      let bookmarks = JSON.parse(localStorage.getItem('bookmarks'));
+      const rQueries = JSON.parse(localStorage.getItem('recent-queries'));
+      const bookmarks = JSON.parse(localStorage.getItem('bookmarks'));
       rQueries
         ? (this.recentQueries = this.filterQueries(rQueries))
         : localStorage.setItem('recent-queries', JSON.stringify([]));
@@ -429,7 +429,7 @@ export default {
         : localStorage.setItem('bookmarks', JSON.stringify([]));
     },
     setRecentQueries() {
-      let tab = JSON.parse(localStorage.getItem('recent-queries'));
+      const tab = JSON.parse(localStorage.getItem('recent-queries'));
       localStorage.setItem(
         'recent-queries',
         JSON.stringify(this.newRecentQuery(tab))
@@ -437,7 +437,7 @@ export default {
       this.getRecentQueries();
     },
     setBookmarks() {
-      let bookmarks = JSON.parse(localStorage.getItem('bookmarks'));
+      const bookmarks = JSON.parse(localStorage.getItem('bookmarks'));
       localStorage.setItem(
         'bookmarks',
         JSON.stringify(this.newBookmark(bookmarks))
@@ -445,9 +445,9 @@ export default {
       this.getRecentQueries();
     },
     newRecentQuery(tab) {
-      let allQueries = tab;
-      let currentEntityQueries = this.filterQueries(tab);
-      let newQuery = {
+      const allQueries = tab;
+      const currentEntityQueries = this.filterQueries(tab);
+      const newQuery = {
         entity: this.storeEntity,
         query: {
           inventoryMode: this.storeInventoryMode,
@@ -460,6 +460,7 @@ export default {
           : '',
         index: new Date().getTime(),
       };
+
       if (this.search) {
         if (
           currentEntityQueries.findIndex(
@@ -479,9 +480,9 @@ export default {
         .concat(currentEntityQueries);
     },
     newBookmark(tab) {
-      let allQueries = tab;
-      let currentEntityQueries = this.filterQueries(tab);
-      let newQuery = {
+      const allQueries = tab;
+      const currentEntityQueries = this.filterQueries(tab);
+      const newQuery = {
         entity: this.storeEntity,
         query: {
           inventoryMode:
@@ -519,7 +520,7 @@ export default {
         .concat(currentEntityQueries);
     },
     removeBookmark(item) {
-      let bookmarks = JSON.parse(localStorage.getItem('bookmarks'));
+      const bookmarks = JSON.parse(localStorage.getItem('bookmarks'));
       bookmarks.splice(
         bookmarks.findIndex((el) => el.index === item.index),
         1
@@ -528,7 +529,7 @@ export default {
       this.getRecentQueries();
     },
     removeRecentQuery(item) {
-      let rQueries = JSON.parse(localStorage.getItem('recent-queries'));
+      const rQueries = JSON.parse(localStorage.getItem('recent-queries'));
       rQueries.splice(
         rQueries.findIndex((el) => el.index === item.index),
         1

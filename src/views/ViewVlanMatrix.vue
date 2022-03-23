@@ -1,80 +1,78 @@
 <template>
-  <div>
-    <v-card :width="tableWidth" class="elevation-2">
-      <table id="table-vlan" :style="`height:${this.tableHeight}px;`">
-        <tbody>
-          <tr>
-            <th rowspan="2"></th>
-          </tr>
-          <tr>
-            <th class="vlan-number">#vlans</th>
-            <th
-              scope="col"
-              v-for="item in vlansArray"
-              :key="item.id"
-              :class="'cell-' + item.id"
+  <v-card :width="tableWidth" class="elevation-2">
+    <table id="table-vlan" :style="`height:${this.tableHeight}px;`">
+      <tbody>
+        <tr>
+          <th rowspan="2"></th>
+        </tr>
+        <tr>
+          <th class="vlan-number">#vlans</th>
+          <th
+            scope="col"
+            v-for="item in vlansArray"
+            :key="item.id"
+            :class="'cell-' + item.id"
+          >
+            {{ item.id }}
+          </th>
+        </tr>
+        <tr v-for="element in vlans" :key="element.id">
+          <th scope="row" class="font-weight-regular">
+            <router-link :to="'/main/inventory/switch/' + element.id">{{
+              element.name
+            }}</router-link>
+          </th>
+          <td
+            class="vlan-number"
+            :class="'cell-' + element.id"
+            @mouseover="onOverCell(element.id)"
+            @mouseout="onOutCell(element.id)"
+          >
+            {{ element.vlan.length }}
+          </td>
+          <td
+            v-for="item in vlansArray"
+            :key="item.id"
+            :class="
+              element.vlan.findIndex((el) => el.id === item.id) === -1
+                ? 'vlan-not-found cell-' + item.id
+                : 'vlan-found cell-' + item.id
+            "
+            @mouseover="onOverCell(item.id)"
+            @mouseout="onOutCell(item.id)"
+          >
+            <span
+              v-if="element.vlan.findIndex((el) => el.id === item.id) !== -1"
+              :title="element.vlan.find((el) => el.id === item.id).name"
+              >{{ element.vlan.find((el) => el.id === item.id).name }}</span
             >
-              {{ item.id }}
-            </th>
-          </tr>
-          <tr v-for="element in vlans" :key="element.id">
-            <th scope="row" class="font-weight-regular">
-              <router-link :to="'/main/inventory/switch/' + element.id">{{
-                element.name
-              }}</router-link>
-            </th>
-            <td
-              class="vlan-number"
-              :class="'cell-' + element.id"
-              @mouseover="onOverCell(element.id)"
-              @mouseout="onOutCell(element.id)"
-            >
-              {{ element.vlan.length }}
-            </td>
-            <td
-              v-for="item in vlansArray"
-              :key="item.id"
-              :class="
-                element.vlan.findIndex((el) => el.id === item.id) === -1
-                  ? 'vlan-not-found cell-' + item.id
-                  : 'vlan-found cell-' + item.id
-              "
-              @mouseover="onOverCell(item.id)"
-              @mouseout="onOutCell(item.id)"
-            >
-              <span
-                v-if="element.vlan.findIndex((el) => el.id === item.id) !== -1"
-                :title="element.vlan.find((el) => el.id === item.id).name"
-                >{{ element.vlan.find((el) => el.id === item.id).name }}</span
-              >
-            </td>
-          </tr>
-          <tr>
-            <th>#switches</th>
-            <td></td>
-            <td v-for="element in vlansArray" :key="`el-${element.id}`">
-              {{ switchesByVlan(element.id) }}
-            </td>
-          </tr>
-        </tbody>
-      </table>
+          </td>
+        </tr>
+        <tr>
+          <th>#switches</th>
+          <td></td>
+          <td v-for="element in vlansArray" :key="`el-${element.id}`">
+            {{ switchesByVlan(element.id) }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
 
-      <v-overlay
-        :absolute="true"
-        :opacity="0.5"
-        color="#ffffff"
-        :value="isLoading"
-        class="overlay"
-        z-index="9"
-      >
-        <v-progress-circular
-          indeterminate
-          size="64"
-          color="#a2a2a2"
-        ></v-progress-circular>
-      </v-overlay>
-    </v-card>
-  </div>
+    <v-overlay
+      :absolute="true"
+      :opacity="0.5"
+      color="#ffffff"
+      :value="isLoading"
+      class="overlay"
+      z-index="9"
+    >
+      <v-progress-circular
+        indeterminate
+        size="64"
+        color="#a2a2a2"
+      ></v-progress-circular>
+    </v-overlay>
+  </v-card>
 </template>
 
 <style lang="scss" scoped>
@@ -227,7 +225,8 @@ export default {
   },
   methods: {
     getVlansArray() {
-      let tab = [];
+      const tab = [];
+      /** @todo */
       for (let i = 0; i < this.vlans.length; i++) {
         for (let j = 0; j < this.vlans[i].vlan.length; j++) {
           if (
@@ -261,7 +260,6 @@ export default {
           });
           this.getVlansArray();
           this.isLoading = false;
-          // console.log(JSON.stringify(this.vlansArray));
         })
         .catch((error) => {
           console.log(error);
@@ -273,6 +271,7 @@ export default {
         });
     },
     switchesByVlan(vlanId) {
+      /**@todo */
       let number = 0;
       this.vlans.forEach((element) => {
         element.vlan.findIndex((el) => el.id === vlanId) !== -1
@@ -282,9 +281,10 @@ export default {
       return number;
     },
     setTableDimensions() {
-      let tableVlan = document.getElementById('table-vlan');
+      /** @todo */
+      const tableVlan = document.getElementById('table-vlan');
       if (tableVlan) {
-        let tableVlanRect = tableVlan.getBoundingClientRect();
+        const tableVlanRect = tableVlan.getBoundingClientRect();
         this.tableHeight = window.innerHeight - tableVlanRect.top - 130;
         if (window.innerWidth <= this.$vuetify.breakpoint.mdAndDown) {
           this.tableWidth = window.innerWidth - 300;
@@ -294,7 +294,8 @@ export default {
       }
     },
     onOverCell(id) {
-      let cells = document.querySelectorAll('.cell-' + id);
+      /** @todo */
+      const cells = document.querySelectorAll('.cell-' + id);
       cells.forEach((element) => {
         if (!element.classList.contains('vlan-number')) {
           element.setAttribute(
@@ -305,7 +306,7 @@ export default {
       });
     },
     onOutCell(id) {
-      let cells = document.querySelectorAll('.cell-' + id);
+      const cells = document.querySelectorAll('.cell-' + id);
       cells.forEach((element) => {
         if (element.classList.contains('vlan-number')) {
           document.querySelectorAll('.vlan-number').forEach((el) => {

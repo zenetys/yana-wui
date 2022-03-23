@@ -361,7 +361,8 @@ export default {
      * @param {number} index - item index
      */
     copyCellContent(value, index) {
-      let elCopy = document.getElementsByClassName(`${value}`)[index].innerText;
+      const elCopy = document.getElementsByClassName(`${value}`)[index]
+        .innerText;
       copyToClipboard(elCopy).then(() => {
         const tooltipElement = document.querySelector(
           '.cp-span:hover .cell-copied-tooltip'
