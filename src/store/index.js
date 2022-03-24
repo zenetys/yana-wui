@@ -1,7 +1,7 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
+import Vue from 'vue';
+import Vuex from 'vuex';
 
-Vue.use(Vuex)
+Vue.use(Vuex);
 
 export default new Vuex.Store({
     state: {
@@ -31,15 +31,12 @@ export default new Vuex.Store({
         },
         EDIT_STORE_SEARCH(state, value) {
             console.log('from store: mutation EDIT_STORE_SEARCH', value);
-            if (value===null) {
-                value = '';
-            }
-            state.storeSearch = value;
+            state.storeSearch = value || '';
         },
         EDIT_STORE_INFO_MESSAGE(state, value) {
             console.log('from store: mutation EDIT_STORE_INFO_MESSAGE', value);
             state.storeInfoMessage = value;
-        }
+        },
     },
     actions: {
         updateStoreDatabase({ commit }, value) {
@@ -59,28 +56,27 @@ export default new Vuex.Store({
         },
         updateStoreInfoMessage({ commit }, value) {
             commit('EDIT_STORE_INFO_MESSAGE', value);
-        }
+        },
     },
     getters: {
-        storeDatabase: state => {
+        storeDatabase: (state) => {
             return state.storeDatabase;
         },
-        storeEntities: state => {
+        storeEntities: (state) => {
             return state.storeEntities;
         },
-        storeEntity: state => {
+        storeEntity: (state) => {
             return state.storeEntity;
         },
-        storeInventoryMode: state => {
+        storeInventoryMode: (state) => {
             return state.storeInventoryMode;
-        }, 
-        storeSearch: state => {
+        },
+        storeSearch: (state) => {
             return state.storeSearch;
         },
-        storeInfoMessage: state => {
+        storeInfoMessage: (state) => {
             return state.storeInfoMessage;
-        }
+        },
     },
-    modules: {
-    }
-})
+    modules: {},
+});

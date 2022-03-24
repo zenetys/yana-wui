@@ -1,8 +1,11 @@
 <template>
     <div>
         <!-- ================== NAV BAR ============== -->
-        <v-app-bar id="navbar" height="48" app class="" elevation="0" color="#ffffff">
-            <v-app-bar-nav-icon v-if="$vuetify.breakpoint.mdAndDown" @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
+        <v-app-bar id="navbar" height="48" app elevation="0" color="#ffffff">
+            <v-app-bar-nav-icon
+                v-if="$vuetify.breakpoint.mdAndDown"
+                @click.stop="drawer = !drawer"
+            ></v-app-bar-nav-icon>
             <v-col cols="9" sm="5" md="4" lg="4" xl="5" class="pl-0 d-inline-flex">
                 <v-text-field
                     label="Search..."
@@ -19,158 +22,158 @@
                     @mouseup.middle="onClickMouseMiddle(search)"
                     @keyup="updateStoreSearchOnAnyKeyUp(search)"
                     @keyup.enter="updateStoreSearchOnEnterPress(search)"
-                    ></v-text-field>
+                ></v-text-field>
                 <v-btn icon small @click="updateKeepSearch" class="mt-1 ml-1" title="keep / disable your search">
                     <v-icon class="pt-1">
-                        {{keepSearch ? 'mdi-pin' : 'mdi-pin-off'}}
+                        {{ keepSearch ? 'mdi-pin' : 'mdi-pin-off' }}
                     </v-icon>
                 </v-btn>
             </v-col>
             <v-col cols="12" sm="3" md="4" lg="3" xl="4" class="d-flex justify-end">
-                <div v-if="this.$route.path=='/main/inventory'" class="pt-2 rounded select_inventory_mode">
+                <div v-if="this.$route.path === '/main/inventory'" class="pt-2 rounded select-inventory-mode">
                     <v-checkbox
-                        v-for="(item, index) in inventoryModes" :key="index"
+                        v-for="(mode, modeIndex) in inventoryModes"
+                        :key="modeIndex"
                         v-model="storeInventoryMode"
-                        :label="item"
-                        :value="item"
+                        :label="mode"
+                        :value="mode"
                         hide-details=""
                         :ripple="false"
                         tile
                         class="px-3 font-weight-light"
-                        ></v-checkbox>
+                    ></v-checkbox>
                 </div>
             </v-col>
 
             <v-col cols="12" sm="3" md="3" lg="4" xl="2" class="d-flex">
                 <v-autocomplete
-                    class="choose-entity-menu"
+                    class="select-entity-menu"
                     :items="storeEntities"
                     v-model="storeEntity"
-                    label="Chose Entity"
-                    placeholder="Chose Entity"
+                    label="Select Entity"
+                    placeholder="Select Entity"
                     solo
                     dense
                     hide-details=""
                     flat
                     background-color="#e8e8e8d6"
                     prepend-inner-icon="mdi-server-network"
-                    ></v-autocomplete>
-                <v-btn icon small @click="setBookmarks" class="mt-1 ml-1" title="Add to favorite">
-                    <v-icon class="">
-                        mdi-bookmark
-                    </v-icon>
+                ></v-autocomplete>
+                <v-btn icon small @click="setBookmarks" class="mt-1 ml-1" title="Add to Favorites">
+                    <v-icon> mdi-bookmark </v-icon>
                 </v-btn>
             </v-col>
 
             <v-spacer></v-spacer>
             <v-col cols="1" sm="1" md="1" lg="1" xl="1" class="d-flex justify-end">
-                <v-menu open-on-hover bottom>
-                </v-menu>
+                <v-menu open-on-hover bottom> </v-menu>
                 <v-avatar color="light">
-                    <v-icon size="30">
-                        mdi-account-circle
-                    </v-icon>
+                    <v-icon size="30"> mdi-account-circle </v-icon>
                 </v-avatar>
             </v-col>
         </v-app-bar>
 
         <!-- ================== SIDE BAR ============== -->
-        <v-navigation-drawer
-            class="aside-navigation"
-            app
-            v-model="drawer"
-            >
-            <v-toolbar-title class="">
+        <v-navigation-drawer class="aside-navigation" app v-model="drawer">
+            <v-toolbar-title>
                 <router-link to="/">
-                    <img class="py-1 pl-4 d-flex justify-start align-center" height="40" src="../assets/images/zenetys-fg-black-bg-full-transparent_LD.png" alt="">
+                    <img
+                        class="py-1 pl-4 d-flex justify-start align-center"
+                        height="40"
+                        src="/assets/images/zenetys-fg-black-bg-full-transparent_LD.png"
+                        alt=""
+                    />
                 </router-link>
             </v-toolbar-title>
             <v-list class="pt-0 mt-0">
-                <div v-for="(link, i) in menuSide" :key="i">
+                <div v-for="(sectionLink, linkIndex) in menuSide" :key="linkIndex">
                     <v-list-item
-                        v-if="!link.subMenus"
-                        :to="link.url"
+                        v-if="!sectionLink.subMenus"
+                        :to="sectionLink.url"
                         active-class="deep-cyan--text text--accent-4"
                         class="v-list-item"
                         dense
-                        :style="link.url ? '' : 'opacity:0.5'"
-                        >
+                        :style="sectionLink.url ? '' : 'opacity:0.5'"
+                    >
                         <v-list-item-action class="mr-4">
-                            <v-icon size="20">{{ link.icon }}</v-icon>
+                            <v-icon size="20">{{ sectionLink.icon }}</v-icon>
                         </v-list-item-action>
-                        <v-list-item-title v-text="link.name" />
-                        </v-list-item>
+                        <v-list-item-title v-text="sectionLink.name" />
+                    </v-list-item>
                 </div>
-                    </v-list>
-                    <v-spacer></v-spacer>
-                    <v-list dense class="mt-5 mb-2">
-                        <p class="ml-5 mb-1 font-weight-light">Recent queries</p>
-                        <v-divider></v-divider>
-                        <v-list
-                            color=""
-                            class="mt-0"
-                            v-if="recentQueries.length>0"
-                            >
-                            <v-list-item
-                                v-for="(item, i) in recentQueries"
-                                :key="i"
-                                active-class="black"
-                                class="list-item"
-                                >
-                                <v-list-item-icon class="mr-0 align-start item-icon">
-                                    <v-icon size="14" class="">mdi-history</v-icon>
-                                </v-list-item-icon>
-                                <v-list-item-content>
-                                    <v-list-item-title @click="loadRecentQuery(item)" class="font-weight-regular" :title="item.query.inventoryMode+' / '+item.query.search" v-text="item.query.inventoryMode+' / '+item.query.search"></v-list-item-title>
-                                </v-list-item-content>
-                                <v-icon @click="removeRecentQuery(item)" size="14" class="list-item-remove-icon algin-end justify-end">mdi-close</v-icon>
-                            </v-list-item>
-                        </v-list>
-                        <span v-else class="ml-5 caption">
-                            Empty list
-                        </span>
-                    </v-list>
+            </v-list>
+            <v-spacer></v-spacer>
+            <v-list dense class="mt-5 mb-2">
+                <p class="ml-5 mb-1 font-weight-light">Recent queries</p>
+                <v-divider></v-divider>
+                <v-list color="" class="mt-0" v-if="recentQueries.length > 0">
+                    <v-list-item
+                        v-for="(query, queryIndex) in recentQueries"
+                        :key="queryIndex"
+                        active-class="black"
+                        class="list-item"
+                    >
+                        <v-list-item-icon class="mr-0 align-start item-icon">
+                            <v-icon size="14">mdi-history</v-icon>
+                        </v-list-item-icon>
+                        <v-list-item-content>
+                            <v-list-item-title
+                                @click="loadRecentQuery(query)"
+                                class="font-weight-regular"
+                                :title="getHistoryQueryText(query)"
+                                v-text="getHistoryQueryText(query)"
+                            ></v-list-item-title>
+                        </v-list-item-content>
+                        <v-icon
+                            @click="removeRecentQuery(query)"
+                            size="14"
+                            class="list-item-remove-icon algin-end justify-end"
+                            >mdi-close</v-icon
+                        >
+                    </v-list-item>
+                </v-list>
+                <span v-else class="ml-5 caption"> Empty list </span>
+            </v-list>
 
-                    <v-list dense>
-                        <p class="ml-5 mb-1 font-weight-light">Bookmarks</p>
-                        <v-divider></v-divider>
-                        <v-list
-                            color=""
-                            class="mt-0"
-                            v-if="bookMarks.length>0"
-                            >
-                            <v-list-item
-                                v-for="(item, i) in bookMarks"
-                                :key="i"
-                                class="list-item"
-                                >
-                                <v-list-item-icon class="mr-0 align-start item-icon">
-                                    <v-icon size="14">mdi-bookmark-outline</v-icon>
-                                </v-list-item-icon>
-                                <v-list-item-content @click="loadRecentQuery(item)">
-                                    <v-list-item-title class="font-weight-regular" :title="item.query.inventoryMode + (item.query.search ? ' / '+item.query.search : '') + (item.label ? ' / '+item.label : '')" v-text="item.query.inventoryMode + (item.query.search ? ' / '+item.query.search : '') + (item.label ? ' / '+item.label : '')"></v-list-item-title>
-                                </v-list-item-content>
-                                <v-icon @click="removeBookmark(item)" size="14" class="list-item-remove-icon algin-end justify-end">mdi-close</v-icon>
-                            </v-list-item>
-                        </v-list>
-                        <span v-else class="ml-5 caption">
-                            Empty list
-                        </span>
-                    </v-list>
+            <v-list dense>
+                <p class="ml-5 mb-1 font-weight-light">Bookmarks</p>
+                <v-divider></v-divider>
+                <v-list color="" class="mt-0" v-if="bookMarks.length > 0">
+                    <v-list-item v-for="(bookmark, bookmarkIndex) in bookMarks" :key="bookmarkIndex" class="list-item">
+                        <v-list-item-icon class="mr-0 align-start item-icon">
+                            <v-icon size="14">mdi-bookmark-outline</v-icon>
+                        </v-list-item-icon>
+                        <v-list-item-content @click="loadRecentQuery(bookmark)">
+                            <v-list-item-title
+                                class="font-weight-regular"
+                                :title="getBookmarksQueryText(bookmark)"
+                                v-text="getBookmarksQueryText(bookmark)"
+                            ></v-list-item-title>
+                        </v-list-item-content>
+                        <v-icon
+                            @click="removeBookmark(bookmark)"
+                            size="14"
+                            class="list-item-remove-icon algin-end justify-end"
+                            >mdi-close</v-icon
+                        >
+                    </v-list-item>
+                </v-list>
+                <span v-else class="ml-5 caption"> Empty list </span>
+            </v-list>
         </v-navigation-drawer>
 
         <!-- ================== MAIN CONTENT =========== -->
         <v-row>
             <v-col cols="12">
                 <router-view class="mx-4 mt-4"></router-view>
-                <Message/>
+                <Message />
             </v-col>
         </v-row>
 
-        <v-bottom-navigation id="bottombar" fixed hide-on-scroll grow height="" :style="this.bottomBarStyle()">
-            <v-col cols="12" class="">
+        <v-bottom-navigation id="bottombar" fixed hide-on-scroll grow height="" :style="this.bottomBarStyle">
+            <v-col cols="12">
                 <v-card>
-                    <TimeLine :key="timeLineKey" @error="onErrorOccurs" class="bottom_timeline"/>
+                    <TimeLine :key="timeLineKey" @error="onError" class="bottom-timeline" />
                 </v-card>
             </v-col>
         </v-bottom-navigation>
@@ -183,68 +186,68 @@
     display: none;
 }
 
-::v-deep .v-navigation-drawer__content {
-    margin-top: 47px;
-    position: relative;
-    border-top: solid 1px rgba(0,0,0,.12);
-}
+::v-deep {
+    .v-navigation-drawer__content {
+        margin-top: 47px;
+        position: relative;
+        border-top: solid 1px rgba(0, 0, 0, 0.12);
+    }
 
-::v-deep .v-navigation-drawer__border {
-    top: 47px;
-}
+    .v-navigation-drawer__border {
+        top: 47px;
+    }
 
-::v-deep .v-toolbar__title {
-    margin-top: -44px;
-    position: fixed;
+    .v-toolbar__title {
+        margin-top: -44px;
+        position: fixed;
+    }
 }
 
 .list-item {
-    height:20px;
-    min-height:20px !important;
+    height: 20px;
+    min-height: 20px !important;
     cursor: pointer;
+
+    .list-item-remove-icon {
+        visibility: hidden;
+    }
+
+    &:hover {
+        background-color: #f7f7f7;
+        .list-item-remove-icon {
+            visibility: visible;
+        }
+    }
 }
 
-.list-item .list-item-remove-icon {
-    visibility: hidden;
-}
-
-.list-item:hover {
-    background-color: #f7f7f7;
-}
-
-.list-item:hover .list-item-remove-icon {
-    visibility: visible;
-}
-
-.choose-entity-menu {
+.select-entity-menu {
     z-index: 10;
 }
 
 header {
-    border-bottom: solid 1px rgba(0,0,0,.12) !important;
+    border-bottom: solid 1px rgba(0, 0, 0, 0.12) !important;
 }
 
-.select_inventory_mode {
-    display:flex;
-    background-color:#e8e8e8d6;
-    height:38px;
+.select-inventory-mode {
+    display: flex;
+    background-color: #e8e8e8d6;
+    height: 38px;
 }
 
-.bottom_timeline {
-    height:80px;
+.bottom-timeline {
+    height: 80px;
 }
 
 .aside-navigation {
-    // box-shadow: 0 2px 10px 0 rgb(94 86 105 / 10%);
     z-index: 10;
+
+    .item-icon {
+        margin-top: 2px !important;
+    }
 }
 
 a {
     text-decoration: none;
-}
-
-.item-icon {
-    margin-top: 2px !important;
 }
 </style>
 
@@ -252,7 +255,7 @@ a {
 import { mapActions, mapGetters } from 'vuex';
 import TimeLine from '@/components/TimeLine.vue';
 import Message from '@/components/Message.vue';
-import * as queries from "@/plugins/queries";
+import * as queries from '@/plugins/queries';
 
 export default {
     name: 'Home',
@@ -262,7 +265,7 @@ export default {
     },
     data() {
         return {
-            inventoryModes: ['devices', 'fdb' ],
+            inventoryModes: ['devices', 'fdb'],
             defaultInventoryMode: 'devices',
             search: '',
             drawer: true,
@@ -272,64 +275,69 @@ export default {
             keepSearch: true,
             menuSide: [
                 {
-                    "name": "Inventory",
-                    "url": "/main/inventory",
-                    "icon": "mdi-grid",
+                    name: 'Inventory',
+                    url: '/main/inventory',
+                    icon: 'mdi-grid',
                 },
                 {
-                    "name": "VLAN matrix",
-                    "url": "/main/vlan-matrix",
-                    "icon": "mdi-table",
+                    name: 'VLAN matrix',
+                    url: '/main/vlan-matrix',
+                    icon: 'mdi-table',
                 },
                 {
-                    "name": "L2 schema",
-                    "icon": "mdi-graph",
+                    name: 'L2 schema',
+                    icon: 'mdi-graph',
                 },
                 {
-                    "name": "OUI lookup",
-                    "url": "/main/oui",
-                    "icon": "mdi-help-network-outline",
+                    name: 'OUI lookup',
+                    url: '/main/oui',
+                    icon: 'mdi-help-network-outline',
                 },
             ],
             recentQueries: [],
             bookMarks: [],
-        }
+        };
     },
     computed: {
-        ...mapGetters([
-            'storeEntities',
-        ]),
+        ...mapGetters(['storeEntities']),
         /* like mapGetters + mapActions to be able to use v-model */
         storeEntity: {
-            get() { return this.$store.getters.storeEntity },
-            set(v) { this.$store.commit('EDIT_STORE_ENTITY', v) },
+            get() {
+                return this.$store.getters.storeEntity;
+            },
+            set(newEntity) {
+                this.$store.commit('EDIT_STORE_ENTITY', newEntity);
+            },
         },
         /* like mapGetters + mapActions to be able to use v-model */
         storeInventoryMode: {
-            get() { return this.$store.getters.storeInventoryMode },
-            set(v) { this.$store.commit('EDIT_STORE_INVENTORY_MODE', v) },
+            get() {
+                return this.$store.getters.storeInventoryMode;
+            },
+            set(newInventoryMode) {
+                this.$store.commit('EDIT_STORE_INVENTORY_MODE', newInventoryMode);
+            },
         },
         /* like mapGetters + mapActions to be able to use v-model */
         storeSearch: {
-            get() { return this.$store.getters.storeSearch },
-            set(v) { this.$store.commit('EDIT_STORE_SEARCH', v) },
-        }
-    },
-    methods: {
-        onClickMouseMiddle(){
-            setTimeout( () => this.updateStoreSearchOnAnyKeyUp(this.search), 100 );
-        },
-        ...mapActions([
-            'updateStoreDatabase',
-        ]),
-        drawerValueByBreakpoint() {
-            this.drawer = !this.$vuetify.breakpoint.mdAndDown;
+            get() {
+                return this.$store.getters.storeSearch;
+            },
+            set(newSearch) {
+                this.$store.commit('EDIT_STORE_SEARCH', newSearch);
+            },
         },
         bottomBarStyle() {
-            return (this.$vuetify.breakpoint.mdAndDown)
+            return this.$vuetify.breakpoint.mdAndDown
                 ? 'padding-left:5px;padding-right:5px;'
                 : 'padding-left:261px;padding-right:5px;';
         },
+    },
+    methods: {
+        onClickMouseMiddle() {
+            setTimeout(() => this.updateStoreSearchOnAnyKeyUp(this.search), 100);
+        },
+        ...mapActions(['updateStoreDatabase']),
         updateStoreSearchOnEnterPress(searchValue) {
             clearTimeout(this.searchTimeOutId);
             this.$store.commit('EDIT_STORE_SEARCH', searchValue);
@@ -341,7 +349,10 @@ export default {
                 this.setRecentQueries();
             }, this.searchUpdateTimeOut);
         },
-        onErrorOccurs(payload) {
+        drawerValueByBreakpoint() {
+            this.drawer = !this.$vuetify.breakpoint.mdAndDown;
+        },
+        onError(payload) {
             this.$store.commit('EDIT_STORE_INFO_MESSAGE', payload);
             console.log(this.$store.state.storeInfoMessage);
         },
@@ -352,133 +363,185 @@ export default {
             this.search = '';
             this.$store.commit('EDIT_STORE_SEARCH', this.search);
         },
-        loadRecentQuery(item) {
-            if (item.url=='/main/inventory') {
-                this.storeSearch = this.search = item.query.search;
-                this.storeInventoryMode = item.query.inventoryMode;
+        getHistoryQueryText(query) {
+            return query.queryInfo.inventoryMode + ' / ' + query.queryInfo.search;
+        },
+        getBookmarksQueryText(bookmark) {
+            return (
+                bookmark.queryInfo.inventoryMode +
+                (bookmark.queryInfo.search ? ' / ' + bookmark.queryInfo.search : '') +
+                (bookmark.label ? ' / ' + bookmark.label : '')
+            );
+        },
+        loadRecentQuery(query) {
+            this.storeSearch = this.search = query.queryInfo.search;
+
+            if (query.url === '/main/inventory') {
+                this.storeInventoryMode = query.queryInfo.inventoryMode;
                 this.$router.push('/main/inventory').catch(() => {});
             } else {
-                this.storeSearch = this.search = item.query.search;
-                this.$router.push(''+item.url).catch(() => {});
+                this.$router.push('' + query.url).catch(() => {});
             }
         },
         getRecentQueries() {
-            let rQueries = JSON.parse(localStorage.getItem('recent-queries'));
-            let bookmarks = JSON.parse(localStorage.getItem('bookmarks'));
-            rQueries ? this.recentQueries = this.filterQueries(rQueries) : localStorage.setItem('recent-queries', JSON.stringify([]));
-            bookmarks ? this.bookMarks = this.filterQueries(bookmarks) : localStorage.setItem('bookmarks', JSON.stringify([]));
+            const rQueries = JSON.parse(localStorage.getItem('recent-queries'));
+            const bookmarks = JSON.parse(localStorage.getItem('bookmarks'));
+
+            rQueries
+                ? (this.recentQueries = this.filterQueries(rQueries))
+                : localStorage.setItem('recent-queries', JSON.stringify([]));
+
+            bookmarks
+                ? (this.bookMarks = this.filterQueries(bookmarks))
+                : localStorage.setItem('bookmarks', JSON.stringify([]));
         },
         setRecentQueries() {
-            let tab = JSON.parse(localStorage.getItem('recent-queries'));
+            const tab = JSON.parse(localStorage.getItem('recent-queries'));
+
             localStorage.setItem('recent-queries', JSON.stringify(this.newRecentQuery(tab)));
             this.getRecentQueries();
         },
         setBookmarks() {
-            let bookmarks = JSON.parse(localStorage.getItem('bookmarks'));
+            const bookmarks = JSON.parse(localStorage.getItem('bookmarks'));
+
             localStorage.setItem('bookmarks', JSON.stringify(this.newBookmark(bookmarks)));
             this.getRecentQueries();
         },
         newRecentQuery(tab) {
-            let allQueries = tab;
-            let currentEntityQueries = this.filterQueries(tab);
-            let newQuery = {
-                "entity": this.storeEntity,
-                "query": {
-                    "inventoryMode": this.storeInventoryMode,
-                    "search": this.search,
+            const allQueries = tab;
+            const currentEntityQueries = this.filterQueries(tab);
+            const newQuery = {
+                entity: this.storeEntity,
+                queryInfo: {
+                    inventoryMode: this.storeInventoryMode,
+                    search: this.search,
                 },
-                "url": this.search ? '/main/inventory' : this.$route.path,
-                "id": this.$route.params.id,
-                "label": document.querySelector('#device-name') ? document.querySelector('#device-name').textContent : '',
-                "index": new Date().getTime(),
+                url: this.search ? '/main/inventory' : this.$route.path,
+                id: this.$route.params.id,
+                label: document.querySelector('#device-name') ? document.querySelector('#device-name').textContent : '',
+                index: new Date().getTime(),
             };
-            if (this.search) {
-                if (currentEntityQueries.findIndex(el => el.query.search==this.search && el.query.inventoryMode==this.storeInventoryMode)==-1) {
-                    if (currentEntityQueries.length>=5) {
-                        currentEntityQueries.pop();
-                    }
-                    currentEntityQueries.push(newQuery);
-                }
-            }
-            return allQueries.filter(el => el.entity != this.storeEntity).concat(currentEntityQueries);
-        },
-        newBookmark(tab) {
-            let allQueries = tab;
-            let currentEntityQueries = this.filterQueries(tab);
-            let newQuery = {
-                "entity": this.storeEntity,
-                "query": {
-                    "inventoryMode": this.$route.path == '/main/inventory' ? this.storeInventoryMode : this.$route.path.includes('switch') ? 'switch' : 'host',
-                    "search": (this.$route.path=='/main/inventory') ? this.storeSearch : '',
-                },
-                "url": this.$route.path,
-                "id": this.$route.params.id,
-                "label": document.querySelector('#device-name') ? document.querySelector('#device-name').textContent : '',
-                "index": new Date().getTime(),
-            };
-            if (currentEntityQueries.findIndex(el => el.url==this.$route.path && el.query.search==this.search && el.id==this.$route.params.id && el.query.inventoryMode==newQuery.query.inventoryMode)==-1) {
-                if (currentEntityQueries.length>=10) {
+
+            if (
+                this.search &&
+                !currentEntityQueries.find(
+                    (entity) =>
+                        entity.queryInfo.search === this.search &&
+                        entity.queryInfo.inventoryMode === this.storeInventoryMode
+                )
+            ) {
+                if (currentEntityQueries.length >= 5) {
                     currentEntityQueries.pop();
                 }
                 currentEntityQueries.push(newQuery);
             }
-            return allQueries.filter(el => el.entity != this.storeEntity).concat(currentEntityQueries);
+
+            return allQueries.filter((query) => query.entity !== this.storeEntity).concat(currentEntityQueries);
         },
-        removeBookmark(item) {
-            let bookmarks = JSON.parse(localStorage.getItem('bookmarks'));
-            bookmarks.splice(bookmarks.findIndex(el=>el.index==item.index), 1);
+        newBookmark(tab) {
+            const allQueries = tab;
+            const currentEntityQueries = this.filterQueries(tab);
+            const newQuery = {
+                entity: this.storeEntity,
+                queryInfo: {
+                    inventoryMode:
+                        this.$route.path === '/main/inventory'
+                            ? this.storeInventoryMode
+                            : this.$route.path.includes('switch')
+                            ? 'switch'
+                            : 'host',
+                    search: this.$route.path === '/main/inventory' ? this.storeSearch : '',
+                },
+                url: this.$route.path,
+                id: this.$route.params.id,
+                label: document.querySelector('#device-name') ? document.querySelector('#device-name').textContent : '',
+                index: new Date().getTime(),
+            };
+
+            if (
+                currentEntityQueries.find(
+                    (el) =>
+                        el.url === this.$route.path &&
+                        el.queryInfo.search === this.search &&
+                        el.id === this.$route.params.id &&
+                        el.queryInfo.inventoryMode === newQuery.queryInfo.inventoryMode
+                )
+            ) {
+                if (currentEntityQueries.length >= 10) {
+                    currentEntityQueries.pop();
+                }
+                currentEntityQueries.push(newQuery);
+            }
+
+            return allQueries.filter((el) => el.entity !== this.storeEntity).concat(currentEntityQueries);
+        },
+        removeBookmark(bookmark) {
+            const bookmarks = JSON.parse(localStorage.getItem('bookmarks'));
+
+            bookmarks.splice(
+                bookmarks.findIndex((el) => el.index === bookmark.index),
+                1
+            );
+
             localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
-            this.getRecentQueries()
+            this.getRecentQueries();
         },
-        removeRecentQuery(item) {
-            let rQueries = JSON.parse(localStorage.getItem('recent-queries'));
-            rQueries.splice(rQueries.findIndex(el=>el.index==item.index), 1);
+        removeRecentQuery(query) {
+            const rQueries = JSON.parse(localStorage.getItem('recent-queries'));
+
+            rQueries.splice(
+                rQueries.findIndex((rQuery) => rQuery.index === query.index),
+                1
+            );
             localStorage.setItem('recent-queries', JSON.stringify(rQueries));
-            this.getRecentQueries()
+            this.getRecentQueries();
         },
         filterQueries(queriesArray) {
-            return queriesArray.filter( el => el.entity == this.storeEntity ).sort( (a, b) => b.index - a.index );
-        }
+            return queriesArray.filter((query) => query.entity === this.storeEntity).sort((a, b) => b.index - a.index);
+        },
     },
     watch: {
         /* FIXME: We could pass and update the api url to TimeLine like
          * for the AutoTable. */
         storeEntity() {
             this.updateStoreDatabase('');
+
             // Reset search field
             if (!this.keepSearch) {
                 this.search = '';
                 this.$store.commit('EDIT_STORE_SEARCH', '');
             }
-            if (this.$route.name!="ViewVlanMatrix") {
+
+            if (this.$route.name !== 'ViewVlanMatrix') {
                 this.$router.push('/main/inventory').catch(() => {});
             }
+
             this.timeLineKey++;
             this.setRecentQueries();
         },
-        '$route'(to) {
-            if(to.path!='/main/inventory') {
-                if (!this.keepSearch) {
-                    this.search = '';
-                    this.$store.commit('EDIT_STORE_SEARCH', '');
-                }
+        $route(to) {
+            if (to.path !== '/main/inventory' && !this.keepSearch) {
+                this.search = '';
+                this.$store.commit('EDIT_STORE_SEARCH', '');
             }
         },
     },
     mounted() {
-        if (this.storeEntities.length == 0)
-            queries.fetchUpdateStoreEntities();
+        if (this.storeEntities.length === 0) queries.fetchUpdateStoreEntities();
+
         this.$nextTick(function () {
             this.drawerValueByBreakpoint();
         });
+
         this.getRecentQueries();
     },
     beforeMount() {
-        if (this.inventoryModes.indexOf(this.storeInventoryMode) == -1)
+        if (!this.inventoryModes.includes(this.storeInventoryMode)) {
             this.storeInventoryMode = this.defaultInventoryMode;
-        /* redirect to the entity-chooser if none is set, at least for now */
-        if (!this.storeEntity)
-            this.$router.push('/entity-chooser');
-    }
-}
+        }
+
+        /* redirect to the entity-picker if none is set, at least for now */
+        if (!this.storeEntity) this.$router.push('/entity-picker');
+    },
+};
 </script>

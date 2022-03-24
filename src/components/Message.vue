@@ -6,19 +6,14 @@
                 v-model="snackbarIsDisplayed"
                 :color="messageColor"
                 :elevation="5"
-                style="white-space: pre-line;"
+                style="white-space: pre-line"
                 centered
                 ref="messageOverlay"
                 id="messageSnackbar"
-                >
-                <span class="message"> {{this.messageContent}} </span>
+            >
+                <span class="message"> {{ this.messageContent }} </span>
                 <template v-slot:action="{ attrs }">
-                    <v-btn
-                        icon
-                        v-bind="attrs"
-                        top
-                        @click="closeSnackbar()"
-                        >
+                    <v-btn icon v-bind="attrs" top @click="closeSnackbar()">
                         <v-icon class="message">mdi-close</v-icon>
                     </v-btn>
                 </template>
@@ -38,17 +33,16 @@ import { mapState } from 'vuex';
 
 export default {
     name: 'Message',
-    props: {
-    },
+    props: {},
     data() {
         return {
             snackbarIsDisplayed: false,
             snackbarTimeOut: 5000,
-        }
+        };
     },
     computed: {
         ...mapState({
-            message: 'storeInfoMessage'
+            message: 'storeInfoMessage',
         }),
         messageColor() {
             switch (this.message.type) {
@@ -63,17 +57,17 @@ export default {
             }
         },
         messageContent() {
-            return this.message.content + (this.message.error ? ('\nError detail: '+this.message.error.message) : '');
-        }
+            return this.message.content + (this.message.error ? '\nError detail: ' + this.message.error.message : '');
+        },
     },
     watch: {
         message() {
-            if(Object.keys(this.message)!=0){
+            if (Object.keys(this.message).length !== 0) {
                 this.snackbarIsDisplayed = true;
             } else {
                 this.snackbarIsDisplayed = false;
             }
-        }
+        },
     },
     methods: {
         closeSnackbar() {
@@ -81,9 +75,8 @@ export default {
             this.$store.commit('EDIT_STORE_INFO_MESSAGE', {});
         },
         closeSnackbarOnWindowKeyUp(e) {
-            if (e.key == 'Escape')
-                this.closeSnackbar();
-        }
+            if (e.key === 'Escape') this.closeSnackbar();
+        },
     },
     mounted() {
         window.addEventListener('keyup', this.closeSnackbarOnWindowKeyUp);
@@ -91,5 +84,5 @@ export default {
     destroyed() {
         window.removeEventListener('keyup', this.closeSnackbarOnWindowKeyUp);
     },
-}
+};
 </script>

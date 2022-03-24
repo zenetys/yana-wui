@@ -1,20 +1,22 @@
 <template>
-    <div>
-        <table class="device-info mb-3">
+    <div class="device-info">
+        <table class="mb-3">
             <tbody>
                 <tr>
                     <th class="text-left px-2">Name</th>
                     <td class="text-left pl-2">
-                        <router-link :to="'/main/inventory/host/'+this.device.id" id="device-name">{{ this.deviceName }}</router-link>
-                        <span class="name2">{{ this.deviceSecondaryNames }}</span>
+                        <router-link :to="'/main/inventory/host/' + this.device.id" id="device-name">{{
+                            this.deviceName
+                        }}</router-link>
+                        <span class="secondary-names">{{ this.deviceSecondaryNames }}</span>
                     </td>
                 </tr>
-                <tr class="">
-                    <th class="text-left px-2">Description </th>
+                <tr>
+                    <th class="text-left px-2">Description</th>
                     <td class="text-left pl-2">{{ this.deviceDescription }}</td>
                 </tr>
                 <tr>
-                    <th class="text-left px-2">IP </th>
+                    <th class="text-left px-2">IP</th>
                     <td class="text-left pl-2">{{ this.deviceIp }}</td>
                 </tr>
             </tbody>
@@ -26,60 +28,60 @@
             :api="apiUrl"
             array-data=""
             height="auto"
-            :auto-table-height-extra="[-120]"
+            :height-offsets="[-120]"
             :column-definition="columnDefinition"
             :item-class="itemClass"
-            />
+        />
     </div>
 </template>
 
-<style scoped>
-table.device-info {
+<style scoped lang="scss">
+.device-info table {
     font-size: 12.8px;
     border-collapse: collapse;
     line-height: 1.4;
+
+    th {
+        border-right: thin solid rgba(0, 0, 0, 0.12);
+        background-color: #fcfcfc !important;
+        font-size: 12px;
+        color: rgba(0, 0, 0, 0.6);
+        font-weight: 700;
+        vertical-align: top;
+    }
+
+    span.secondary-names {
+        color: #666;
+    }
 }
 
-table.device-info th {
-    border-right: thin solid rgba(0, 0, 0, 0.12);
-    background-color: #FCFCFC !important;
-    font-size: 12px;
-    color: rgba(0, 0, 0, 0.6);
-    font-weight: 700;
-}
+::v-deep {
+    #table-switch tr:not(.status-up---up) td {
+        color: #aaa;
+    }
 
-table.device-info span.name2 {
-    color: #666;
-}
+    .level-1 {
+        /* orange */
+        background-color: #ffe4a8 !important;
+        border-color: #f2dfab !important;
+    }
 
-::v-deep #table-switch tr:not(.status-up---up) td {
-    color: #aaa;
-}
+    .level-2 {
+        /* red */
+        background-color: #fac8d1 !important;
+        border-color: #ebbfbb !important;
+    }
 
-::v-deep .level-1 {
-    /* orange */
-    background-color: #FFE4A8 !important;
-    border-color: #F2DFAB !important;
-}
-::v-deep .level-2 {
-    /* red */
-    background-color: #FAC8D1 !important;
-    border-color: #EBBFBB !important;
-}
-
-::v-deep .col_peers .mdi:not(.cp-span) {
-    color: #1eb8ce;
-}
-
-.device-info th {
-    vertical-align: top;
+    .col_peers .mdi:not(.cp-span) {
+        color: #1eb8ce;
+    }
 }
 </style>
 
 <script>
-import AutoTable from "@/components/AutoTable";
+import AutoTable from '@/components/AutoTable';
 import { mapGetters } from 'vuex';
-import axios from 'axios';
+import { unArray } from '../plugins/utils';
 
 export default {
     name: 'SwitchView',
@@ -88,7 +90,6 @@ export default {
     },
     data() {
         return {
-            // deviceInfo: {},
             columnDefinition: {
                 did: {
                     hidden: true,
@@ -96,73 +97,66 @@ export default {
                 dname: {
                     hidden: true,
                 },
-                hwAddr: {
-
-                },
-                name: {
-
-                },
+                hwAddr: {},
+                name: {},
                 description: {
-                    tdClass: (v, o) => this.getTdClass('description', v, o),
-                    tdTooltip: (v, o) => this.getTdTooltip('description', v, o),
+                    getClass: (tableItem) => this.getClass('description', tableItem),
+                    getTitle: (tableItem) => this.getTitle('description', tableItem),
                 },
                 status: {
-                    tdClass: (v, o) => this.getTdClass('status', v, o),
-                    tdTooltip: (v, o) => this.getTdTooltip('status', v, o),
+                    getClass: (tableItem) => this.getClass('status', tableItem),
+                    getTitle: (tableItem) => this.getTitle('status', tableItem),
                 },
                 speed: {
-                    tdClass: (v, o) => this.getTdClass('speed', v, o),
-                    tdTooltip: (v, o) => this.getTdTooltip('speed', v, o),
+                    getClass: (tableItem) => this.getClass('speed', tableItem),
+                    getTitle: (tableItem) => this.getTitle('speed', tableItem),
                 },
-                group: {
-
-                },
+                group: {},
                 mode: {
-                    tdClass: (v, o) => this.getTdClass('mode', v, o),
-                    tdTooltip: (v, o) => this.getTdTooltip('mode', v, o),
+                    getClass: (tableItem) => this.getClass('mode', tableItem),
+                    getTitle: (tableItem) => this.getTitle('mode', tableItem),
                 },
                 pvlan: {
-                    tdClass: (v, o) => this.getTdClass('pvlan', v, o),
-                    tdTooltip: (v, o) => this.getTdTooltip('pvlan', v, o),
+                    getClass: (tableItem) => this.getClass('pvlan', tableItem),
+                    getTitle: (tableItem) => this.getTitle('pvlan', tableItem),
                 },
                 untagged: {
-                    tdClass: (v, o) => this.getTdClass('untagged', v, o),
-                    tdTooltip: (v, o) => this.getTdTooltip('untagged', v, o),
+                    getClass: (tableItem) => this.getClass('untagged', tableItem),
+                    getTitle: (tableItem) => this.getTitle('untagged', tableItem),
                 },
                 tagged: {
-                    tdClass: (v, o) => this.getTdClass('tagged', v, o),
-                    tdTooltip: (v, o) => this.getTdTooltip('tagged', v, o),
-                    style: () => {
-                        return 'white-space: normal;';
-                    },
+                    getClass: (tableItem) => this.getClass('tagged', tableItem),
+                    getTitle: (tableItem) => this.getTitle('tagged', tableItem),
+                    getStyle: () => 'white-space: normal;',
                 },
                 peers: {
-                    style: () => {
-                        return 'white-space: normal;'
-                    },
-                    format: (v) => {
-                        let out = [];
-                        if (v) {
-                            for (let i of v) {
-                                var label = i.label;
-                                if (i.type && i.type.indexOf('switch') > -1) {
-                                    if (i.id)
-                                        label = `<a href="#/main/inventory/switch/${i.id}">${label}</a>`;
-                                    label='<span class="mdi mdi-swap-horizontal-bold"></span> '+label;
+                    getStyle: () => 'white-space: normal;',
+                    format: (peers) => {
+                        const formattedPeers = peers.map((peer) => {
+                            let label = peer.label;
+
+                            if (peer.type?.includes('switch')) {
+                                if (peer.id) {
+                                    label = `<a href="#/main/inventory/switch/${peer.id}">${label}</a>`;
                                 }
 
-                                let tab = [];
-                                for (let j in i) {
-                                    if (j!='label' && j!='id') {
-                                        tab.push(j+': '+ i[j]);
-                                    }
-                                }
-                                out.push( '<span class="nowrap" title="'+ tab.join('\n') +'">' + label + '</span>');
+                                label = '<span class="mdi mdi-swap-horizontal-bold"></span> ' + label;
                             }
-                        }
-                        return out.join(', ');
+
+                            const tab = [];
+
+                            Object.keys(peer).forEach((key) => {
+                                if (key !== 'label' && key !== 'id') {
+                                    tab.push(key + ': ' + peer[key]);
+                                }
+                            });
+
+                            return '<span class="nowrap" title="' + tab.join('\n') + '">' + label + '</span>';
+                        });
+
+                        return formattedPeers.join(', ');
                     },
-                    html: true,
+                    isHtml: true,
                 },
                 _meta: {
                     hidden: true,
@@ -170,22 +164,23 @@ export default {
             },
             tableHeight: 0,
             device: {},
-        }
+        };
     },
     computed: {
         apiUrl() {
-            return '/entity/' + encodeURIComponent(this.storeEntity) + '/' +
-                'interfaces?database=' + encodeURIComponent(this.storeDatabase) +
-                '&id=' + encodeURIComponent(this.$route.params.id);
+            return (
+                '/entity/' +
+                encodeURIComponent(this.storeEntity) +
+                '/' +
+                'interfaces?database=' +
+                encodeURIComponent(this.storeDatabase) +
+                '&id=' +
+                encodeURIComponent(this.$route.params.id)
+            );
         },
-        ...mapGetters([
-            'storeDatabase',
-            'storeEntity',
-            'storeSearch',
-        ]),
+        ...mapGetters(['storeDatabase', 'storeEntity', 'storeSearch']),
         deviceName() {
-            return Array.isArray(this.device.name)
-                ? this.device.name[0] : this.device.name;
+            return unArray(this.device.name);
         },
         deviceSecondaryNames() {
             if (Array.isArray(this.device.name) && this.device.name.length > 1)
@@ -193,47 +188,55 @@ export default {
             return '';
         },
         deviceDescription() {
-            return Array.isArray(this.device.description)
-                ? this.device.description[0] : this.device.description;
+            return unArray(this.device.description);
         },
         deviceIp() {
-            return Array.isArray(this.device.ip)
-                ? this.device.ip.join(', ') : this.device.ip;
-        }
+            return Array.isArray(this.device.ip) ? this.device.ip.join(', ') : this.device.ip;
+        },
     },
     methods: {
         getDeviceInfo() {
-            let url = '/entity/' + encodeURIComponent(this.storeEntity) + '/' +
-                'devices?database=' + encodeURIComponent(this.storeDatabase) +
-                '&id=' + encodeURIComponent(this.$route.params.id);
-            axios({
-                method: 'get',
-                url: url,
-            }).then( (response) => {
-                this.device = response.data;
-            }).catch((error) => {
-                console.log(error);
-                this.$store.commit('EDIT_STORE_INFO_MESSAGE', {type: 'error', content: 'Cannot load device informations, problem with the query.', error: error });
-            });
+            const url =
+                '/entity/' +
+                encodeURIComponent(this.storeEntity) +
+                '/' +
+                'devices?database=' +
+                encodeURIComponent(this.storeDatabase) +
+                '&id=' +
+                encodeURIComponent(this.$route.params.id);
+            this.$api
+                .get(url)
+                .then((response) => {
+                    this.device = response.data;
+                })
+                .catch((error) => {
+                    console.log(error);
+                    this.$store.commit('EDIT_STORE_INFO_MESSAGE', {
+                        type: 'error',
+                        content: 'Cannot load device informations, problem with the query.',
+                        error: error,
+                    });
+                });
         },
         itemClass(item) {
-            let classz = '';
-            if (item.status)
-                classz+='status-'+item.status.toLowerCase().replace(/[^a-z0-9]/g, '-');
-            return classz;
+            let classes = '';
+
+            if (item.status) classes += 'status-' + item.status.toLowerCase().replace(/[^a-z0-9]/g, '-');
+
+            return classes;
         },
-        getTdClass(k, v, o) {
-            if (o._meta && o._meta[k])
-                return (o._meta[k].level != undefined) ? 'level-' + o._meta[k].level : '';
+        getClass(itemKey, tableItem) {
+            if (tableItem && tableItem._meta && tableItem._meta[itemKey])
+                return tableItem._meta[itemKey].level !== undefined ? 'level-' + tableItem._meta[itemKey].level : '';
             return '';
         },
-        getTdTooltip(k, v, o) {
-            if (o._meta && o._meta[k] && o._meta[k].text) {
-                if (Array.isArray(o._meta[k].text))
-                    return o._meta[k].text.join('\n');
-                else
-                    return o._meta[k].text;
+        getTitle(itemKey, tableItem) {
+            if (tableItem?._meta[itemKey]?.text) {
+                return Array.isArray(tableItem._meta[itemKey].text)
+                    ? tableItem._meta[itemKey].text.join('\n')
+                    : tableItem._meta[itemKey].text;
             }
+
             return '';
         },
     },
@@ -241,20 +244,25 @@ export default {
         /* FIXME: workaround bug on entity change
          * also add redirect to inventory main view on search
          * this is probably not the right way to do it, need to check */
-        storeEntity() { this.$router.push('/main/inventory'); },
-        storeSearch() { this.$router.push('/main/inventory'); },
-        '$route.params.id': function () { this.getDeviceInfo(); },
+        storeEntity() {
+            this.$router.push('/main/inventory');
+        },
+        storeSearch() {
+            this.$router.push('/main/inventory');
+        },
+        '$route.params.id': {
+            immediate: true,
+            handler() {
+                this.getDeviceInfo();
+            },
+        },
     },
     beforeMount() {
-        /* redirect to the entity-chooser if none is set, at least for now */
-        if (!this.storeEntity)
-            this.$router.push('/entity-chooser');
-    },
-    mounted() {
-        this.getDeviceInfo();
+        /* redirect to the entity-picker if none is set, at least for now */
+        if (!this.storeEntity) this.$router.push('/entity-picker');
     },
     updated() {
         window.dispatchEvent(new Event('resize'));
     },
-}
+};
 </script>
