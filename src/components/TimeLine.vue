@@ -1,5 +1,4 @@
 <script>
-import axios from 'axios';
 import 'chartjs-plugin-colorschemes';
 import 'chartjs-plugin-zoom';
 import { Line } from 'vue-chartjs';
@@ -25,12 +24,12 @@ export default {
                         pointHoverBorderColor: '#D100E4',
                         pointHoverRadius: 13,
                     },
-                ]
+                ],
             },
             options: {
                 maintainAspectRatio: false,
                 responsive: true,
-                onClick:  this.handleClick,
+                onClick: this.handleClick,
                 title: { display: false },
                 tooltips: {
                     titleMarginBottom: -2,
@@ -39,9 +38,7 @@ export default {
                     yPadding: 4,
                     caretPadding: 5,
                     callbacks: {
-                        label: function(tooltipItems, data) {
-                            return data.labels[tooltipItems.index];
-                        }
+                        label: (tooltipItems, data) => data.labels[tooltipItems.index],
                     },
                     xAlign: 'center',
                     yAlign: 'bottom',
@@ -52,7 +49,7 @@ export default {
                 scales: {
                     xAxes: [
                         {
-                            type: "time",
+                            type: 'time',
                             time: {
                                 displayFormats: {
                                     millisecond: 'hh:mm:ss.SSS',
@@ -72,9 +69,9 @@ export default {
                                 maxRotation: 0,
                                 autoSkipPadding: 25,
                                 fontSize: 10,
-                                fontFamily: 'Roboto, sans-serif'
+                                fontFamily: 'Roboto, sans-serif',
                             },
-                        }
+                        },
                     ],
                     yAxes: [
                         {
@@ -89,25 +86,23 @@ export default {
                 },
                 plugins: {
                     colorschemes: {
-                        scheme: "brewer.Paired12"
+                        scheme: 'brewer.Paired12',
                     },
                     zoom: {
                         pan: {
                             enabled: true,
-                            mode: "x",
+                            mode: 'x',
                         },
                         zoom: {
                             enabled: true,
                             drag: false,
-                            mode: () => {
-                                return "x";
-                            },
+                            mode: () => 'x',
                         },
                     },
                 },
                 elements: {
                     line: {
-                        tension: 0
+                        tension: 0,
                     },
                 },
             },
@@ -121,28 +116,28 @@ export default {
          * @param {Array} data - Data array fetched from api
          */
         updateTimeLine(data) {
-            this.chartdata.datasets[0].data = data.map(
-                function (d) {
-                    return {
-                        x: d.ts * 1000,
-                        y: 9,
-                        databaseId: d.id,
-                    };
-                }
-            );
-
-            let findIndex = this.chartdata.datasets[0].data.findIndex((element) => {
-                return element.databaseId == this.database;
+            this.chartdata.datasets[0].data = data.map(function (d) {
+                return {
+                    x: d.ts * 1000,
+                    y: 9,
+                    databaseId: d.id,
+                };
             });
 
-            if (findIndex == -1 && this.chartdata.datasets[0].data)
+            const foundIndex = this.chartdata.datasets[0].data.findIndex((element) => {
+                return element.databaseId === this.database;
+            });
+
+            if (foundIndex === -1 && this.chartdata.datasets[0].data) {
                 this.selectedIndex = this.chartdata.datasets[0].data.length - 1;
-            else
-                this.selectedIndex = findIndex;
+            } else {
+                this.selectedIndex = foundIndex;
+            }
+
             this.database = this.chartdata.datasets[0].data[this.selectedIndex].databaseId;
 
-            this.chartdata.datasets[0].pointBackgroundColor = () => this.colorOnClick();
-            this.chartdata.datasets[0].pointBorderColor = () => this.colorOnClick();
+            this.chartdata.datasets[0].pointBackgroundColor = this.colorOnClick;
+            this.chartdata.datasets[0].pointBorderColor = this.colorOnClick;
             this.$data._chart.update();
         },
         /**
@@ -151,59 +146,67 @@ export default {
          * @returns {Array}
          */
         colorOnClick() {
-            let colors = [];
+            const colors = [];
             colors[this.selectedIndex] = '#D100E4';
             return colors;
         },
         /**
-         * Update store datbase value
+         * Update store database value
          * @param {Object} point - PointerEvent
          * @param {Array} event - ChartElement
          */
         handleClick(point, event) {
-            console.log(point);
-            console.log(event);
-            if (Array.isArray(event))
-                var item = event[0];
-            if (!item) {
-                console.log('timeline: cancel click, not on a point');
-                return;
+            let clickedItem = null;
+
+            if (Array.isArray(event)) {
+                clickedItem = event[0];
             }
-            this.selectedIndex = item._index;
-            this.database = this.chartdata.datasets[0].data[item._index].databaseId;
-            this.updateStoreDatabase(this.database);
-            this.$data._chart.update();
+
+            if (!clickedItem) {
+                return;
+            } else {
+                this.selectedIndex = clickedItem._index;
+                this.database = this.chartdata.datasets[0].data[clickedItem._index].databaseId;
+                this.updateStoreDatabase(this.database);
+                this.$data._chart.update();
+            }
         },
-        ...mapActions([
-            'updateStoreDatabase', 'updateStoreInfoMessage'
-        ]),
+        ...mapActions(['updateStoreDatabase', 'updateStoreInfoMessage']),
     },
     computed: {
-        ...mapGetters([
-            'storeEntity',
-        ]),
+        ...mapGetters(['storeEntity']),
     },
     watch: {
         database() {
             this.updateStoreDatabase(this.database);
         },
     },
-    mounted () {
+    mounted() {
         this.updateStoreDatabase(this.database);
         if (this.storeEntity) {
-            axios.get(`/entity/${this.storeEntity}/databases`)
-                .then((response) => { this.updateTimeLine(response.data); this.updateStoreInfoMessage({}); })
-                .catch((err) => { console.log(err); this.updateStoreInfoMessage({type: 'error', content: 'Cannot load databases, problem with the query.', error: err }); });
+            this.$api
+                .get(`/entity/${this.storeEntity}/databases`)
+                .then((response) => {
+                    this.updateTimeLine(response.data);
+                    this.updateStoreInfoMessage({});
+                })
+                .catch((err) => {
+                    console.log(err);
+                    this.updateStoreInfoMessage({
+                        type: 'error',
+                        content: 'Cannot load databases, problem with the query.',
+                        error: err,
+                    });
+                });
         }
         this.renderChart(this.chartdata, this.options);
     },
-}
+};
 
 /*
 Notes:
-- Force update the grph: 
- */
+- Force update the grph:
+*/
 </script>
 
-<style>
-</style>
+<style></style>

@@ -1,12 +1,12 @@
 <template>
     <v-app>
         <v-main>
-            <router-view/>
+            <router-view />
         </v-main>
     </v-app>
 </template>
 
-<style>
+<style lang="scss">
 html {
     overflow-y: auto !important;
 }
@@ -15,9 +15,10 @@ html {
 }
 a {
     text-decoration: none;
-}
-a:hover {
-    text-decoration: underline;
+
+    &:hover {
+        text-decoration: underline;
+    }
 }
 .nowrap {
     white-space: nowrap;
@@ -28,8 +29,6 @@ a:hover {
 export default {
     name: 'App',
 
-    data: () => ({
-        //
-    }),
+    data: () => ({}),
 };
 </script>

@@ -1,70 +1,84 @@
 <template>
-    <div>
-        <auto-table
-            v-if="apiUrl != ''"
-            id="table-inventory-devices"
-            :pagination="true"
-            :api="apiUrl"
-            array-data=""
-            height="auto"
-            :auto-table-height-extra="[-120]"
-            :column-definition="columnDefinition"
-            :headers-computation="onHeadersComputation"
-            @error="onErrorOccurs">
-        </auto-table>
-    </div>
+    <auto-table
+        v-if="apiUrl !== ''"
+        id="table-inventory-devices"
+        :pagination="true"
+        :api="apiUrl"
+        array-data=""
+        height="auto"
+        :height-offsets="[-120]"
+        :column-definition="columnDefinition"
+        :custom-headers-computation="computeHeaders"
+        @error="onError"
+    >
+    </auto-table>
 </template>
 
 <style lang="scss" scoped>
-/* color of icons in column flag */
-::v-deep .col_flag .mdi:not(.cp-span) {
-    color: gray;
-}
+::v-deep {
+    /* color of icons in column flag */
+    .col_flag .mdi:not(.cp-span) {
+        color: gray;
+    }
 
-/* color of icons in swport column */
-::v-deep .col_swPort .mdi:not(.cp-span) {
-    color: #1eb8ce;
-}
+    /* color of icons in swport column */
+    .col_swPort .mdi:not(.cp-span) {
+        color: #1eb8ce;
+    }
 
-/* column default max width */
-::v-deep .v-data-table__divider {
-    max-width:100px;
-}
+    /* column default max width */
+    .v-data-table__divider {
+        max-width: 100px;
 
-::v-deep .v-data-table__divider.col_flag { width: 1px; }
-::v-deep .v-data-table__divider.col_ip { max-width: 130px; width: 130px; }
-::v-deep .v-data-table__divider.col_mac { max-width: 130px; width: 130px; }
-::v-deep .v-data-table__divider.col_swPort { max-width: inherit; }
+        &.col_flag {
+            width: 1px;
+        }
 
-@media (min-width: 1200px) {
-    ::v-deep .v-data-table__divider.col_name { max-width:200px; }
-    ::v-deep .v-data-table__divider.col_description { max-width: 200px; }
-    ::v-deep .v-data-table__divider.col_macVendor { max-width: 100px; }
-    ::v-deep .v-data-table__divider.col_type { max-width: 100px; }
-}
+        &.col_ip,
+        &.col_mac {
+            max-width: 130px;
+            width: 130px;
+        }
 
-@media (min-width: 1500px) {
-    ::v-deep .v-data-table__divider.col_description { max-width: 500px; }
-}
+        &.col_swPort {
+            max-width: inherit;
+        }
 
+        > span:not(.cp-span) {
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
 
-/* truncate text in columns */
-::v-deep .v-data-table__divider > span:not(.cp-span) {
-    /* nowrap is set by default in autotable */
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
+        @media (min-width: 1200px) {
+            &.col_name,
+            &.col_description {
+                max-width: 200px;
+            }
 
-::v-deep .more {
-    font-size: 10px;
-    font-style: italic;
-    color: #666;
+            &.col_macVendor,
+            &.col_type {
+                max-width: 100px;
+            }
+        }
+
+        @media (min-width: 1500px) {
+            &.col_description {
+                max-width: 500px;
+            }
+        }
+    }
+    .additional-ports-counter {
+        font-size: 10px;
+        font-style: italic;
+        color: #666;
+    }
 }
 </style>
 
 <script>
 import AutoTable from '@/components/AutoTable';
 import { mapGetters } from 'vuex';
+import { unArray } from '@/plugins/utils';
 
 export default {
     name: 'ViewInventoryDevices',
@@ -76,177 +90,175 @@ export default {
             apiUrl: '',
             columnDefinition: {
                 flag: {
-                    format: (v, o) => {
-                        v = this.getArrayContent(v);
-                        const type = this.getArrayContent(o.type) ? this.getArrayContent(o.type).toLowerCase() : '';
-                        const descr = this.getArrayContent(o.description) ? this.getArrayContent(o.description).toLowerCase() : '';
+                    format: (input, tableItem) => {
+                        const type = unArray(tableItem.type) ? unArray(tableItem.type).toLowerCase() : '';
+                        const descr = unArray(tableItem.description)
+                            ? unArray(tableItem.description).toLowerCase()
+                            : '';
+
                         if (type) {
-                            if (type.indexOf('switch') > -1)
-                                return '<span class="mdi mdi-swap-horizontal-bold"></span>';
-                            if (type.indexOf('router') > -1)
-                                return '<span class="mdi mdi-router"></span>';
-                            if (type.indexOf('wlan') > -1)
-                                return '<span class="mdi mdi-wifi"></span>';
-                            if (type.indexOf('phone') > -1)
-                                return '<span class="mdi mdi-phone"></span>';
-                            if (type.indexOf('print') > -1)
-                                return '<span class="mdi mdi-printer"></span>';
+                            if (type.includes('switch')) return '<span class="mdi mdi-swap-horizontal-bold"></span>';
+                            if (type.includes('router')) return '<span class="mdi mdi-router"></span>';
+                            if (type.includes('wlan')) return '<span class="mdi mdi-wifi"></span>';
+                            if (type.includes('phone')) return '<span class="mdi mdi-phone"></span>';
+                            if (type.includes('print')) return '<span class="mdi mdi-printer"></span>';
                         }
+
                         if (descr) {
-                            if (descr.indexOf('linux') > -1)
-                                return '<span class="mdi mdi-linux"></span>';
-                            if (descr.indexOf('windows') > -1)
-                                return '<span class="mdi mdi-microsoft-windows"></span>';
-                            if (descr.indexOf('print') > -1)
-                                return '<span class="mdi mdi-printer"></span>';
+                            if (descr.includes('linux')) return '<span class="mdi mdi-linux"></span>';
+                            if (descr.includes('windows')) return '<span class="mdi mdi-microsoft-windows"></span>';
+                            if (descr.includes('print')) return '<span class="mdi mdi-printer"></span>';
                         }
+
                         return '<span class="mdi mdi-monitor-small"></span>';
                     },
-                    html: true,
-                    tdClass: () => 'nocp'
+                    isHtml: true,
+                    getClass: () => 'nocp',
                 },
                 id: {
-                    format: (v) => this.getArrayContent(v),
+                    format: unArray,
                     hidden: true,
                 },
                 ip: {
-                    format: (v, o) => {
-                        v = this.getArrayContent(v);
-                        if (v) {
-                            const type = this.getArrayContent(o.type);
-                            if (type && type.toLowerCase().indexOf('switch') > -1)
-                                return '<a href="#/main/inventory/switch/'+o.id+'">' + v + '</a>';
-                            return '<a href="#/main/inventory/host/'+o.id+'">' + v + '</a>';
+                    format: (input, tableItem) => {
+                        const inputValue = unArray(input);
+
+                        if (inputValue) {
+                            const type = unArray(tableItem.type);
+
+                            if (type && type.toLowerCase().includes('switch')) {
+                                return '<a href="#/main/inventory/switch/' + tableItem.id + '">' + inputValue + '</a>';
+                            }
+                            return '<a href="#/main/inventory/host/' + tableItem.id + '">' + inputValue + '</a>';
                         }
                         return '';
                     },
-                    onHover: (value) => {
-                        if (this.getArrayContent(value)) {
-                            let res = '';
-                            for (let i = 0; i < value.length; i++) {
-                                res+= value[i]+'\n'
-                            }
-                            return res;
+                    onHover: (input) => {
+                        if (Array.isArray(input)) {
+                            return input.map((val) => val + '\n').join('');
                         }
-                        return ''+value;
+                        return String(input);
                     },
                     label: 'IP',
-                    html: true,
+                    isHtml: true,
                 },
                 name: {
-                    format: (v, o) => {
-                        v = this.getArrayContent(v);
-                        if (v) {
-                            const type = this.getArrayContent(o.type);
-                            if (type && type.toLowerCase().indexOf('switch') > -1)
-                                return '<a href="#/main/inventory/switch/'+o.id+'">' + v + '</a>';
-                            return '<a href="#/main/inventory/host/'+o.id+'">' + v + '</a>';
+                    format: (input, tableItem) => {
+                        input = unArray(input);
+
+                        if (input) {
+                            const type = unArray(tableItem.type);
+
+                            if (type && type.toLowerCase().includes('switch')) {
+                                return '<a href="#/main/inventory/switch/' + tableItem.id + '">' + input + '</a>';
+                            }
+                            return '<a href="#/main/inventory/host/' + tableItem.id + '">' + input + '</a>';
                         }
                         return '';
                     },
-                    html: true,
+                    isHtml: true,
                 },
                 location: {
-                    format: (v) => this.getArrayContent(v),
+                    format: unArray,
                 },
                 description: {
-                    format: (v) => {
-                        v = this.getArrayContent(v);
-                        return v;
+                    format: unArray,
+                    getTooltip: (input) => {
+                        return Array.isArray(input) ? input.join('\n') : '';
                     },
-                    tooltip: (v) => {
-                        return (Array.isArray(v)) ? v.join('\n') : '';
-                    }
                 },
                 type: {
-                    format: (v) => this.getArrayContent(v),
+                    format: unArray,
                 },
                 mac: {
-                    format: (v) => this.getArrayContent(v),
+                    format: unArray,
                 },
                 capabilities: {
-                    format: (v) => this.getArrayContent(v),
+                    format: unArray,
                 },
                 swPort: {
-                    format: (v) => {
-                        const total = Array.isArray(v) ? v.length : (v ? 1 : 0);
-                        const first = this.getArrayContent(v);
-                        let out = '<span class="nowrap">';
-                        if (first) {
-                            out += '<span class="mdi mdi-swap-horizontal-bold"></span> <a href="#/main/inventory/switch/' + first.id +'">' + first.name + '</a> ' + first.iface;
+                    format: (input) => {
+                        const total = Array.isArray(input) ? input.length : input ? 1 : 0;
+                        const firstValue = unArray(input);
+                        let formatted = '<span class="nowrap">';
+
+                        if (firstValue) {
+                            formatted +=
+                                '<span class="mdi mdi-swap-horizontal-bold"></span> <a href="#/main/inventory/switch/' +
+                                firstValue.id +
+                                '">' +
+                                firstValue.name +
+                                '</a> ' +
+                                firstValue.iface;
                             if (total > 1)
-                                out += ` <span class="more">(+${total-1})</span>`;
+                                formatted += ` <span class="additional-ports-counter">(+${total - 1})</span>`;
                         }
-                        out += '</span>';
-                        return out;
+                        formatted += '</span>';
+
+                        return formatted;
                     },
-                    tooltip: (v) => {
-                        let out = [];
-                        // v = this.getArrayContent(v);
-                        if (v) {
-                            for (let i of v) {
-                                let current = i.name+ ' ' + i.iface;
-                                if (i.count !== undefined)
-                                    current+=' ('+i.count+' mac'+ (i.count>1?'s':'') +')';
-                                out.push(current);
-                            }
+                    getTooltip: (inputs) => {
+                        let tooltip = [];
+
+                        if (inputs) {
+                            tooltip = inputs.map((value) => {
+                                let current = value.name + ' ' + value.iface;
+
+                                if (value.count) {
+                                    current += ' (' + value.count + ' mac' + (value.count > 1 ? 's' : '') + ')';
+                                }
+
+                                return current;
+                            });
                         }
-                        return out.join('\n');
+                        return tooltip.join('\n');
                     },
-                    html: true,
+                    isHtml: true,
                 },
                 macVendor: {
-                    format: (v) => this.getArrayContent(v),
-                }
+                    format: unArray,
+                },
             },
-        }
+        };
     },
     methods: {
         /**
          * Update the query api link to make the query
          */
         updateApiUrl() {
-            let params = this.apiStateParams;
+            const params = this.apiStateParams;
             let url = '';
-            if (params.entity && params.database)
-                url += '/entity/' + encodeURIComponent(params.entity) +
-                    '/devices?database=' + encodeURIComponent(params.database) +
-                    '&q=' + encodeURIComponent(params.search) + '&short';
-            console.log('updateApiUrl', url);
+
+            if (params.entity && params.database) {
+                url +=
+                    '/entity/' +
+                    encodeURIComponent(params.entity) +
+                    '/devices?database=' +
+                    encodeURIComponent(params.database) +
+                    '&q=' +
+                    encodeURIComponent(params.search) +
+                    '&short';
+            }
+
             this.apiUrl = url;
         },
         /**
-         * Let edit the headers
-         * @param {array} headerArray
+         * Compute the headers
+         * @param {array<object>} headers
          */
-        onHeadersComputation(headerArray/*, items*/) {
-            headerArray.unshift({ text: '', value: 'flag' });
+        computeHeaders(headers) {
+            headers.unshift({ value: 'flag' });
         },
         /**
          * Add error object in the store
          * @param {object} payload
          */
-        onErrorOccurs(payload) {
+        onError(payload) {
             this.$store.commit('EDIT_STORE_INFO_MESSAGE', payload);
         },
-        /**
-         *
-         * Check in the parameter is array
-         * If it is an array, return the first value of the array
-         * Else return the parameter as is
-         * @param {array} value - The value to check
-         * @returns {array}
-         */
-        getArrayContent(value) {
-            return Array.isArray(value) ? value[0] : value;
-        }
     },
     computed: {
-        ...mapGetters([
-            'storeEntity',
-            'storeDatabase',
-            'storeSearch',
-        ]),
+        ...mapGetters(['storeEntity', 'storeDatabase', 'storeSearch']),
         apiStateParams() {
             return {
                 entity: this.storeEntity,
@@ -258,14 +270,11 @@ export default {
     watch: {
         apiStateParams: {
             immediate: true,
-            handler(cur, prev) {
-                console.log('watch apiStateParams', cur, prev);
+            handler() {
                 this.updateApiUrl();
-            }
-        }
+            },
+        },
     },
-    mounted() {
-
-    }
-}
+    mounted() {},
+};
 </script>
