@@ -23,11 +23,7 @@
               v-for="(header, headerIndex) in headers"
               :key="headerIndex"
               :title="header.columnDefinition.getTitle(item)"
-              :class="
-                header.columnDefinition.getClass(item) +
-                ' v-data-table__divider col_' +
-                header.value
-              "
+              :class="getHeaderClassForItem(header, item)"
             >
               <span
                 v-if="header.columnDefinition.isHtml"
@@ -320,6 +316,13 @@ export default {
       return typeof this.itemClass === 'function'
         ? this.itemClass(item)
         : this.itemClass;
+    },
+    getHeaderClassForItem(header, tableItem) {
+      return (
+        header.columnDefinition.getClass(tableItem) +
+        ' v-data-table__divider col_' +
+        header.value
+      );
     },
     setTableHeight() {
       if (this.$props.height === 'auto')
