@@ -162,7 +162,7 @@ export default {
       type: [String, Number],
       default: 'auto',
     },
-    autoTableHeightExtra: {
+    heightOffsets: {
       type: Array,
       default: () => [],
       /* array of dom ids to substract of +/- numbers */
@@ -261,22 +261,22 @@ export default {
         .get(this.$props.api)
         .then((response) => {
           const path = this.$props.arrayData.split('.');
-          let pointer = response.data;
+          let tableData = response.data;
 
           if (unArray(path) !== '') {
             for (let i = 0; i < path.length; i++) {
-              if (pointer[path[i]]) {
-                pointer = pointer[path[i]];
+              if (tableData[path[i]]) {
+                tableData = tableData[path[i]];
               } else {
-                pointer = null;
+                tableData = null;
                 break;
               }
             }
-            if (pointer === null) {
+            if (tableData === null) {
               this.$emit('error', 'Error occurs in data path.');
             }
           }
-          this.tableItems = pointer;
+          this.tableItems = tableData;
           this.isLoading = false;
           this.$emit('error', {});
         })
@@ -298,29 +298,37 @@ export default {
     },
     setTableHeight() {
       if (this.$props.height === 'auto') this.tableHeight = this.computeAutoTableHeight();
-      else if (this.$props.height !== undefined) this.tableHeight = this.$props.height;
+      else if (this.$props.height) this.tableHeight = this.$props.height;
     },
     computeAutoTableHeight() {
-      const table = document.getElementById(this.id);
       let tableHeight = 0;
+      const table = document.getElementById(this.id);
+
       if (table) {
         const tableFooterElement = table.getElementsByClassName('v-data-footer');
         const footerHeight = tableFooterElement.length ? tableFooterElement[0].clientHeight : 0;
+
         if (table.parentElement && table.parentElement.style.height !== '') {
           tableHeight += table.parentElement.style.height;
         } else {
           const tableRect = table.getBoundingClientRect();
           tableHeight += window.innerHeight - tableRect.top;
         }
+
         tableHeight -= footerHeight;
-        if (this.autoTableHeightExtra) {
-          for (let i of this.autoTableHeightExtra) {
-            if (typeof i === 'number') tableHeight += i;
-            else {
-              i = document.getElementById(i);
-              if (i) tableHeight -= i.clientHeight;
+
+        if (this.heightOffsets) {
+          this.heightOffsets.forEach((offset) => {
+            if (typeof offset === 'number') {
+              tableHeight += offset;
+            } else {
+              const element = document.getElementById(offset);
+
+              if (element) {
+                tableHeight -= element.clientHeight;
+              }
             }
-          }
+          });
         }
       }
       return tableHeight;

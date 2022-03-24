@@ -7,13 +7,13 @@
             <tr v-for="(propertyValue, propertyKey) in device" :key="propertyKey">
               <template v-if="propertyKey !== 'iface'">
                 <th class="text-left px-2">
-                  {{ propertyKey.charAt(0).toUpperCase() + propertyKey.slice(1) }}
+                  {{ formatPropertyKey(propertyKey) }}
                 </th>
                 <td class="text-left px-2" :id="'device-' + propertyKey">
                   <!-- Array -->
                   <template v-if="Array.isArray(propertyValue)">
                     <!-- Array and not object -->
-                    <template v-if="!checkIfObject(propertyValue[0])">
+                    <template v-if="!isObject(propertyValue[0])">
                       {{ propertyValue[0] }}
                       <v-icon
                         v-if="propertyValue.length > 1"
@@ -24,20 +24,18 @@
                       >
                       <div v-if="propertyValue[0]" :class="'expand-panel--' + propertyKey">
                         <template v-for="(subValue, subKey) in propertyValue">
-                          <p class="mb-0" v-if="subKey !== 0" :key="subValue + `-${subKey}`">
+                          <p class="mb-0" v-if="subKey !== 0" :key="subKey">
                             {{ subValue }}
                           </p>
                         </template>
                       </div>
                     </template>
                     <!-- Array and object -- route -->
-                    <template v-if="checkIfObject(propertyValue[0]) && propertyKey === 'route'">
+                    <template v-if="isObject(propertyValue[0]) && propertyKey === 'route'">
                       <div v-if="propertyValue[0].dest">
                         dest {{ propertyValue[0].dest }}
                         <span v-if="propertyValue[0].via"> via {{ propertyValue[0].via }} </span>
-                        <span v-if="propertyValue[0].iface">
-                          dev {{ propertyValue[0].iface }}
-                        </span>
+                        <span v-if="propertyValue[0].iface"> dev {{ propertyValue[0].iface }}</span>
                         <v-icon
                           v-if="propertyValue.length > 1"
                           size="18"
@@ -57,7 +55,7 @@
                       </div>
                     </template>
                     <!-- Array and object -- vlan -->
-                    <template v-if="checkIfObject(propertyValue[0]) && propertyKey === 'vlan'">
+                    <template v-if="isObject(propertyValue[0]) && propertyKey === 'vlan'">
                       {{ propertyValue[0].id }} {{ propertyValue[0].name }}
                       <v-icon
                         v-if="propertyValue.length > 1"
@@ -77,7 +75,7 @@
                   </template>
                   <!-- Not Array -->
                   <template v-else>
-                    <span v-if="!checkIfObject(propertyValue)">{{ propertyValue }}</span>
+                    <span v-if="!isObject(propertyValue)">{{ propertyValue }}</span>
                   </template>
                 </td>
               </template>
@@ -342,8 +340,11 @@ export default {
         }
       }
     },
-    checkIfObject(item) {
-      return typeof item === 'object';
+    formatPropertyKey(propertyKey) {
+      return propertyKey.charAt(0).toUpperCase() + propertyKey.slice(1);
+    },
+    isObject(input) {
+      return typeof input === 'object';
     },
     /**
      * Get a cell color class depending on the status of the interface

@@ -6,7 +6,7 @@
         <router-link to="/">
           <img
             class="py-1 pl-0 d-flex justify-start align-center"
-            src="../assets/images/zenetys-fg-black-bg-full-transparent_LD.png"
+            src="assets/images/zenetys-fg-black-bg-full-transparent_LD.png"
             height="40"
           />
         </router-link>
@@ -14,8 +14,7 @@
       <v-spacer></v-spacer>
 
       <v-btn
-        v-if="entityPickerDisplayMode === 'grid'"
-        @click="setentityPickerDisplayMode('table')"
+        @click="setEntityPickerDisplayMode(entityPickerDisplayMode)"
         icon
         fab
         dark
@@ -23,19 +22,8 @@
         color="primary"
         class="view-type-button"
       >
-        <v-icon dark> mdi-table </v-icon>
-      </v-btn>
-      <v-btn
-        v-if="entityPickerDisplayMode === 'table'"
-        @click="setentityPickerDisplayMode('grid')"
-        icon
-        fab
-        dark
-        x-small
-        color="primary"
-        class="view-type-button"
-      >
-        <v-icon dark> mdi-view-grid </v-icon>
+        <v-icon dark v-if="entityPickerDisplayMode === 'grid'"> mdi-table </v-icon>
+        <v-icon dark v-if="entityPickerDisplayMode === 'table'"> mdi-view-grid </v-icon>
       </v-btn>
     </v-app-bar>
 
@@ -65,68 +53,65 @@
         </v-row>
       </v-container>
 
-      <!-- Grid Display Mode -->
-      <v-container v-if="entityPickerDisplayMode === 'grid' && filteredEntities.length !== 0">
+      <v-container>
         <v-row class="row justify-center align-center">
-          <!-- Entities -->
-          <v-col
-            :key="`entity-${entityIndex}`"
-            v-for="(entity, entityIndex) in filteredEntities"
-            cols="6"
-            sm="4"
-            md="3"
-            lg="2"
-            xl="1"
-          >
-            <router-link class="entity" :to="'/main'">
-              <v-card
-                class="d-flex align-center justify-center px-3 entity-card"
-                color="secondary"
-                min-height="100"
-                @click="updateStoreEntity(entity.name)"
-              >
-                <v-card-actions>
-                  <span class="entity-name"> {{ entity.name }}</span>
-                </v-card-actions>
-              </v-card>
-            </router-link>
-          </v-col>
-        </v-row>
-      </v-container>
-
-      <!-- Table Display Mode -->
-      <v-container
-        v-if="entityPickerDisplayMode === 'table' && filteredEntities.length !== 0"
-        id="table-view"
-      >
-        <v-row class="row justify-center align-center">
-          <!-- Entities -->
-          <v-col cols="12" sm="6" md="6" lg="4" xl="4">
-            <v-data-table
-              :headers="headers"
-              :items="filteredEntities"
-              class="elevation-2"
-              mobile-breakpoint="0"
-              width=""
-              :height="tableHeight"
-              fixed-header
-              :footer-props="entityTableProps.itemPerPageOptions"
-              :items-per-page="-1"
+          <!-- Grid Display Mode -->
+          <template v-if="entityPickerDisplayMode === 'grid' && filteredEntities.length !== 0">
+            <!-- Entities -->
+            <v-col
+              :key="`entity-${entityIndex}`"
+              v-for="(entity, entityIndex) in filteredEntities"
+              cols="6"
+              sm="4"
+              md="3"
+              lg="2"
+              xl="1"
             >
-              <template
-                v-for="(header, headerIndex) in headers"
-                v-slot:[`item.${header.value}`]="{ item }"
+              <router-link class="entity" :to="'/main'">
+                <v-card
+                  class="d-flex align-center justify-center px-3 entity-card"
+                  color="secondary"
+                  min-height="100"
+                  @click="updateStoreEntity(entity.name)"
+                >
+                  <v-card-actions>
+                    <span class="entity-name"> {{ entity.name }}</span>
+                  </v-card-actions>
+                </v-card>
+              </router-link>
+            </v-col>
+          </template>
+
+          <!-- Table Display Mode -->
+          <template v-if="entityPickerDisplayMode === 'table' && filteredEntities.length !== 0">
+            <!-- Entities -->
+            <v-col cols="12" sm="6" md="6" lg="4" xl="4">
+              <v-data-table
+                :headers="headers"
+                :items="filteredEntities"
+                class="elevation-2"
+                mobile-breakpoint="0"
+                width=""
+                :height="tableHeight"
+                fixed-header
+                :footer-props="entityTableProps.itemPerPageOptions"
+                :items-per-page="-1"
               >
-                <div :key="`entity-${headerIndex}`">
-                  <router-link :to="'/main'">
-                    <span v-if="header.value === 'name'" @click="updateStoreEntity(item.name)">
-                      {{ item.name }}
-                    </span>
-                  </router-link>
-                </div>
-              </template>
-            </v-data-table>
-          </v-col>
+                <template
+                  v-for="(header, headerIndex) in headers"
+                  v-slot:[`item.${header.value}`]="{ item }"
+                >
+                  <div :key="`entity-${headerIndex}`">
+                    <router-link :to="'/main'">
+                      <span v-if="header.value === 'name'" @click="updateStoreEntity(item.name)">
+                        {{ item.name }}
+                      </span>
+                    </router-link>
+                  </div>
+                </template>
+              </v-data-table>
+            </v-col>
+          </template>
         </v-row>
       </v-container>
     </v-main>
@@ -180,13 +165,13 @@ export default {
     filteredEntities() {
       return this.storeEntities
         .map((entity) => ({ name: entity }))
-        .filter((el) => el.name.toLowerCase().indexOf(this.entitySearch.toLowerCase()) !== -1);
+        .filter((el) => el.name.toLowerCase().includes(this.entitySearch.toLowerCase()));
     },
   },
   methods: {
     ...mapActions(['updateStoreEntity', 'updateStoreSearch']),
-    setentityPickerDisplayMode(type) {
-      this.entityPickerDisplayMode = type;
+    setEntityPickerDisplayMode(type) {
+      this.entityPickerDisplayMode = type === 'table' ? 'grid' : 'table';
     },
     setTableHeight() {
       const header = document.querySelector('header');

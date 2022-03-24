@@ -12,6 +12,7 @@ export function copyToClipboard(textToCopy) {
   } else {
     // text area method
     const textArea = document.createElement('textarea');
+
     textArea.value = textToCopy;
     // make the textarea out of viewport
     textArea.style.position = 'fixed';
@@ -20,6 +21,7 @@ export function copyToClipboard(textToCopy) {
     document.body.appendChild(textArea);
     textArea.focus();
     textArea.select();
+
     return new Promise((res, rej) => {
       // here the magic happens
       document.execCommand('copy') ? res() : rej();
@@ -30,10 +32,10 @@ export function copyToClipboard(textToCopy) {
 
 /**
  *
- * Transforms an input that can be an array into a litteral value
+ * Transform an input that can be an array into a litteral value
  * If it's an array, return the first value of the array
- * @param {Array} input - The value to check
- * @returns {Array}
+ * @param {any} input - The value to check
+ * @returns {any}
  */
 export function unArray(input) {
   return Array.isArray(input) ? input[0] : input;

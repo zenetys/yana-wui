@@ -38,9 +38,7 @@ export default {
           yPadding: 4,
           caretPadding: 5,
           callbacks: {
-            label: function (tooltipItems, data) {
-              return data.labels[tooltipItems.index];
-            },
+            label: (tooltipItems, data) => data.labels[tooltipItems.index],
           },
           xAlign: 'center',
           yAlign: 'bottom',
@@ -98,9 +96,7 @@ export default {
             zoom: {
               enabled: true,
               drag: false,
-              mode: () => {
-                return 'x';
-              },
+              mode: () => 'x',
             },
           },
         },
@@ -128,17 +124,20 @@ export default {
         };
       });
 
-      const findIndex = this.chartdata.datasets[0].data.findIndex((element) => {
+      const foundIndex = this.chartdata.datasets[0].data.findIndex((element) => {
         return element.databaseId === this.database;
       });
 
-      if (findIndex === -1 && this.chartdata.datasets[0].data)
+      if (foundIndex === -1 && this.chartdata.datasets[0].data) {
         this.selectedIndex = this.chartdata.datasets[0].data.length - 1;
-      else this.selectedIndex = findIndex;
+      } else {
+        this.selectedIndex = foundIndex;
+      }
+
       this.database = this.chartdata.datasets[0].data[this.selectedIndex].databaseId;
 
-      this.chartdata.datasets[0].pointBackgroundColor = () => this.colorOnClick();
-      this.chartdata.datasets[0].pointBorderColor = () => this.colorOnClick();
+      this.chartdata.datasets[0].pointBackgroundColor = this.colorOnClick;
+      this.chartdata.datasets[0].pointBorderColor = this.colorOnClick;
       this.$data._chart.update();
     },
     /**
@@ -158,7 +157,11 @@ export default {
      */
     handleClick(point, event) {
       let clickedItem = null;
-      if (Array.isArray(event)) clickedItem = event[0];
+
+      if (Array.isArray(event)) {
+        clickedItem = event[0];
+      }
+
       if (!clickedItem) {
         return;
       } else {
@@ -202,7 +205,7 @@ export default {
 
 /*
 Notes:
-- Force update the grph: 
+- Force update the grph:
 */
 </script>
 

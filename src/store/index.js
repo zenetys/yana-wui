@@ -31,10 +31,7 @@ export default new Vuex.Store({
     },
     EDIT_STORE_SEARCH(state, value) {
       console.log('from store: mutation EDIT_STORE_SEARCH', value);
-      if (value === null) {
-        value = '';
-      }
-      state.storeSearch = value;
+      state.storeSearch = value || '';
     },
     EDIT_STORE_INFO_MESSAGE(state, value) {
       console.log('from store: mutation EDIT_STORE_INFO_MESSAGE', value);

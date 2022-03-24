@@ -6,10 +6,10 @@
     :api="apiUrl"
     array-data=""
     height="auto"
-    :auto-table-height-extra="[-120]"
+    :height-offsets="[-120]"
     :column-definition="columnDefinition"
     :custom-headers-computation="computeHeaders"
-    @error="onErrorOccurs"
+    @error="onError"
   >
   </auto-table>
 </template>
@@ -90,89 +90,102 @@ export default {
       apiUrl: '',
       columnDefinition: {
         flag: {
-          format: (v, o) => {
-            v = unArray(v);
-            const type = unArray(o.type) ? unArray(o.type).toLowerCase() : '';
-            const descr = unArray(o.description) ? unArray(o.description).toLowerCase() : '';
+          format: (input, tableItem) => {
+            const type = unArray(tableItem.type) ? unArray(tableItem.type).toLowerCase() : '';
+            const descr = unArray(tableItem.description)
+              ? unArray(tableItem.description).toLowerCase()
+              : '';
+
             if (type) {
-              if (type.indexOf('switch') > -1)
+              if (type.includes('switch'))
                 return '<span class="mdi mdi-swap-horizontal-bold"></span>';
-              if (type.indexOf('router') > -1) return '<span class="mdi mdi-router"></span>';
-              if (type.indexOf('wlan') > -1) return '<span class="mdi mdi-wifi"></span>';
-              if (type.indexOf('phone') > -1) return '<span class="mdi mdi-phone"></span>';
-              if (type.indexOf('print') > -1) return '<span class="mdi mdi-printer"></span>';
+              if (type.includes('router')) return '<span class="mdi mdi-router"></span>';
+              if (type.includes('wlan')) return '<span class="mdi mdi-wifi"></span>';
+              if (type.includes('phone')) return '<span class="mdi mdi-phone"></span>';
+              if (type.includes('print')) return '<span class="mdi mdi-printer"></span>';
             }
+
             if (descr) {
-              if (descr.indexOf('linux') > -1) return '<span class="mdi mdi-linux"></span>';
-              if (descr.indexOf('windows') > -1)
+              if (descr.includes('linux')) return '<span class="mdi mdi-linux"></span>';
+              if (descr.includes('windows'))
                 return '<span class="mdi mdi-microsoft-windows"></span>';
-              if (descr.indexOf('print') > -1) return '<span class="mdi mdi-printer"></span>';
+              if (descr.includes('print')) return '<span class="mdi mdi-printer"></span>';
             }
+
             return '<span class="mdi mdi-monitor-small"></span>';
           },
           isHtml: true,
           getClass: () => 'nocp',
         },
         id: {
-          format: (v) => unArray(v),
+          format: unArray,
           hidden: true,
         },
         ip: {
-          format: (v, o) => {
-            v = unArray(v);
-            if (v) {
-              const type = unArray(o.type);
-              if (type && type.toLowerCase().indexOf('switch') > -1)
-                return '<a href="#/main/inventory/switch/' + o.id + '">' + v + '</a>';
-              return '<a href="#/main/inventory/host/' + o.id + '">' + v + '</a>';
+          format: (input, tableItem) => {
+            const inputValue = unArray(input);
+
+            if (inputValue) {
+              const type = unArray(tableItem.type);
+
+              if (type && type.toLowerCase().includes('switch')) {
+                return (
+                  '<a href="#/main/inventory/switch/' + tableItem.id + '">' + inputValue + '</a>'
+                );
+              }
+              return '<a href="#/main/inventory/host/' + tableItem.id + '">' + inputValue + '</a>';
             }
             return '';
           },
-          onHover: (value) => {
-            if (Array.isArray(value)) {
-              return value.map((v) => v + '\n').join('');
+          onHover: (input) => {
+            if (Array.isArray(input)) {
+              return input.map((val) => val + '\n').join('');
             }
-            return '' + value;
+            return String(input);
           },
           label: 'IP',
           isHtml: true,
         },
         name: {
-          format: (v, o) => {
-            v = unArray(v);
-            if (v) {
-              const type = unArray(o.type);
-              if (type && type.toLowerCase().indexOf('switch') > -1)
-                return '<a href="#/main/inventory/switch/' + o.id + '">' + v + '</a>';
-              return '<a href="#/main/inventory/host/' + o.id + '">' + v + '</a>';
+          format: (input, tableItem) => {
+            input = unArray(input);
+
+            if (input) {
+              const type = unArray(tableItem.type);
+
+              if (type && type.toLowerCase().includes('switch')) {
+                return '<a href="#/main/inventory/switch/' + tableItem.id + '">' + input + '</a>';
+              }
+              return '<a href="#/main/inventory/host/' + tableItem.id + '">' + input + '</a>';
             }
             return '';
           },
           isHtml: true,
         },
         location: {
-          format: (v) => unArray(v),
+          format: unArray,
         },
         description: {
-          format: (v) => unArray(v),
-          getTooltip: (v) => {
-            return Array.isArray(v) ? v.join('\n') : '';
+          format: unArray,
+          getTooltip: (input) => {
+            return Array.isArray(input) ? input.join('\n') : '';
           },
         },
         type: {
-          format: (v) => unArray(v),
+          format: unArray,
         },
         mac: {
-          format: (v) => unArray(v),
+          format: unArray,
         },
         capabilities: {
-          format: (v) => unArray(v),
+          format: unArray,
         },
         swPort: {
-          format: (v) => {
-            const total = Array.isArray(v) ? v.length : v ? 1 : 0;
-            const firstValue = unArray(v);
+          format: (input) => {
+            const total = Array.isArray(input) ? input.length : input ? 1 : 0;
+            const firstValue = unArray(input);
             let formatted = '<span class="nowrap">';
+
             if (firstValue) {
               formatted +=
                 '<span class="mdi mdi-swap-horizontal-bold"></span> <a href="#/main/inventory/switch/' +
@@ -185,25 +198,29 @@ export default {
                 formatted += ` <span class="additional-ports-counter">(+${total - 1})</span>`;
             }
             formatted += '</span>';
+
             return formatted;
           },
-          getTooltip: (v) => {
-            const tooltip = [];
+          getTooltip: (inputs) => {
+            let tooltip = [];
 
-            if (v) {
-              for (let i of v) {
-                let current = i.name + ' ' + i.iface;
-                if (i.count !== undefined)
-                  current += ' (' + i.count + ' mac' + (i.count > 1 ? 's' : '') + ')';
-                tooltip.push(current);
-              }
+            if (inputs) {
+              tooltip = inputs.map((value) => {
+                let current = value.name + ' ' + value.iface;
+
+                if (value.count) {
+                  current += ' (' + value.count + ' mac' + (value.count > 1 ? 's' : '') + ')';
+                }
+
+                return current;
+              });
             }
             return tooltip.join('\n');
           },
           isHtml: true,
         },
         macVendor: {
-          format: (v) => unArray(v),
+          format: unArray,
         },
       },
     };
@@ -215,7 +232,8 @@ export default {
     updateApiUrl() {
       const params = this.apiStateParams;
       let url = '';
-      if (params.entity && params.database)
+
+      if (params.entity && params.database) {
         url +=
           '/entity/' +
           encodeURIComponent(params.entity) +
@@ -224,6 +242,8 @@ export default {
           '&q=' +
           encodeURIComponent(params.search) +
           '&short';
+      }
+
       this.apiUrl = url;
     },
     /**
@@ -237,7 +257,7 @@ export default {
      * Add error object in the store
      * @param {object} payload
      */
-    onErrorOccurs(payload) {
+    onError(payload) {
       this.$store.commit('EDIT_STORE_INFO_MESSAGE', payload);
     },
   },
