@@ -32,10 +32,8 @@ export default {
       const response = await this.get('config.json');
 
       if (typeof response.data === 'object') {
-        if (response.data.API_BASE_URL)
-          axios.defaults.baseURL = response.data.API_BASE_URL;
-        if (response.data.API_TIMEOUT)
-          axios.defaults.timeout = response.data.API_TIMEOUT;
+        if (response.data.API_BASE_URL) axios.defaults.baseURL = response.data.API_BASE_URL;
+        if (response.data.API_TIMEOUT) axios.defaults.timeout = response.data.API_TIMEOUT;
       }
       console.log('API plugin: Successfully initialised');
     } catch (e) {

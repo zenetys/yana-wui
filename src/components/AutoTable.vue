@@ -27,37 +27,22 @@
             >
               <span
                 v-if="header.columnDefinition.isHtml"
-                :title="
-                  header.columnDefinition.getTooltip(item[header.value], item)
-                "
-                :style="
-                  header.columnDefinition.getStyle(item[header.value], item)
-                "
-                v-html="
-                  header.columnDefinition.format(item[header.value], item)
-                "
+                :title="header.columnDefinition.getTooltip(item[header.value], item)"
+                :style="header.columnDefinition.getStyle(item[header.value], item)"
+                v-html="header.columnDefinition.format(item[header.value], item)"
               ></span>
               <span
                 v-else
-                :title="
-                  header.columnDefinition.getTooltip(item[header.value], item)
-                "
-                :style="
-                  header.columnDefinition.getStyle(item[header.value], item)
-                "
-                >{{
-                  header.columnDefinition.format(item[header.value], item)
-                }}</span
+                :title="header.columnDefinition.getTooltip(item[header.value], item)"
+                :style="header.columnDefinition.getStyle(item[header.value], item)"
+                >{{ header.columnDefinition.format(item[header.value], item) }}</span
               >
               <span
                 v-if="
-                  activeCopyCellContent &&
-                  header.columnDefinition.format(item[header.value], item)
+                  activeCopyCellContent && header.columnDefinition.format(item[header.value], item)
                 "
                 class="cp-span mdi mdi-content-copy"
-                @click="
-                  copyCellContent('col_' + header.value, headerIndex, $event)
-                "
+                @click="copyCellContent('col_' + header.value, headerIndex, $event)"
               >
                 <span class="cell-copied-tooltip">Copied!</span>
               </span>
@@ -67,17 +52,8 @@
       </template>
     </v-data-table>
 
-    <v-overlay
-      :absolute="true"
-      :opacity="0.5"
-      color="#ffffff"
-      :value="isLoading"
-    >
-      <v-progress-circular
-        indeterminate
-        size="64"
-        color="#a2a2a2"
-      ></v-progress-circular>
+    <v-overlay :absolute="true" :opacity="0.5" color="#ffffff" :value="isLoading">
+      <v-progress-circular indeterminate size="64" color="#a2a2a2"></v-progress-circular>
     </v-overlay>
   </v-card>
 </template>
@@ -313,32 +289,23 @@ export default {
         });
     },
     getRowClass(item) {
-      return typeof this.itemClass === 'function'
-        ? this.itemClass(item)
-        : this.itemClass;
+      return typeof this.itemClass === 'function' ? this.itemClass(item) : this.itemClass;
     },
     getHeaderClassForItem(header, tableItem) {
       return (
-        header.columnDefinition.getClass(tableItem) +
-        ' v-data-table__divider col_' +
-        header.value
+        header.columnDefinition.getClass(tableItem) + ' v-data-table__divider col_' + header.value
       );
     },
     setTableHeight() {
-      if (this.$props.height === 'auto')
-        this.tableHeight = this.computeAutoTableHeight();
-      else if (this.$props.height !== undefined)
-        this.tableHeight = this.$props.height;
+      if (this.$props.height === 'auto') this.tableHeight = this.computeAutoTableHeight();
+      else if (this.$props.height !== undefined) this.tableHeight = this.$props.height;
     },
     computeAutoTableHeight() {
       const table = document.getElementById(this.id);
       let tableHeight = 0;
       if (table) {
-        const tableFooterElement =
-          table.getElementsByClassName('v-data-footer');
-        const footerHeight = tableFooterElement.length
-          ? tableFooterElement[0].clientHeight
-          : 0;
+        const tableFooterElement = table.getElementsByClassName('v-data-footer');
+        const footerHeight = tableFooterElement.length ? tableFooterElement[0].clientHeight : 0;
         if (table.parentElement && table.parentElement.style.height !== '') {
           tableHeight += table.parentElement.style.height;
         } else {
@@ -364,12 +331,9 @@ export default {
      * @param {number} index - item index
      */
     copyCellContent(value, index) {
-      const elCopy = document.getElementsByClassName(`${value}`)[index]
-        .innerText;
+      const elCopy = document.getElementsByClassName(`${value}`)[index].innerText;
       copyToClipboard(elCopy).then(() => {
-        const tooltipElement = document.querySelector(
-          '.cp-span:hover .cell-copied-tooltip'
-        );
+        const tooltipElement = document.querySelector('.cp-span:hover .cell-copied-tooltip');
         if (tooltipElement) {
           tooltipElement.style = 'visibility:visible;';
           setTimeout(() => {

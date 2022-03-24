@@ -68,13 +68,7 @@
           background-color="#e8e8e8d6"
           prepend-inner-icon="mdi-server-network"
         ></v-autocomplete>
-        <v-btn
-          icon
-          small
-          @click="setBookmarks"
-          class="mt-1 ml-1"
-          title="Add to favorite"
-        >
+        <v-btn icon small @click="setBookmarks" class="mt-1 ml-1" title="Add to favorite">
           <v-icon> mdi-bookmark </v-icon>
         </v-btn>
       </v-col>
@@ -199,11 +193,7 @@
     >
       <v-col cols="12">
         <v-card>
-          <TimeLine
-            :key="timeLineKey"
-            @error="onErrorOccurs"
-            class="bottom-timeline"
-          />
+          <TimeLine :key="timeLineKey" @error="onErrorOccurs" class="bottom-timeline" />
         </v-card>
       </v-col>
     </v-bottom-navigation>
@@ -425,18 +415,12 @@ export default {
     },
     setRecentQueries() {
       const tab = JSON.parse(localStorage.getItem('recent-queries'));
-      localStorage.setItem(
-        'recent-queries',
-        JSON.stringify(this.newRecentQuery(tab))
-      );
+      localStorage.setItem('recent-queries', JSON.stringify(this.newRecentQuery(tab)));
       this.getRecentQueries();
     },
     setBookmarks() {
       const bookmarks = JSON.parse(localStorage.getItem('bookmarks'));
-      localStorage.setItem(
-        'bookmarks',
-        JSON.stringify(this.newBookmark(bookmarks))
-      );
+      localStorage.setItem('bookmarks', JSON.stringify(this.newBookmark(bookmarks)));
       this.getRecentQueries();
     },
     newRecentQuery(tab) {
@@ -470,9 +454,7 @@ export default {
           currentEntityQueries.push(newQuery);
         }
       }
-      return allQueries
-        .filter((el) => el.entity !== this.storeEntity)
-        .concat(currentEntityQueries);
+      return allQueries.filter((el) => el.entity !== this.storeEntity).concat(currentEntityQueries);
     },
     newBookmark(tab) {
       const allQueries = tab;
@@ -486,8 +468,7 @@ export default {
               : this.$route.path.includes('switch')
               ? 'switch'
               : 'host',
-          search:
-            this.$route.path === '/main/inventory' ? this.storeSearch : '',
+          search: this.$route.path === '/main/inventory' ? this.storeSearch : '',
         },
         url: this.$route.path,
         id: this.$route.params.id,
@@ -510,9 +491,7 @@ export default {
         }
         currentEntityQueries.push(newQuery);
       }
-      return allQueries
-        .filter((el) => el.entity !== this.storeEntity)
-        .concat(currentEntityQueries);
+      return allQueries.filter((el) => el.entity !== this.storeEntity).concat(currentEntityQueries);
     },
     removeBookmark(item) {
       const bookmarks = JSON.parse(localStorage.getItem('bookmarks'));

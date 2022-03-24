@@ -93,28 +93,20 @@ export default {
           format: (v, o) => {
             v = unArray(v);
             const type = unArray(o.type) ? unArray(o.type).toLowerCase() : '';
-            const descr = unArray(o.description)
-              ? unArray(o.description).toLowerCase()
-              : '';
+            const descr = unArray(o.description) ? unArray(o.description).toLowerCase() : '';
             if (type) {
               if (type.indexOf('switch') > -1)
                 return '<span class="mdi mdi-swap-horizontal-bold"></span>';
-              if (type.indexOf('router') > -1)
-                return '<span class="mdi mdi-router"></span>';
-              if (type.indexOf('wlan') > -1)
-                return '<span class="mdi mdi-wifi"></span>';
-              if (type.indexOf('phone') > -1)
-                return '<span class="mdi mdi-phone"></span>';
-              if (type.indexOf('print') > -1)
-                return '<span class="mdi mdi-printer"></span>';
+              if (type.indexOf('router') > -1) return '<span class="mdi mdi-router"></span>';
+              if (type.indexOf('wlan') > -1) return '<span class="mdi mdi-wifi"></span>';
+              if (type.indexOf('phone') > -1) return '<span class="mdi mdi-phone"></span>';
+              if (type.indexOf('print') > -1) return '<span class="mdi mdi-printer"></span>';
             }
             if (descr) {
-              if (descr.indexOf('linux') > -1)
-                return '<span class="mdi mdi-linux"></span>';
+              if (descr.indexOf('linux') > -1) return '<span class="mdi mdi-linux"></span>';
               if (descr.indexOf('windows') > -1)
                 return '<span class="mdi mdi-microsoft-windows"></span>';
-              if (descr.indexOf('print') > -1)
-                return '<span class="mdi mdi-printer"></span>';
+              if (descr.indexOf('print') > -1) return '<span class="mdi mdi-printer"></span>';
             }
             return '<span class="mdi mdi-monitor-small"></span>';
           },
@@ -131,12 +123,8 @@ export default {
             if (v) {
               const type = unArray(o.type);
               if (type && type.toLowerCase().indexOf('switch') > -1)
-                return (
-                  '<a href="#/main/inventory/switch/' + o.id + '">' + v + '</a>'
-                );
-              return (
-                '<a href="#/main/inventory/host/' + o.id + '">' + v + '</a>'
-              );
+                return '<a href="#/main/inventory/switch/' + o.id + '">' + v + '</a>';
+              return '<a href="#/main/inventory/host/' + o.id + '">' + v + '</a>';
             }
             return '';
           },
@@ -155,12 +143,8 @@ export default {
             if (v) {
               const type = unArray(o.type);
               if (type && type.toLowerCase().indexOf('switch') > -1)
-                return (
-                  '<a href="#/main/inventory/switch/' + o.id + '">' + v + '</a>'
-                );
-              return (
-                '<a href="#/main/inventory/host/' + o.id + '">' + v + '</a>'
-              );
+                return '<a href="#/main/inventory/switch/' + o.id + '">' + v + '</a>';
+              return '<a href="#/main/inventory/host/' + o.id + '">' + v + '</a>';
             }
             return '';
           },
@@ -198,9 +182,7 @@ export default {
                 '</a> ' +
                 firstValue.iface;
               if (total > 1)
-                formatted += ` <span class="additional-ports-counter">(+${
-                  total - 1
-                })</span>`;
+                formatted += ` <span class="additional-ports-counter">(+${total - 1})</span>`;
             }
             formatted += '</span>';
             return formatted;
@@ -212,8 +194,7 @@ export default {
               for (let i of v) {
                 let current = i.name + ' ' + i.iface;
                 if (i.count !== undefined)
-                  current +=
-                    ' (' + i.count + ' mac' + (i.count > 1 ? 's' : '') + ')';
+                  current += ' (' + i.count + ' mac' + (i.count > 1 ? 's' : '') + ')';
                 tooltip.push(current);
               }
             }

@@ -4,15 +4,10 @@
       <v-card :height="cardHeight" id="host-card">
         <table class="device-info mb-3">
           <tbody>
-            <tr
-              v-for="(propertyValue, propertyKey) in device"
-              :key="propertyKey"
-            >
+            <tr v-for="(propertyValue, propertyKey) in device" :key="propertyKey">
               <template v-if="propertyKey !== 'iface'">
                 <th class="text-left px-2">
-                  {{
-                    propertyKey.charAt(0).toUpperCase() + propertyKey.slice(1)
-                  }}
+                  {{ propertyKey.charAt(0).toUpperCase() + propertyKey.slice(1) }}
                 </th>
                 <td class="text-left px-2" :id="'device-' + propertyKey">
                   <!-- Array -->
@@ -27,33 +22,19 @@
                         @click="openExpand(propertyKey)"
                         >mdi-chevron-down</v-icon
                       >
-                      <div
-                        v-if="propertyValue[0]"
-                        :class="'expand-panel--' + propertyKey"
-                      >
+                      <div v-if="propertyValue[0]" :class="'expand-panel--' + propertyKey">
                         <template v-for="(subValue, subKey) in propertyValue">
-                          <p
-                            class="mb-0"
-                            v-if="subKey !== 0"
-                            :key="subValue + `-${subKey}`"
-                          >
+                          <p class="mb-0" v-if="subKey !== 0" :key="subValue + `-${subKey}`">
                             {{ subValue }}
                           </p>
                         </template>
                       </div>
                     </template>
                     <!-- Array and object -- route -->
-                    <template
-                      v-if="
-                        checkIfObject(propertyValue[0]) &&
-                        propertyKey === 'route'
-                      "
-                    >
+                    <template v-if="checkIfObject(propertyValue[0]) && propertyKey === 'route'">
                       <div v-if="propertyValue[0].dest">
                         dest {{ propertyValue[0].dest }}
-                        <span v-if="propertyValue[0].via">
-                          via {{ propertyValue[0].via }}
-                        </span>
+                        <span v-if="propertyValue[0].via"> via {{ propertyValue[0].via }} </span>
                         <span v-if="propertyValue[0].iface">
                           dev {{ propertyValue[0].iface }}
                         </span>
@@ -65,33 +46,18 @@
                           >mdi-chevron-down</v-icon
                         >
                       </div>
-                      <div
-                        v-if="propertyValue[0]"
-                        :class="'expand-panel--' + propertyKey"
-                      >
-                        <div
-                          v-for="(subValue, subKey) in propertyValue"
-                          :key="subKey"
-                        >
+                      <div v-if="propertyValue[0]" :class="'expand-panel--' + propertyKey">
+                        <div v-for="(subValue, subKey) in propertyValue" :key="subKey">
                           <p v-if="subKey !== 0 && subValue.dest" class="mb-0">
                             dest {{ subValue.dest }}
-                            <span v-if="subValue.via">
-                              via {{ subValue.via }}
-                            </span>
-                            <span v-if="subValue.iface">
-                              dev {{ subValue.iface }}
-                            </span>
+                            <span v-if="subValue.via"> via {{ subValue.via }} </span>
+                            <span v-if="subValue.iface"> dev {{ subValue.iface }} </span>
                           </p>
                         </div>
                       </div>
                     </template>
                     <!-- Array and object -- vlan -->
-                    <template
-                      v-if="
-                        checkIfObject(propertyValue[0]) &&
-                        propertyKey === 'vlan'
-                      "
-                    >
+                    <template v-if="checkIfObject(propertyValue[0]) && propertyKey === 'vlan'">
                       {{ propertyValue[0].id }} {{ propertyValue[0].name }}
                       <v-icon
                         v-if="propertyValue.length > 1"
@@ -111,9 +77,7 @@
                   </template>
                   <!-- Not Array -->
                   <template v-else>
-                    <span v-if="!checkIfObject(propertyValue)">{{
-                      propertyValue
-                    }}</span>
+                    <span v-if="!checkIfObject(propertyValue)">{{ propertyValue }}</span>
                   </template>
                 </td>
               </template>
@@ -370,9 +334,7 @@ export default {
     openExpand(val) {
       const expandedPanel = document.querySelector('.expand-panel--' + val);
       if (expandedPanel) {
-        const displayValue = window
-          .getComputedStyle(expandedPanel)
-          .getPropertyValue('display');
+        const displayValue = window.getComputedStyle(expandedPanel).getPropertyValue('display');
         if (displayValue === 'block') {
           expandedPanel.style.display = 'none';
         } else if (displayValue === 'none') {
@@ -405,11 +367,7 @@ export default {
      * @returns {string|array} The equivalent ip format
      */
     formatIfaceIp(ifname) {
-      if (
-        this.device.iface &&
-        this.device.iface[ifname] &&
-        this.device.iface[ifname].ip
-      )
+      if (this.device.iface && this.device.iface[ifname] && this.device.iface[ifname].ip)
         return Array.isArray(this.device.iface[ifname].ip)
           ? this.device.iface[ifname].ip.join(', ')
           : this.device.iface[ifname].ip;

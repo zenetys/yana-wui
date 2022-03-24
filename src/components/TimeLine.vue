@@ -135,11 +135,9 @@ export default {
       if (findIndex === -1 && this.chartdata.datasets[0].data)
         this.selectedIndex = this.chartdata.datasets[0].data.length - 1;
       else this.selectedIndex = findIndex;
-      this.database =
-        this.chartdata.datasets[0].data[this.selectedIndex].databaseId;
+      this.database = this.chartdata.datasets[0].data[this.selectedIndex].databaseId;
 
-      this.chartdata.datasets[0].pointBackgroundColor = () =>
-        this.colorOnClick();
+      this.chartdata.datasets[0].pointBackgroundColor = () => this.colorOnClick();
       this.chartdata.datasets[0].pointBorderColor = () => this.colorOnClick();
       this.$data._chart.update();
     },
@@ -165,8 +163,7 @@ export default {
         return;
       } else {
         this.selectedIndex = clickedItem._index;
-        this.database =
-          this.chartdata.datasets[0].data[clickedItem._index].databaseId;
+        this.database = this.chartdata.datasets[0].data[clickedItem._index].databaseId;
         this.updateStoreDatabase(this.database);
         this.$data._chart.update();
       }

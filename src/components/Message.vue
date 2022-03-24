@@ -65,9 +65,7 @@ export default {
     messageContent() {
       return (
         this.message.content +
-        (this.message.error
-          ? '\nError detail: ' + this.message.error.message
-          : '')
+        (this.message.error ? '\nError detail: ' + this.message.error.message : '')
       );
     },
   },

@@ -5,11 +5,9 @@
         <tr>
           <th class="text-left px-2">Name</th>
           <td class="text-left pl-2">
-            <router-link
-              :to="'/main/inventory/host/' + this.device.id"
-              id="device-name"
-              >{{ this.deviceName }}</router-link
-            >
+            <router-link :to="'/main/inventory/host/' + this.device.id" id="device-name">{{
+              this.deviceName
+            }}</router-link>
             <span class="secondary-names">{{ this.deviceSecondaryNames }}</span>
           </td>
         </tr>
@@ -147,8 +145,7 @@ export default {
                   label = `<a href="#/main/inventory/switch/${value.id}">${label}</a>`;
                 }
 
-                label =
-                  '<span class="mdi mdi-swap-horizontal-bold"></span> ' + label;
+                label = '<span class="mdi mdi-swap-horizontal-bold"></span> ' + label;
               }
 
               const tab = [];
@@ -158,13 +155,7 @@ export default {
                 }
               });
 
-              return (
-                '<span class="nowrap" title="' +
-                tab.join('\n') +
-                '">' +
-                label +
-                '</span>'
-              );
+              return '<span class="nowrap" title="' + tab.join('\n') + '">' + label + '</span>';
             });
 
             return formatted.join(', ');
@@ -204,9 +195,7 @@ export default {
       return unArray(this.device.description);
     },
     deviceIp() {
-      return Array.isArray(this.device.ip)
-        ? this.device.ip.join(', ')
-        : this.device.ip;
+      return Array.isArray(this.device.ip) ? this.device.ip.join(', ') : this.device.ip;
     },
   },
   methods: {
@@ -236,9 +225,7 @@ export default {
     itemClass(item) {
       let classes = '';
 
-      if (item.status)
-        classes +=
-          'status-' + item.status.toLowerCase().replace(/[^a-z0-9]/g, '-');
+      if (item.status) classes += 'status-' + item.status.toLowerCase().replace(/[^a-z0-9]/g, '-');
       return classes;
     },
     getClass(itemKey, tableItem) {

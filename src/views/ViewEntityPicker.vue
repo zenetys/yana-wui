@@ -66,11 +66,7 @@
       </v-container>
 
       <!-- Grid Display Mode -->
-      <v-container
-        v-if="
-          entityPickerDisplayMode === 'grid' && filteredEntities.length !== 0
-        "
-      >
+      <v-container v-if="entityPickerDisplayMode === 'grid' && filteredEntities.length !== 0">
         <v-row class="row justify-center align-center">
           <!-- Entities -->
           <v-col
@@ -100,9 +96,7 @@
 
       <!-- Table Display Mode -->
       <v-container
-        v-if="
-          entityPickerDisplayMode === 'table' && filteredEntities.length !== 0
-        "
+        v-if="entityPickerDisplayMode === 'table' && filteredEntities.length !== 0"
         id="table-view"
       >
         <v-row class="row justify-center align-center">
@@ -125,10 +119,7 @@
               >
                 <div :key="`entity-${headerIndex}`">
                   <router-link :to="'/main'">
-                    <span
-                      v-if="header.value === 'name'"
-                      @click="updateStoreEntity(item.name)"
-                    >
+                    <span v-if="header.value === 'name'" @click="updateStoreEntity(item.name)">
                       {{ item.name }}
                     </span>
                   </router-link>
@@ -150,11 +141,7 @@ a {
 .entity-card {
   &:hover {
     cursor: pointer;
-    background-image: linear-gradient(
-      to left bottom,
-      rgba(16, 110, 132, 1),
-      rgba(30, 184, 206, 1)
-    );
+    background-image: linear-gradient(to left bottom, rgba(16, 110, 132, 1), rgba(30, 184, 206, 1));
   }
   .entity-name {
     color: #ffffff;
@@ -193,11 +180,7 @@ export default {
     filteredEntities() {
       return this.storeEntities
         .map((entity) => ({ name: entity }))
-        .filter(
-          (el) =>
-            el.name.toLowerCase().indexOf(this.entitySearch.toLowerCase()) !==
-            -1
-        );
+        .filter((el) => el.name.toLowerCase().indexOf(this.entitySearch.toLowerCase()) !== -1);
     },
   },
   methods: {
@@ -210,8 +193,7 @@ export default {
       const searchField = document.getElementById('search-field');
       if (header && searchField) {
         this.tableHeight =
-          window.innerHeight -
-          (header.clientHeight + searchField.clientHeight + 136);
+          window.innerHeight - (header.clientHeight + searchField.clientHeight + 136);
       }
     },
   },

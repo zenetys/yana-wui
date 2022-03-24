@@ -57,9 +57,7 @@ export default {
         swName: {
           format: (v, o) => {
             v = unArray(v);
-            return (
-              '<a href="#/main/inventory/switch/' + o.swId + '"> ' + v + ' </a>'
-            );
+            return '<a href="#/main/inventory/switch/' + o.swId + '"> ' + v + ' </a>';
           },
           isHtml: true,
         },
@@ -68,12 +66,7 @@ export default {
             v = unArray(v);
             if (v) {
               return (
-                '<a href="#/main/inventory/switch/' +
-                v.id +
-                '"> ' +
-                v.name +
-                '</a> ' +
-                v.iface
+                '<a href="#/main/inventory/switch/' + v.id + '"> ' + v.name + '</a> ' + v.iface
               );
             }
             return v;

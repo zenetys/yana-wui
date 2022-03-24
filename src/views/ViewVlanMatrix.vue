@@ -18,9 +18,7 @@
         </tr>
         <tr v-for="vlan in vlans" :key="vlan.id">
           <th scope="row" class="font-weight-regular">
-            <router-link :to="'/main/inventory/switch/' + vlan.id">{{
-              vlan.name
-            }}</router-link>
+            <router-link :to="'/main/inventory/switch/' + vlan.id">{{ vlan.name }}</router-link>
           </th>
           <td
             class="vlan-number"
@@ -48,10 +46,7 @@
         <tr>
           <th>#switches</th>
           <td></td>
-          <td
-            v-for="formattedVlan in formattedVlans"
-            :key="`el-${formattedVlan.id}`"
-          >
+          <td v-for="formattedVlan in formattedVlans" :key="`el-${formattedVlan.id}`">
             {{ amountOfswitchesFromVlan(formattedVlan.id) }}
           </td>
         </tr>
@@ -66,11 +61,7 @@
       class="overlay"
       z-index="9"
     >
-      <v-progress-circular
-        indeterminate
-        size="64"
-        color="#a2a2a2"
-      ></v-progress-circular>
+      <v-progress-circular indeterminate size="64" color="#a2a2a2"></v-progress-circular>
     </v-overlay>
   </v-card>
 </template>
@@ -302,8 +293,7 @@ export default {
 
       this.tableDimensions = tableVlan
         ? {
-            height:
-              window.innerHeight - tableVlan.getBoundingClientRect().top - 130,
+            height: window.innerHeight - tableVlan.getBoundingClientRect().top - 130,
           }
         : { height: '100%' };
     },
