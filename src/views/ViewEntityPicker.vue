@@ -6,7 +6,7 @@
                 <router-link to="/">
                     <img
                         class="py-1 pl-0 d-flex justify-start align-center"
-                        src="../assets/images/zenetys-fg-black-bg-full-transparent_LD.png"
+                        src="assets/images/zenetys-fg-black-bg-full-transparent_LD.png"
                         height="40"
                         />
                 </router-link>
