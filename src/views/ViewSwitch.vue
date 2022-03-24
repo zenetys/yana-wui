@@ -28,7 +28,7 @@
       :api="apiUrl"
       array-data=""
       height="auto"
-      :auto-table-height-extra="[-120]"
+      :height-offsets="[-120]"
       :column-definition="columnDefinition"
       :item-class="itemClass"
     />
@@ -90,7 +90,6 @@ export default {
   },
   data() {
     return {
-      // deviceInfo: {},
       columnDefinition: {
         did: {
           hidden: true,
@@ -128,37 +127,34 @@ export default {
         tagged: {
           getClass: (tableItem) => this.getClass('tagged', tableItem),
           getTitle: (tableItem) => this.getTitle('tagged', tableItem),
-          getStyle: () => {
-            return 'white-space: normal;';
-          },
+          getStyle: () => 'white-space: normal;',
         },
         peers: {
-          getStyle: () => {
-            return 'white-space: normal;';
-          },
-          format: (values) => {
-            const formatted = values.map((value) => {
-              let label = value.label;
+          getStyle: () => 'white-space: normal;',
+          format: (peers) => {
+            const formattedPeers = peers.map((peer) => {
+              let label = peer.label;
 
-              if (value.type?.includes('switch')) {
-                if (value.id) {
-                  label = `<a href="#/main/inventory/switch/${value.id}">${label}</a>`;
+              if (peer.type?.includes('switch')) {
+                if (peer.id) {
+                  label = `<a href="#/main/inventory/switch/${peer.id}">${label}</a>`;
                 }
 
                 label = '<span class="mdi mdi-swap-horizontal-bold"></span> ' + label;
               }
 
               const tab = [];
-              Object.keys(value).forEach((key) => {
+
+              Object.keys(peer).forEach((key) => {
                 if (key !== 'label' && key !== 'id') {
-                  tab.push(key + ': ' + value[key]);
+                  tab.push(key + ': ' + peer[key]);
                 }
               });
 
               return '<span class="nowrap" title="' + tab.join('\n') + '">' + label + '</span>';
             });
 
-            return formatted.join(', ');
+            return formattedPeers.join(', ');
           },
           isHtml: true,
         },
@@ -226,6 +222,7 @@ export default {
       let classes = '';
 
       if (item.status) classes += 'status-' + item.status.toLowerCase().replace(/[^a-z0-9]/g, '-');
+
       return classes;
     },
     getClass(itemKey, tableItem) {
@@ -236,16 +233,12 @@ export default {
       return '';
     },
     getTitle(itemKey, tableItem) {
-      if (
-        tableItem &&
-        tableItem._meta &&
-        tableItem._meta[itemKey] &&
-        tableItem._meta[itemKey].text
-      ) {
+      if (tableItem?._meta[itemKey]?.text) {
         return Array.isArray(tableItem._meta[itemKey].text)
           ? tableItem._meta[itemKey].text.join('\n')
           : tableItem._meta[itemKey].text;
       }
+
       return '';
     },
   },
@@ -259,16 +252,16 @@ export default {
     storeSearch() {
       this.$router.push('/main/inventory');
     },
-    '$route.params.id': function () {
-      this.getDeviceInfo();
+    '$route.params.id': {
+      immediate: true,
+      handler() {
+        this.getDeviceInfo();
+      },
     },
   },
   beforeMount() {
     /* redirect to the entity-picker if none is set, at least for now */
     if (!this.storeEntity) this.$router.push('/entity-picker');
-  },
-  mounted() {
-    this.getDeviceInfo();
   },
   updated() {
     window.dispatchEvent(new Event('resize'));

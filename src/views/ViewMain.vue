@@ -68,7 +68,7 @@
           background-color="#e8e8e8d6"
           prepend-inner-icon="mdi-server-network"
         ></v-autocomplete>
-        <v-btn icon small @click="setBookmarks" class="mt-1 ml-1" title="Add to favorite">
+        <v-btn icon small @click="setBookmarks" class="mt-1 ml-1" title="Add to Favorites">
           <v-icon> mdi-bookmark </v-icon>
         </v-btn>
       </v-col>
@@ -89,7 +89,7 @@
           <img
             class="py-1 pl-4 d-flex justify-start align-center"
             height="40"
-            src="../assets/images/zenetys-fg-black-bg-full-transparent_LD.png"
+            src="/assets/images/zenetys-fg-black-bg-full-transparent_LD.png"
             alt=""
           />
         </router-link>
@@ -189,11 +189,11 @@
       hide-on-scroll
       grow
       height=""
-      :style="this.bottomBarStyle()"
+      :style="this.bottomBarStyle"
     >
       <v-col cols="12">
         <v-card>
-          <TimeLine :key="timeLineKey" @error="onErrorOccurs" class="bottom-timeline" />
+          <TimeLine :key="timeLineKey" @error="onError" class="bottom-timeline" />
         </v-card>
       </v-col>
     </v-bottom-navigation>
@@ -325,8 +325,8 @@ export default {
       get() {
         return this.$store.getters.storeEntity;
       },
-      set(v) {
-        this.$store.commit('EDIT_STORE_ENTITY', v);
+      set(newEntity) {
+        this.$store.commit('EDIT_STORE_ENTITY', newEntity);
       },
     },
     /* like mapGetters + mapActions to be able to use v-model */
@@ -334,8 +334,8 @@ export default {
       get() {
         return this.$store.getters.storeInventoryMode;
       },
-      set(v) {
-        this.$store.commit('EDIT_STORE_INVENTORY_MODE', v);
+      set(newInventoryMode) {
+        this.$store.commit('EDIT_STORE_INVENTORY_MODE', newInventoryMode);
       },
     },
     /* like mapGetters + mapActions to be able to use v-model */
@@ -343,9 +343,14 @@ export default {
       get() {
         return this.$store.getters.storeSearch;
       },
-      set(v) {
-        this.$store.commit('EDIT_STORE_SEARCH', v);
+      set(newSearch) {
+        this.$store.commit('EDIT_STORE_SEARCH', newSearch);
       },
+    },
+    bottomBarStyle() {
+      return this.$vuetify.breakpoint.mdAndDown
+        ? 'padding-left:5px;padding-right:5px;'
+        : 'padding-left:261px;padding-right:5px;';
     },
   },
   methods: {
@@ -353,14 +358,6 @@ export default {
       setTimeout(() => this.updateStoreSearchOnAnyKeyUp(this.search), 100);
     },
     ...mapActions(['updateStoreDatabase']),
-    drawerValueByBreakpoint() {
-      this.drawer = !this.$vuetify.breakpoint.mdAndDown;
-    },
-    bottomBarStyle() {
-      return this.$vuetify.breakpoint.mdAndDown
-        ? 'padding-left:5px;padding-right:5px;'
-        : 'padding-left:261px;padding-right:5px;';
-    },
     updateStoreSearchOnEnterPress(searchValue) {
       clearTimeout(this.searchTimeOutId);
       this.$store.commit('EDIT_STORE_SEARCH', searchValue);
@@ -372,7 +369,10 @@ export default {
         this.setRecentQueries();
       }, this.searchUpdateTimeOut);
     },
-    onErrorOccurs(payload) {
+    drawerValueByBreakpoint() {
+      this.drawer = !this.$vuetify.breakpoint.mdAndDown;
+    },
+    onError(payload) {
       this.$store.commit('EDIT_STORE_INFO_MESSAGE', payload);
       console.log(this.$store.state.storeInfoMessage);
     },
@@ -394,32 +394,36 @@ export default {
       );
     },
     loadRecentQuery(query) {
+      this.storeSearch = this.search = query.queryInfo.search;
+
       if (query.url === '/main/inventory') {
-        this.storeSearch = this.search = query.queryInfo.search;
         this.storeInventoryMode = query.queryInfo.inventoryMode;
         this.$router.push('/main/inventory').catch(() => {});
       } else {
-        this.storeSearch = this.search = query.queryInfo.search;
         this.$router.push('' + query.url).catch(() => {});
       }
     },
     getRecentQueries() {
       const rQueries = JSON.parse(localStorage.getItem('recent-queries'));
       const bookmarks = JSON.parse(localStorage.getItem('bookmarks'));
+
       rQueries
         ? (this.recentQueries = this.filterQueries(rQueries))
         : localStorage.setItem('recent-queries', JSON.stringify([]));
+
       bookmarks
         ? (this.bookMarks = this.filterQueries(bookmarks))
         : localStorage.setItem('bookmarks', JSON.stringify([]));
     },
     setRecentQueries() {
       const tab = JSON.parse(localStorage.getItem('recent-queries'));
+
       localStorage.setItem('recent-queries', JSON.stringify(this.newRecentQuery(tab)));
       this.getRecentQueries();
     },
     setBookmarks() {
       const bookmarks = JSON.parse(localStorage.getItem('bookmarks'));
+
       localStorage.setItem('bookmarks', JSON.stringify(this.newBookmark(bookmarks)));
       this.getRecentQueries();
     },
@@ -440,21 +444,23 @@ export default {
         index: new Date().getTime(),
       };
 
-      if (this.search) {
-        if (
-          currentEntityQueries.findIndex(
-            (el) =>
-              el.queryInfo.search === this.search &&
-              el.queryInfo.inventoryMode === this.storeInventoryMode
-          ) === -1
-        ) {
-          if (currentEntityQueries.length >= 5) {
-            currentEntityQueries.pop();
-          }
-          currentEntityQueries.push(newQuery);
+      if (
+        this.search &&
+        !currentEntityQueries.find(
+          (entity) =>
+            entity.queryInfo.search === this.search &&
+            entity.queryInfo.inventoryMode === this.storeInventoryMode
+        )
+      ) {
+        if (currentEntityQueries.length >= 5) {
+          currentEntityQueries.pop();
         }
+        currentEntityQueries.push(newQuery);
       }
-      return allQueries.filter((el) => el.entity !== this.storeEntity).concat(currentEntityQueries);
+
+      return allQueries
+        .filter((query) => query.entity !== this.storeEntity)
+        .concat(currentEntityQueries);
     },
     newBookmark(tab) {
       const allQueries = tab;
@@ -477,35 +483,40 @@ export default {
           : '',
         index: new Date().getTime(),
       };
+
       if (
-        currentEntityQueries.findIndex(
+        currentEntityQueries.find(
           (el) =>
             el.url === this.$route.path &&
             el.queryInfo.search === this.search &&
             el.id === this.$route.params.id &&
             el.queryInfo.inventoryMode === newQuery.queryInfo.inventoryMode
-        ) === -1
+        )
       ) {
         if (currentEntityQueries.length >= 10) {
           currentEntityQueries.pop();
         }
         currentEntityQueries.push(newQuery);
       }
+
       return allQueries.filter((el) => el.entity !== this.storeEntity).concat(currentEntityQueries);
     },
-    removeBookmark(item) {
+    removeBookmark(bookmark) {
       const bookmarks = JSON.parse(localStorage.getItem('bookmarks'));
+
       bookmarks.splice(
-        bookmarks.findIndex((el) => el.index === item.index),
+        bookmarks.findIndex((el) => el.index === bookmark.index),
         1
       );
+
       localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
       this.getRecentQueries();
     },
-    removeRecentQuery(item) {
+    removeRecentQuery(query) {
       const rQueries = JSON.parse(localStorage.getItem('recent-queries'));
+
       rQueries.splice(
-        rQueries.findIndex((el) => el.index === item.index),
+        rQueries.findIndex((rQuery) => rQuery.index === query.index),
         1
       );
       localStorage.setItem('recent-queries', JSON.stringify(rQueries));
@@ -513,7 +524,7 @@ export default {
     },
     filterQueries(queriesArray) {
       return queriesArray
-        .filter((el) => el.entity === this.storeEntity)
+        .filter((query) => query.entity === this.storeEntity)
         .sort((a, b) => b.index - a.index);
     },
   },
@@ -522,36 +533,41 @@ export default {
      * for the AutoTable. */
     storeEntity() {
       this.updateStoreDatabase('');
+
       // Reset search field
       if (!this.keepSearch) {
         this.search = '';
         this.$store.commit('EDIT_STORE_SEARCH', '');
       }
+
       if (this.$route.name !== 'ViewVlanMatrix') {
         this.$router.push('/main/inventory').catch(() => {});
       }
+
       this.timeLineKey++;
       this.setRecentQueries();
     },
     $route(to) {
-      if (to.path !== '/main/inventory') {
-        if (!this.keepSearch) {
-          this.search = '';
-          this.$store.commit('EDIT_STORE_SEARCH', '');
-        }
+      if (to.path !== '/main/inventory' && !this.keepSearch) {
+        this.search = '';
+        this.$store.commit('EDIT_STORE_SEARCH', '');
       }
     },
   },
   mounted() {
     if (this.storeEntities.length === 0) queries.fetchUpdateStoreEntities();
+
     this.$nextTick(function () {
       this.drawerValueByBreakpoint();
     });
+
     this.getRecentQueries();
   },
   beforeMount() {
-    if (this.inventoryModes.indexOf(this.storeInventoryMode) === -1)
+    if (!this.inventoryModes.includes(this.storeInventoryMode)) {
       this.storeInventoryMode = this.defaultInventoryMode;
+    }
+
     /* redirect to the entity-picker if none is set, at least for now */
     if (!this.storeEntity) this.$router.push('/entity-picker');
   },

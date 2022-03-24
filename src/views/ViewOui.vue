@@ -22,9 +22,9 @@
     <v-btn color="#17B8CE" class="white--text" @click="handleOuiLookupClick()"> Find </v-btn>
     <div class="pt-8">
       <table v-if="typeof ouiMessage === 'object'">
-        <tr v-for="(messageValue, messageKey) in ouiMessage" :key="messageKey">
-          <td class="pr-2">{{ messageKey }}</td>
-          <td>{{ messageValue }}</td>
+        <tr v-for="(subMessage, subMessageKey) in ouiMessage" :key="subMessageKey">
+          <td class="pr-2">{{ subMessageKey }}</td>
+          <td>{{ subMessage }}</td>
         </tr>
       </table>
       <p v-else>{{ ouiMessage }}</p>
@@ -70,8 +70,11 @@ export default {
         this.$api
           .get('/oui', searchOptions)
           .then((response) => {
-            if (isEmptyObject(response.data)) this.ouiMessage = 'Nothing found';
-            else this.ouiMessage = response.data;
+            if (isEmptyObject(response.data)) {
+              this.ouiMessage = 'Nothing found';
+            } else {
+              this.ouiMessage = response.data;
+            }
           })
           .catch((e) => {
             this.ouiMessage = e.toString();

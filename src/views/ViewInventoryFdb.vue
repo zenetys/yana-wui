@@ -7,7 +7,7 @@
       :api="apiUrl"
       array-data=""
       height="auto"
-      :auto-table-height-extra="[-120]"
+      :height-offsets="[-120]"
       :column-definition="columnDefinition"
     />
     <span v-if="storeSearch === ''">Please enter something to search</span>
@@ -41,44 +41,45 @@ export default {
           hidden: true,
         },
         fdbMacDip: {
-          format: (v) => {
-            return unArray(v);
-          },
-          getTooltip: (v) => {
-            if (Array.isArray(v)) {
-              return v.join('\n');
-            } else if (v) {
-              return v;
-            }
-            return '';
+          format: unArray,
+          getTooltip: (input) => {
+            return input ? (Array.isArray(input) ? input.join('\n') : input) : '';
           },
           getStyle: () => 'color: #666;',
         },
         swName: {
-          format: (v, o) => {
-            v = unArray(v);
-            return '<a href="#/main/inventory/switch/' + o.swId + '"> ' + v + ' </a>';
+          format: (input, tableItem) => {
+            input = unArray(input);
+
+            return '<a href="#/main/inventory/switch/' + tableItem.swId + '"> ' + input + ' </a>';
           },
           isHtml: true,
         },
         swIfUplink: {
-          format: (v) => {
-            v = unArray(v);
-            if (v) {
-              return (
-                '<a href="#/main/inventory/switch/' + v.id + '"> ' + v.name + '</a> ' + v.iface
-              );
+          format: (input) => {
+            input = unArray(input);
+
+            let output = '';
+
+            if (input) {
+              output =
+                '<a href="#/main/inventory/switch/' +
+                input.id +
+                '"> ' +
+                input.name +
+                '</a> ' +
+                input.iface;
             }
-            return v;
+
+            return output;
           },
-          getTooltip: (v) => {
-            const tooltip = [];
-            if (v) {
-              for (let i of v) {
-                const current = i.name + ' ' + i.iface;
-                tooltip.push(current);
-              }
+          getTooltip: (inputs) => {
+            let tooltip = [];
+
+            if (inputs) {
+              tooltip = inputs.map((input) => input.name + ' ' + input.iface);
             }
+
             return tooltip.join('\n');
           },
           isHtml: true,
@@ -90,7 +91,8 @@ export default {
     updateApiUrl() {
       const params = this.apiStateParams;
       let url = '';
-      if (params.entity && params.database)
+
+      if (params.entity && params.database) {
         url +=
           '/entity/' +
           encodeURIComponent(params.entity) +
@@ -98,6 +100,8 @@ export default {
           encodeURIComponent(params.database) +
           '&q=' +
           encodeURIComponent(params.search);
+      }
+
       this.apiUrl = url;
     },
   },

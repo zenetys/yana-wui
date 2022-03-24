@@ -1,6 +1,6 @@
 <template>
   <v-card class="elevation-2">
-    <table id="table-vlan" :style="`height:${this.tableDimensions.height}px;`">
+    <table id="table-vlan" :height="this.tableDimensions.height">
       <tbody>
         <tr>
           <th rowspan="2"></th>
@@ -47,7 +47,7 @@
           <th>#switches</th>
           <td></td>
           <td v-for="formattedVlan in formattedVlans" :key="`el-${formattedVlan.id}`">
-            {{ amountOfswitchesFromVlan(formattedVlan.id) }}
+            {{ amountOfswitchesFromVlan(formattedVlan) }}
           </td>
         </tr>
       </tbody>
@@ -230,6 +230,7 @@ export default {
         encodeURIComponent(this.storeEntity) +
         '/vlans?database=' +
         encodeURIComponent(this.storeDatabase);
+
       this.$api
         .get(url)
         .then((response) => {
@@ -239,8 +240,10 @@ export default {
             } else if (a.name.toLowerCase() > b.name.toLowerCase()) {
               return 1;
             }
+
             return 0;
           });
+
           this.formatVlans();
           this.isLoading = false;
         })
@@ -253,18 +256,20 @@ export default {
           });
         });
     },
-
     getVlanClass(vlan, formattedVlan) {
-      return vlan.vlan.findIndex((el) => el.id === formattedVlan.id) === -1
-        ? 'vlan-not-found cell-' + formattedVlan.id
-        : 'vlan-found cell-' + formattedVlan.id;
+      return vlan.vlan.find((subVlan) => subVlan.id === formattedVlan.id)
+        ? 'vlan-found cell-' + formattedVlan.id
+        : 'vlan-not-found cell-' + formattedVlan.id;
     },
-    amountOfswitchesFromVlan(vlanId) {
+    amountOfswitchesFromVlan(vlan) {
       let amount = 0;
 
-      this.vlans.forEach((vlan) => {
-        if (vlan.vlan.some((subVlan) => subVlan.id === vlanId)) amount++;
+      this.vlans.forEach((subVlan) => {
+        if (this.findMatchingVlan(subVlan.vlan, vlan)) {
+          amount++;
+        }
       });
+
       return amount;
     },
     onOverCell(cellId) {
