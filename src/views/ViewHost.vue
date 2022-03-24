@@ -29,7 +29,7 @@
                       >
                       <div
                         v-if="propertyValue[0]"
-                        :class="'expand_panel__' + propertyKey"
+                        :class="'expand-panel--' + propertyKey"
                       >
                         <template v-for="(subValue, subKey) in propertyValue">
                           <p
@@ -67,7 +67,7 @@
                       </div>
                       <div
                         v-if="propertyValue[0]"
-                        :class="'expand_panel__' + propertyKey"
+                        :class="'expand-panel--' + propertyKey"
                       >
                         <div
                           v-for="(subValue, subKey) in propertyValue"
@@ -100,7 +100,7 @@
                         @click="openExpand(propertyKey)"
                         >mdi-chevron-down</v-icon
                       >
-                      <div :class="'expand_panel__' + propertyKey">
+                      <div :class="'expand-panel--' + propertyKey">
                         <template v-for="(subValue, subKey) in propertyValue">
                           <p class="mb-0" v-if="subKey !== 0" :key="subKey">
                             {{ subValue.id }} {{ subValue.name }}
@@ -144,7 +144,7 @@
                 <span v-if="header !== 'ip'">
                   {{ iface[header] }}
                 </span>
-                <span v-else>
+                <span class="cell-ip" v-else>
                   {{ formatIfaceIp(iface.name) }}
                 </span>
               </td>
@@ -159,29 +159,29 @@
 <style lang="scss" scoped>
 * {
   font-size: 12.8px;
-}
 
-.cell-green {
-  background-color: #b1e8b6;
-}
-
-.cell-red {
-  background-color: #fac8d1;
-}
-
-.cell-ip {
-  max-width: 200px;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  th {
+    vertical-align: top;
+  }
 }
 
 #host-card,
 #host-ifaces-card {
   overflow-y: auto;
-}
 
-th {
-  vertical-align: top;
+  .cell-green {
+    background-color: #b1e8b6;
+  }
+
+  .cell-red {
+    background-color: #fac8d1;
+  }
+
+  .cell-ip {
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 }
 
 #host-ifaces-card {
@@ -192,6 +192,44 @@ th {
     display: block;
     white-space: nowrap;
     border-collapse: collapse;
+
+    > tbody > {
+      // Header left
+      tr > th:nth-child(1) {
+        left: 0;
+        text-align: left;
+        vertical-align: middle;
+        padding-left: 5px;
+        padding-right: 15px;
+        color: rgba(0, 0, 0, 0.6);
+        background: #fcfcfc;
+        box-shadow: inset 0px -1px rgb(0 0 0 / 12%);
+      }
+
+      // Header top
+      tr:nth-child(2) > th {
+        position: sticky;
+        position: -webkit-sticky;
+        top: 0;
+        padding: 5px;
+        z-index: 7;
+        color: rgba(0, 0, 0, 0.6);
+        text-align: left;
+        background: #fcfcfc;
+        box-shadow: inset 0 -1px 0 rgb(0 0 0 / 12%);
+        box-shadow: inset 1px -1px 0 rgb(0 0 0 / 12%);
+        box-sizing: border-box;
+      }
+
+      // top left cell
+      tr:nth-child(1) > th {
+        position: sticky;
+        position: -webkit-sticky;
+        top: 0;
+        left: 0;
+        background: rgb(255, 255, 255);
+      }
+    }
   }
 
   tr td:last-child {
@@ -207,42 +245,18 @@ th {
     box-shadow: inset 0 -1px 0 rgb(0 0 0 / 12%);
     box-shadow: inset 1px -1px 0 rgb(0 0 0 / 12%);
   }
+}
 
-  table > tbody > {
-    // Header left
-    tr > th:nth-child(1) {
-      left: 0;
-      text-align: left;
-      vertical-align: middle;
-      padding-left: 5px;
-      padding-right: 15px;
-      color: rgba(0, 0, 0, 0.6);
-      background: #fcfcfc;
-      box-shadow: inset 0px -1px rgb(0 0 0 / 12%);
-    }
+#host-card {
+  th {
+    background-color: #fcfcfc !important;
+    color: rgba(0, 0, 0, 0.6);
+  }
 
-    // Header top
-    tr:nth-child(2) > th {
-      position: sticky;
-      position: -webkit-sticky;
-      top: 0;
-      padding: 5px;
-      z-index: 7;
-      color: rgba(0, 0, 0, 0.6);
-      text-align: left;
-      background: #fcfcfc;
-      box-shadow: inset 0 -1px 0 rgb(0 0 0 / 12%);
-      box-shadow: inset 1px -1px 0 rgb(0 0 0 / 12%);
-      box-sizing: border-box;
-    }
-
-    // top left cell
-    tr:nth-child(1) > th {
-      position: sticky;
-      position: -webkit-sticky;
-      top: 0;
-      left: 0;
-      background: rgb(255, 255, 255);
+  .expand-panel {
+    &--ip,
+    &--mac {
+      display: none;
     }
   }
 }
@@ -256,32 +270,14 @@ th {
   }
 }
 
-.device-info th {
-  background-color: #fcfcfc !important;
-  color: rgba(0, 0, 0, 0.6);
-}
-
 .accordion {
   cursor: pointer;
 }
-
-.ifaces,
-.iface-row {
-  background-color: #f1f1f1 !important;
-}
-
 .icon-chevron,
 .icon-chevron:focus {
   position: relative;
   vertical-align: top;
   background-color: none !important;
-}
-
-.expand_panel {
-  &__ip,
-  &__mac {
-    display: none;
-  }
 }
 </style>
 
@@ -372,7 +368,7 @@ export default {
      * @param {string} val - The item object key label
      */
     openExpand(val) {
-      const expandedPanel = document.querySelector('.expand_panel__' + val);
+      const expandedPanel = document.querySelector('.expand-panel--' + val);
       if (expandedPanel) {
         const displayValue = window
           .getComputedStyle(expandedPanel)

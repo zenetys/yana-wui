@@ -41,11 +41,11 @@
           class="pt-2 rounded select-inventory-mode"
         >
           <v-checkbox
-            v-for="(item, index) in inventoryModes"
-            :key="index"
+            v-for="(mode, modeIndex) in inventoryModes"
+            :key="modeIndex"
             v-model="storeInventoryMode"
-            :label="item"
-            :value="item"
+            :label="mode"
+            :value="mode"
             hide-details=""
             :ripple="false"
             tile
@@ -56,11 +56,11 @@
 
       <v-col cols="12" sm="3" md="3" lg="4" xl="2" class="d-flex">
         <v-autocomplete
-          class="choose-entity-menu"
+          class="select-entity-menu"
           :items="storeEntities"
           v-model="storeEntity"
-          label="Chose Entity"
-          placeholder="Chose Entity"
+          label="Select Entity"
+          placeholder="Select Entity"
           solo
           dense
           hide-details=""
@@ -101,19 +101,19 @@
         </router-link>
       </v-toolbar-title>
       <v-list class="pt-0 mt-0">
-        <div v-for="(link, i) in menuSide" :key="i">
+        <div v-for="(sectionLink, linkIndex) in menuSide" :key="linkIndex">
           <v-list-item
-            v-if="!link.subMenus"
-            :to="link.url"
+            v-if="!sectionLink.subMenus"
+            :to="sectionLink.url"
             active-class="deep-cyan--text text--accent-4"
             class="v-list-item"
             dense
-            :style="link.url ? '' : 'opacity:0.5'"
+            :style="sectionLink.url ? '' : 'opacity:0.5'"
           >
             <v-list-item-action class="mr-4">
-              <v-icon size="20">{{ link.icon }}</v-icon>
+              <v-icon size="20">{{ sectionLink.icon }}</v-icon>
             </v-list-item-action>
-            <v-list-item-title v-text="link.name" />
+            <v-list-item-title v-text="sectionLink.name" />
           </v-list-item>
         </div>
       </v-list>
@@ -123,8 +123,8 @@
         <v-divider></v-divider>
         <v-list color="" class="mt-0" v-if="recentQueries.length > 0">
           <v-list-item
-            v-for="(item, i) in recentQueries"
-            :key="i"
+            v-for="(query, queryIndex) in recentQueries"
+            :key="queryIndex"
             active-class="black"
             class="list-item"
           >
@@ -133,14 +133,14 @@
             </v-list-item-icon>
             <v-list-item-content>
               <v-list-item-title
-                @click="loadRecentQuery(item)"
+                @click="loadRecentQuery(query)"
                 class="font-weight-regular"
-                :title="item.query.inventoryMode + ' / ' + item.query.search"
-                v-text="item.query.inventoryMode + ' / ' + item.query.search"
+                :title="getHistoryQueryText(query)"
+                v-text="getHistoryQueryText(query)"
               ></v-list-item-title>
             </v-list-item-content>
             <v-icon
-              @click="removeRecentQuery(item)"
+              @click="removeRecentQuery(query)"
               size="14"
               class="list-item-remove-icon algin-end justify-end"
               >mdi-close</v-icon
@@ -155,30 +155,22 @@
         <v-divider></v-divider>
         <v-list color="" class="mt-0" v-if="bookMarks.length > 0">
           <v-list-item
-            v-for="(item, i) in bookMarks"
-            :key="i"
+            v-for="(bookmark, bookmarkIndex) in bookMarks"
+            :key="bookmarkIndex"
             class="list-item"
           >
             <v-list-item-icon class="mr-0 align-start item-icon">
               <v-icon size="14">mdi-bookmark-outline</v-icon>
             </v-list-item-icon>
-            <v-list-item-content @click="loadRecentQuery(item)">
+            <v-list-item-content @click="loadRecentQuery(bookmark)">
               <v-list-item-title
                 class="font-weight-regular"
-                :title="
-                  item.query.inventoryMode +
-                  (item.query.search ? ' / ' + item.query.search : '') +
-                  (item.label ? ' / ' + item.label : '')
-                "
-                v-text="
-                  item.query.inventoryMode +
-                  (item.query.search ? ' / ' + item.query.search : '') +
-                  (item.label ? ' / ' + item.label : '')
-                "
+                :title="getBookmarksQueryText(bookmark)"
+                v-text="getBookmarksQueryText(bookmark)"
               ></v-list-item-title>
             </v-list-item-content>
             <v-icon
-              @click="removeBookmark(item)"
+              @click="removeBookmark(bookmark)"
               size="14"
               class="list-item-remove-icon algin-end justify-end"
               >mdi-close</v-icon
@@ -224,40 +216,41 @@
   display: none;
 }
 
-::v-deep .v-navigation-drawer__content {
-  margin-top: 47px;
-  position: relative;
-  border-top: solid 1px rgba(0, 0, 0, 0.12);
-}
+::v-deep {
+  .v-navigation-drawer__content {
+    margin-top: 47px;
+    position: relative;
+    border-top: solid 1px rgba(0, 0, 0, 0.12);
+  }
 
-::v-deep .v-navigation-drawer__border {
-  top: 47px;
-}
+  .v-navigation-drawer__border {
+    top: 47px;
+  }
 
-::v-deep .v-toolbar__title {
-  margin-top: -44px;
-  position: fixed;
+  .v-toolbar__title {
+    margin-top: -44px;
+    position: fixed;
+  }
 }
 
 .list-item {
   height: 20px;
   min-height: 20px !important;
   cursor: pointer;
+
+  .list-item-remove-icon {
+    visibility: hidden;
+  }
+
+  &:hover {
+    background-color: #f7f7f7;
+    .list-item-remove-icon {
+      visibility: visible;
+    }
+  }
 }
 
-.list-item .list-item-remove-icon {
-  visibility: hidden;
-}
-
-.list-item:hover {
-  background-color: #f7f7f7;
-}
-
-.list-item:hover .list-item-remove-icon {
-  visibility: visible;
-}
-
-.choose-entity-menu {
+.select-entity-menu {
   z-index: 10;
 }
 
@@ -276,16 +269,15 @@ header {
 }
 
 .aside-navigation {
-  // box-shadow: 0 2px 10px 0 rgb(94 86 105 / 10%);
   z-index: 10;
+
+  .item-icon {
+    margin-top: 2px !important;
+  }
 }
 
 a {
   text-decoration: none;
-}
-
-.item-icon {
-  margin-top: 2px !important;
 }
 </style>
 
@@ -401,14 +393,24 @@ export default {
       this.search = '';
       this.$store.commit('EDIT_STORE_SEARCH', this.search);
     },
-    loadRecentQuery(item) {
-      if (item.url === '/main/inventory') {
-        this.storeSearch = this.search = item.query.search;
-        this.storeInventoryMode = item.query.inventoryMode;
+    getHistoryQueryText(query) {
+      return query.queryInfo.inventoryMode + ' / ' + query.queryInfo.search;
+    },
+    getBookmarksQueryText(bookmark) {
+      return (
+        bookmark.queryInfo.inventoryMode +
+        (bookmark.queryInfo.search ? ' / ' + bookmark.queryInfo.search : '') +
+        (bookmark.label ? ' / ' + bookmark.label : '')
+      );
+    },
+    loadRecentQuery(query) {
+      if (query.url === '/main/inventory') {
+        this.storeSearch = this.search = query.queryInfo.search;
+        this.storeInventoryMode = query.queryInfo.inventoryMode;
         this.$router.push('/main/inventory').catch(() => {});
       } else {
-        this.storeSearch = this.search = item.query.search;
-        this.$router.push('' + item.url).catch(() => {});
+        this.storeSearch = this.search = query.queryInfo.search;
+        this.$router.push('' + query.url).catch(() => {});
       }
     },
     getRecentQueries() {
@@ -442,7 +444,7 @@ export default {
       const currentEntityQueries = this.filterQueries(tab);
       const newQuery = {
         entity: this.storeEntity,
-        query: {
+        queryInfo: {
           inventoryMode: this.storeInventoryMode,
           search: this.search,
         },
@@ -458,8 +460,8 @@ export default {
         if (
           currentEntityQueries.findIndex(
             (el) =>
-              el.query.search === this.search &&
-              el.query.inventoryMode === this.storeInventoryMode
+              el.queryInfo.search === this.search &&
+              el.queryInfo.inventoryMode === this.storeInventoryMode
           ) === -1
         ) {
           if (currentEntityQueries.length >= 5) {
@@ -477,7 +479,7 @@ export default {
       const currentEntityQueries = this.filterQueries(tab);
       const newQuery = {
         entity: this.storeEntity,
-        query: {
+        queryInfo: {
           inventoryMode:
             this.$route.path === '/main/inventory'
               ? this.storeInventoryMode
@@ -498,9 +500,9 @@ export default {
         currentEntityQueries.findIndex(
           (el) =>
             el.url === this.$route.path &&
-            el.query.search === this.search &&
+            el.queryInfo.search === this.search &&
             el.id === this.$route.params.id &&
-            el.query.inventoryMode === newQuery.query.inventoryMode
+            el.queryInfo.inventoryMode === newQuery.queryInfo.inventoryMode
         ) === -1
       ) {
         if (currentEntityQueries.length >= 10) {

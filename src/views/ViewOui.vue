@@ -25,13 +25,13 @@
       Find
     </v-btn>
     <div class="pt-8">
-      <table v-if="typeof ouiResponse === 'object'">
-        <tr v-for="(v, k) in ouiResponse" :key="k">
-          <td class="pr-2">{{ k }}</td>
-          <td>{{ v }}</td>
+      <table v-if="typeof ouiMessage === 'object'">
+        <tr v-for="(messageValue, messageKey) in ouiMessage" :key="messageKey">
+          <td class="pr-2">{{ messageKey }}</td>
+          <td>{{ messageValue }}</td>
         </tr>
       </table>
-      <p v-else>{{ ouiResponse }}</p>
+      <p v-else>{{ ouiMessage }}</p>
     </div>
   </v-col>
 </template>
@@ -49,42 +49,40 @@
 </style>
 
 <script>
+import { isEmptyObject } from '@/plugins/utils';
 export default {
   name: 'ViewOui',
   data() {
     return {
       ouiSearch: '',
-      ouiResponse: '',
+      ouiMessage: '',
     };
   },
   methods: {
     handleOuiLookupClick() {
       if (!this.ouiSearch) {
-        this.ouiResponse = 'Please enter MAC addresses to search';
+        this.ouiMessage = 'Please enter MAC addresses to search';
         return;
+      } else {
+        const searchOptions = {
+          params: {
+            q: this.ouiSearch,
+          },
+          timeout: 5000,
+        };
+
+        this.$api
+          .get('/oui', searchOptions)
+          .then((response) => {
+            if (isEmptyObject(response.data)) this.ouiMessage = 'Nothing found';
+            else this.ouiMessage = response.data;
+          })
+          .catch((e) => {
+            this.ouiMessage = e.toString();
+          });
+
+        this.ouiMessage = 'Searching, please wait...';
       }
-      const searchOptions = {
-        params: {
-          q: this.ouiSearch,
-        },
-        timeout: 5000,
-      };
-
-      this.$api
-        .get('/oui', searchOptions)
-        .then((response) => {
-          if (this.isEmptyObject(response.data))
-            this.ouiResponse = 'Nothing found';
-          else this.ouiResponse = response.data;
-        })
-        .catch((e) => {
-          this.ouiResponse = e.toString();
-        });
-
-      this.ouiResponse = 'Searching, please wait...';
-    },
-    isEmptyObject(o) {
-      return Object.keys(o).length === 0;
     },
   },
 };

@@ -38,3 +38,7 @@ export function copyToClipboard(textToCopy) {
 export function unArray(input) {
   return Array.isArray(input) ? input[0] : input;
 }
+
+export function isEmptyObject(object) {
+  return Object.keys(object).length === 0;
+}

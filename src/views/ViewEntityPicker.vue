@@ -74,8 +74,8 @@
         <v-row class="row justify-center align-center">
           <!-- Entities -->
           <v-col
-            :key="`entity-${index}`"
-            v-for="(entity, index) in filteredEntities"
+            :key="`entity-${entityIndex}`"
+            v-for="(entity, entityIndex) in filteredEntities"
             cols="6"
             sm="4"
             md="3"
@@ -89,7 +89,7 @@
                 min-height="100"
                 @click="updateStoreEntity(entity.name)"
               >
-                <v-card-actions class="">
+                <v-card-actions>
                   <span class="entity-name"> {{ entity.name }}</span>
                 </v-card-actions>
               </v-card>
@@ -120,11 +120,10 @@
               :items-per-page="-1"
             >
               <template
-                v-for="(header, index) in headers"
+                v-for="(header, headerIndex) in headers"
                 v-slot:[`item.${header.value}`]="{ item }"
-                class=""
               >
-                <div :key="`entity-${index}`">
+                <div :key="`entity-${headerIndex}`">
                   <router-link :to="'/main'">
                     <span
                       v-if="header.value === 'name'"
@@ -157,11 +156,10 @@ a {
       rgba(30, 184, 206, 1)
     );
   }
-}
-
-.entity-name {
-  color: #ffffff;
-  text-align: center;
+  .entity-name {
+    color: #ffffff;
+    text-align: center;
+  }
 }
 
 .view-type-button::before {
