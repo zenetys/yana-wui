@@ -12,58 +12,58 @@ import ViewVlanMatrix from '../views/ViewVlanMatrix.vue';
 Vue.use(VueRouter);
 
 const routes = [
-  {
-    path: '/',
-    redirect: {
-      name: 'ViewEntityPicker',
+    {
+        path: '/',
+        redirect: {
+            name: 'ViewEntityPicker',
+        },
     },
-  },
-  {
-    path: '/entity-picker',
-    name: 'ViewEntityPicker',
-    component: ViewEntityPicker,
-  },
-  {
-    path: '/main',
-    name: 'ViewMain',
-    component: ViewMain,
-    redirect: {
-      name: 'ViewInventory',
+    {
+        path: '/entity-picker',
+        name: 'ViewEntityPicker',
+        component: ViewEntityPicker,
     },
-    children: [
-      {
-        path: 'inventory',
-        name: 'ViewInventory',
-        component: ViewInventory,
+    {
+        path: '/main',
+        name: 'ViewMain',
+        component: ViewMain,
+        redirect: {
+            name: 'ViewInventory',
+        },
         children: [
-          {
-            path: 'host/:id',
-            name: 'ViewHost',
-            component: ViewHost,
-          },
-          {
-            path: 'switch/:id',
-            name: 'ViewSwitch',
-            component: ViewSwitch,
-          },
+            {
+                path: 'inventory',
+                name: 'ViewInventory',
+                component: ViewInventory,
+                children: [
+                    {
+                        path: 'host/:id',
+                        name: 'ViewHost',
+                        component: ViewHost,
+                    },
+                    {
+                        path: 'switch/:id',
+                        name: 'ViewSwitch',
+                        component: ViewSwitch,
+                    },
+                ],
+            },
+            {
+                path: 'vlan-matrix',
+                name: 'ViewVlanMatrix',
+                component: ViewVlanMatrix,
+            },
+            {
+                path: 'oui',
+                name: 'ViewOui',
+                component: ViewOui,
+            },
         ],
-      },
-      {
-        path: 'vlan-matrix',
-        name: 'ViewVlanMatrix',
-        component: ViewVlanMatrix,
-      },
-      {
-        path: 'oui',
-        name: 'ViewOui',
-        component: ViewOui,
-      },
-    ],
-  },
+    },
 ];
 
 const router = new VueRouter({
-  routes,
+    routes,
 });
 
 export default router;

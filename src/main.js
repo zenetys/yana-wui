@@ -12,14 +12,14 @@ Vue.config.productionTip = false;
 Vue.prototype.$api = Api;
 
 async function init() {
-  await Api.init();
+    await Api.init();
 
-  new Vue({
-    router,
-    vuetify,
-    store,
-    render: (h) => h(App),
-  }).$mount('#app');
+    new Vue({
+        router,
+        vuetify,
+        store,
+        render: (h) => h(App),
+    }).$mount('#app');
 }
 
 init();
