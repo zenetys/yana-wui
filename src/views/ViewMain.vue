@@ -80,7 +80,7 @@
                     <img
                         class="py-1 pl-4 d-flex justify-start align-center"
                         height="40"
-                        src="/assets/images/zenetys-fg-black-bg-full-transparent_LD.png"
+                        src="assets/images/zenetys-fg-black-bg-full-transparent_LD.png"
                         alt=""
                     />
                 </router-link>
