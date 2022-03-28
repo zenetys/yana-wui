@@ -541,7 +541,8 @@ export default {
         }
 
         /* redirect to the entity-picker if none is set, at least for now */
-        if (!this.storeEntity) this.$router.push('/entity-picker');
+        if (!this.storeEntity)
+            this.$router.push('/entity-picker');
     },
 };
 </script>
