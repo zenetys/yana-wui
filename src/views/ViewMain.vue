@@ -459,7 +459,7 @@ export default {
             };
 
             if (
-                currentEntityQueries.find(
+                !currentEntityQueries.find(
                     (el) =>
                         el.url === this.$route.path &&
                         el.queryInfo.search === this.search &&
