@@ -80,7 +80,7 @@
                     <img
                         class="py-1 pl-4 d-flex justify-start align-center"
                         height="40"
-                        src="/assets/images/zenetys-fg-black-bg-full-transparent_LD.png"
+                        src="assets/images/zenetys-fg-black-bg-full-transparent_LD.png"
                         alt=""
                     />
                 </router-link>
@@ -364,20 +364,20 @@ export default {
             this.$store.commit('EDIT_STORE_SEARCH', this.search);
         },
         getHistoryQueryText(query) {
-            return query.queryInfo.inventoryMode + ' / ' + query.queryInfo.search;
+            return query.query.inventoryMode + ' / ' + query.query.search;
         },
         getBookmarksQueryText(bookmark) {
             return (
-                bookmark.queryInfo.inventoryMode +
-                (bookmark.queryInfo.search ? ' / ' + bookmark.queryInfo.search : '') +
+                bookmark.query.inventoryMode +
+                (bookmark.query.search ? ' / ' + bookmark.query.search : '') +
                 (bookmark.label ? ' / ' + bookmark.label : '')
             );
         },
         loadRecentQuery(query) {
-            this.storeSearch = this.search = query.queryInfo.search;
+            this.storeSearch = this.search = query.query.search;
 
             if (query.url === '/main/inventory') {
-                this.storeInventoryMode = query.queryInfo.inventoryMode;
+                this.storeInventoryMode = query.query.inventoryMode;
                 this.$router.push('/main/inventory').catch(() => {});
             } else {
                 this.$router.push('' + query.url).catch(() => {});
@@ -412,7 +412,7 @@ export default {
             const currentEntityQueries = this.filterQueries(tab);
             const newQuery = {
                 entity: this.storeEntity,
-                queryInfo: {
+                query: {
                     inventoryMode: this.storeInventoryMode,
                     search: this.search,
                 },
@@ -426,8 +426,8 @@ export default {
                 this.search &&
                 !currentEntityQueries.find(
                     (entity) =>
-                        entity.queryInfo.search === this.search &&
-                        entity.queryInfo.inventoryMode === this.storeInventoryMode
+                        entity.query.search === this.search &&
+                        entity.query.inventoryMode === this.storeInventoryMode
                 )
             ) {
                 if (currentEntityQueries.length >= 5) {
@@ -443,7 +443,7 @@ export default {
             const currentEntityQueries = this.filterQueries(tab);
             const newQuery = {
                 entity: this.storeEntity,
-                queryInfo: {
+                query: {
                     inventoryMode:
                         this.$route.path === '/main/inventory'
                             ? this.storeInventoryMode
@@ -459,12 +459,12 @@ export default {
             };
 
             if (
-                currentEntityQueries.find(
+                !currentEntityQueries.find(
                     (el) =>
                         el.url === this.$route.path &&
-                        el.queryInfo.search === this.search &&
+                        el.query.search === this.search &&
                         el.id === this.$route.params.id &&
-                        el.queryInfo.inventoryMode === newQuery.queryInfo.inventoryMode
+                        el.query.inventoryMode === newQuery.query.inventoryMode
                 )
             ) {
                 if (currentEntityQueries.length >= 10) {
@@ -541,7 +541,8 @@ export default {
         }
 
         /* redirect to the entity-picker if none is set, at least for now */
-        if (!this.storeEntity) this.$router.push('/entity-picker');
+        if (!this.storeEntity)
+            this.$router.push('/entity-picker');
     },
 };
 </script>

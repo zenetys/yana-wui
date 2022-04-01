@@ -18,7 +18,7 @@
         >
             <template v-slot:body="{ items, headers }">
                 <tbody>
-                    <tr v-for="item in items" :key="item.id" :class="getRowClass(item)">
+                    <tr v-for="(item, itemIndex) in items" :key="itemIndex" :class="getRowClass(item)">
                         <td
                             v-for="(header, headerIndex) in headers"
                             :key="headerIndex"
@@ -40,7 +40,7 @@
                             <span
                                 v-if="activeCopyCellContent && header.columnDefinition.format(item[header.value], item)"
                                 class="cp-span mdi mdi-content-copy"
-                                @click="copyCellContent('col_' + header.value, headerIndex, $event)"
+                                @click="copyCellContent(id, headerIndex, itemIndex, $event)"
                             >
                                 <span class="cell-copied-tooltip">Copied!</span>
                             </span>
@@ -291,8 +291,10 @@ export default {
             return header.columnDefinition.getClass(tableItem) + ' v-data-table__divider col_' + header.value;
         },
         setTableHeight() {
-            if (this.$props.height === 'auto') this.tableHeight = this.computeAutoTableHeight();
-            else if (this.$props.height) this.tableHeight = this.$props.height;
+            if (this.$props.height === 'auto')
+                this.tableHeight = this.computeAutoTableHeight();
+            else if (this.$props.height)
+                this.tableHeight = this.$props.height;
         },
         computeAutoTableHeight() {
             let tableHeight = 0;
@@ -329,13 +331,18 @@ export default {
         },
         /**
          * Copy cell content to clipboard
-         * @param {string} value - Cell class name
-         * @param {number} index - item index
+         * @param {string} rootId - DOM id of the auto-table instance
+         * @param {number} colIndex - Column index starting from 0
+         * @param {number} rowIndex - Row index starting from 0
          */
-        copyCellContent(value, index) {
-            const elCopy = document.getElementsByClassName(`${value}`)[index].innerText;
-            copyToClipboard(elCopy).then(() => {
-                const tooltipElement = document.querySelector('.cp-span:hover .cell-copied-tooltip');
+        copyCellContent(rootId, colIndex, rowIndex) {
+            const selector = `#${rootId} tbody > tr:nth-child(${rowIndex+1}) > td:nth-child(${colIndex+1})`;
+            const elementToCopy = document.querySelector(selector);
+            if (!elementToCopy || elementToCopy.innerText === undefined)
+                return; /* not found */
+
+            copyToClipboard(elementToCopy.innerText).then(() => {
+                const tooltipElement = elementToCopy.querySelector('.cp-span:hover .cell-copied-tooltip');
                 if (tooltipElement) {
                     tooltipElement.style = 'visibility:visible;';
                     setTimeout(() => {
