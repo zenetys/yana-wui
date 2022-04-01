@@ -182,12 +182,8 @@ export default {
         },
     },
     mounted() {
-<<<<<<< HEAD
-        if (this.storeEntities.length === 0) queries.fetchUpdateStoreEntities();
-=======
-        if (this.storeEntities.length === 0)
+        if (this.storeEntities.length === 0) 
             queries.fetchUpdateStoreEntities();
->>>>>>> deef2823b16654fae164907d9d94de3823611777
         this.setTableHeight();
         this.$refs.entitySearch.$refs.input.focus();
         window.addEventListener('resize', this.setTableHeight);
