@@ -97,17 +97,25 @@ export default {
                             : '';
 
                         if (type) {
-                            if (type.includes('switch')) return '<span class="mdi mdi-swap-horizontal-bold"></span>';
-                            if (type.includes('router')) return '<span class="mdi mdi-router"></span>';
-                            if (type.includes('wlan')) return '<span class="mdi mdi-wifi"></span>';
-                            if (type.includes('phone')) return '<span class="mdi mdi-phone"></span>';
-                            if (type.includes('print')) return '<span class="mdi mdi-printer"></span>';
+                            if (type.includes('switch'))
+                                return '<span class="mdi mdi-swap-horizontal-bold"></span>';
+                            if (type.includes('router'))
+                                return '<span class="mdi mdi-router"></span>';
+                            if (type.includes('wlan'))
+                                return '<span class="mdi mdi-wifi"></span>';
+                            if (type.includes('phone'))
+                                return '<span class="mdi mdi-phone"></span>';
+                            if (type.includes('print'))
+                                return '<span class="mdi mdi-printer"></span>';
                         }
 
                         if (descr) {
-                            if (descr.includes('linux')) return '<span class="mdi mdi-linux"></span>';
-                            if (descr.includes('windows')) return '<span class="mdi mdi-microsoft-windows"></span>';
-                            if (descr.includes('print')) return '<span class="mdi mdi-printer"></span>';
+                            if (descr.includes('linux'))
+                                return '<span class="mdi mdi-linux"></span>';
+                            if (descr.includes('windows'))
+                                return '<span class="mdi mdi-microsoft-windows"></span>';
+                            if (descr.includes('print'))
+                                return '<span class="mdi mdi-printer"></span>';
                         }
 
                         return '<span class="mdi mdi-monitor-small"></span>';

@@ -75,7 +75,8 @@ export default {
             this.$store.commit('EDIT_STORE_INFO_MESSAGE', {});
         },
         closeSnackbarOnWindowKeyUp(e) {
-            if (e.key === 'Escape') this.closeSnackbar();
+            if (e.key === 'Escape')
+                this.closeSnackbar();
         },
     },
     mounted() {
