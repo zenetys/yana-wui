@@ -246,7 +246,6 @@ a {
 import { mapActions, mapGetters } from 'vuex';
 import TimeLine from '@/components/TimeLine.vue';
 import Message from '@/components/Message.vue';
-import * as queries from '@/plugins/queries';
 
 export default {
     name: 'Home',
@@ -518,8 +517,6 @@ export default {
         },
     },
     mounted() {
-        if (this.storeEntities.length === 0) queries.fetchUpdateStoreEntities();
-
         this.$nextTick(function () {
             this.drawerValueByBreakpoint();
         });
