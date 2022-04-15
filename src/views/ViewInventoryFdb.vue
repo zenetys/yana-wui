@@ -21,7 +21,6 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import { unArray } from '@/plugins/utils';
 import AutoTable from '@/components/AutoTable.vue';
 
 export default {
@@ -40,7 +39,7 @@ export default {
                     hidden: true,
                 },
                 fdbMacDip: {
-                    format: unArray,
+                    format: this.$utils.unArray,
                     getTooltip: (input) => {
                         return input ? (Array.isArray(input) ? input.join('\n') : input) : '';
                     },
@@ -54,8 +53,7 @@ export default {
                      * @return {string} - The anchor tag for the switch name
                      */
                     format: (input, tableItem) => {
-                        input = unArray(input);
-
+                        input = this.$utils.unArray(input);
                         return '<a href="#/main/inventory/switch/' + tableItem.swId + '"> ' + input + ' </a>';
                     },
                     isHtml: true,
@@ -67,7 +65,7 @@ export default {
                      * @return {string} - The anchor tag generated
                      */
                     format: (input) => {
-                        input = unArray(input);
+                        input = this.$utils.unArray(input);
 
                         let output = '';
 

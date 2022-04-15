@@ -81,7 +81,6 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import { unArray } from '@/plugins/utils';
 import AutoTable from '@/components/AutoTable.vue';
 
 export default {
@@ -186,7 +185,7 @@ export default {
         },
         ...mapGetters(['storeDatabase', 'storeEntity', 'storeSearch']),
         deviceName() {
-            return unArray(this.device.name);
+            return this.$utils.unArray(this.device.name);
         },
         deviceSecondaryNames() {
             if (Array.isArray(this.device.name) && this.device.name.length > 1)
@@ -194,7 +193,7 @@ export default {
             return '';
         },
         deviceDescription() {
-            return unArray(this.device.description);
+            return this.$utils.unArray(this.device.description);
         },
         deviceIp() {
             return Array.isArray(this.device.ip) ? this.device.ip.join(', ') : this.device.ip;

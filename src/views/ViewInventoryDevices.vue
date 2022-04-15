@@ -76,7 +76,6 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import { unArray } from '@/plugins/utils';
 import AutoTable from '@/components/AutoTable.vue';
 
 export default {
@@ -96,11 +95,11 @@ export default {
                      * @return {string} - An HTML element with the corresponding icon
                      */
                     format: (input, tableItem) => {
-                        const type = unArray(tableItem.type)
-                            ? unArray(tableItem.type).toLowerCase()
+                        const type = this.$utils.unArray(tableItem.type)
+                            ? this.$utils.unArray(tableItem.type).toLowerCase()
                             : '';
-                        const descr = unArray(tableItem.description)
-                            ? unArray(tableItem.description).toLowerCase()
+                        const descr = this.$utils.unArray(tableItem.description)
+                            ? this.$utils.unArray(tableItem.description).toLowerCase()
                             : '';
 
                         if (type) {
@@ -123,7 +122,7 @@ export default {
                     getClass: () => 'nocp',
                 },
                 id: {
-                    format: unArray,
+                    format: this.$utils.unArray,
                     hidden: true,
                 },
                 ip: {
@@ -134,10 +133,10 @@ export default {
                      * @return {string} - The formatted IP as an anchor tag linking to a device
                      */
                     format: (input, tableItem) => {
-                        const inputValue = unArray(input);
+                        const inputValue = this.$utils.unArray(input);
 
                         if (inputValue) {
-                            const type = unArray(tableItem.type);
+                            const type = this.$utils.unArray(tableItem.type);
 
                             if (type && type.toLowerCase().includes('switch')) {
                                 return '<a href="#/main/inventory/switch/' + tableItem.id + '">' + inputValue + '</a>';
@@ -163,10 +162,10 @@ export default {
                      * @return {string} - The formatted name as an anchor tag linking to a device
                      */
                     format: (input, tableItem) => {
-                        input = unArray(input);
+                        input = this.$utils.unArray(input);
 
                         if (input) {
-                            const type = unArray(tableItem.type);
+                            const type = this.$utils.unArray(tableItem.type);
 
                             if (type && type.toLowerCase().includes('switch')) {
                                 return '<a href="#/main/inventory/switch/' + tableItem.id + '">' + input + '</a>';
@@ -178,22 +177,22 @@ export default {
                     isHtml: true,
                 },
                 location: {
-                    format: unArray,
+                    format: this.$utils.unArray,
                 },
                 description: {
-                    format: unArray,
+                    format: this.$utils.unArray,
                     getTooltip: (input) => {
                         return Array.isArray(input) ? input.join('\n') : '';
                     },
                 },
                 type: {
-                    format: unArray,
+                    format: this.$utils.unArray,
                 },
                 mac: {
-                    format: unArray,
+                    format: this.$utils.unArray,
                 },
                 capabilities: {
-                    format: unArray,
+                    format: this.$utils.unArray,
                 },
                 swPort: {
                     /**
@@ -204,7 +203,7 @@ export default {
                      */
                     format: (input) => {
                         const total = Array.isArray(input) ? input.length : input ? 1 : 0;
-                        const firstValue = unArray(input);
+                        const firstValue = this.$utils.unArray(input);
                         let formatted = '<span class="nowrap">';
 
                         if (firstValue) {
@@ -247,7 +246,7 @@ export default {
                     isHtml: true,
                 },
                 macVendor: {
-                    format: unArray,
+                    format: this.$utils.unArray,
                 },
             },
         };
