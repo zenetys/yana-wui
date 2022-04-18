@@ -80,9 +80,9 @@
 </style>
 
 <script>
-import AutoTable from '@/components/AutoTable';
 import { mapGetters } from 'vuex';
-import { unArray } from '../plugins/utils';
+import { unArray } from '@/plugins/utils';
+import AutoTable from '@/components/AutoTable.vue';
 
 export default {
     name: 'SwitchView',

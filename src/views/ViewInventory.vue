@@ -10,8 +10,8 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import ViewInventoryDevices from '../views/ViewInventoryDevices.vue';
-import ViewInventoryFdb from './ViewInventoryFdb.vue';
+import ViewInventoryDevices from '@/views/ViewInventoryDevices.vue';
+import ViewInventoryFdb from '@/views/ViewInventoryFdb.vue';
 
 export default {
     name: 'ViewInventory',

@@ -1,13 +1,13 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 
-import ViewEntityPicker from '../views/ViewEntityPicker.vue';
-import ViewHost from '../views/ViewHost.vue';
-import ViewInventory from '../views/ViewInventory.vue';
-import ViewMain from '../views/ViewMain.vue';
-import ViewOui from '../views/ViewOui.vue';
-import ViewSwitch from '../views/ViewSwitch.vue';
-import ViewVlanMatrix from '../views/ViewVlanMatrix.vue';
+import ViewEntityPicker from '@/views/ViewEntityPicker.vue';
+import ViewHost from '@/views/ViewHost.vue';
+import ViewInventory from '@/views/ViewInventory.vue';
+import ViewMain from '@/views/ViewMain.vue';
+import ViewOui from '@/views/ViewOui.vue';
+import ViewSwitch from '@/views/ViewSwitch.vue';
+import ViewVlanMatrix from '@/views/ViewVlanMatrix.vue';
 
 Vue.use(VueRouter);
 
