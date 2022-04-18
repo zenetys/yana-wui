@@ -21,7 +21,7 @@
                     @mouseup.middle="onClickMouseMiddle(search)"
                     @keyup="updateStoreSearchOnAnyKeyUp(search)"
                     @keyup.enter="updateStoreSearchOnEnterPress(search)"></v-text-field>
-                <v-btn icon small @click="updateKeepSearch" class="mt-1 ml-1" title="keep / disable your search">
+                <v-btn icon small @click="toggleKeepSearch" class="mt-1 ml-1" title="keep / disable your search">
                     <v-icon class="pt-1">
                         {{ keepSearch ? 'mdi-pin' : 'mdi-pin-off' }}
                     </v-icon>
@@ -346,7 +346,7 @@ export default {
             this.$store.commit('EDIT_STORE_INFO_MESSAGE', payload);
             console.log(this.$store.state.storeInfoMessage);
         },
-        updateKeepSearch() {
+        toggleKeepSearch() {
             this.keepSearch = !this.keepSearch;
         },
         clearSearch() {
