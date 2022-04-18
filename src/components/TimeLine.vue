@@ -2,7 +2,6 @@
 import 'chartjs-plugin-colorschemes';
 import 'chartjs-plugin-zoom';
 import { Line } from 'vue-chartjs';
-import { mapActions, mapGetters } from 'vuex';
 
 /* 20211028: chartjs commit 484f0d1e518963436d5013f61001558ef9788edf in 2.9.4
  * breaks option scales.xAxes[0].maxRotation = 0. Use version 2.9.3 for now. */
@@ -106,39 +105,51 @@ export default {
                     },
                 },
             },
-            selectedIndex: null,
-            database: '',
+            selectedIndex: -1,
+            selectedDatabase: null,
         };
+    },
+    computed: {
+        routeEntity() {
+            return this.$route.query.entity;
+        },
+        routeDatabase() {
+            return this.$route.query.db;
+        },
+        storeEntityDatabases() {
+            return this.$store.state.storeEntityDatabases;
+        },
     },
     methods: {
         /**
-         * Update the timeline with our data
-         * @param {Array} data - Data array fetched from api
+         * Update the timeline databases with new data.
+         * @param {object[]} newDatabases - Databases fetched from API upon entity change/selection.
          */
-        updateTimeLine(data) {
-            this.chartdata.datasets[0].data = data.map(function (d) {
-                return {
-                    x: d.ts * 1000,
+        updateTimeLineDbs(newDatabases) {
+            /* Format databases for chartjs and select one */
+            this.chartdata.datasets[0].data = newDatabases.map((db, dbIndex) => {
+                const formattedDb = {
+                    x: db.ts * 1000,
                     y: 9,
-                    databaseId: d.id,
+                    databaseId: db.id,
                 };
+
+                /* If a db is provided in the URL and it matches any of the new dbs, 
+                select it in the Timeline */
+                if (db.id === this.routeDatabase) {
+                    this.selectedIndex = dbIndex;
+                    this.selectedDatabase = formattedDb;
+                }
+
+                return formattedDb;
             });
-
-            const foundIndex = this.chartdata.datasets[0].data.findIndex((element) => {
-                return element.databaseId === this.database;
-            });
-
-            if (foundIndex === -1 && this.chartdata.datasets[0].data) {
-                this.selectedIndex = this.chartdata.datasets[0].data.length - 1;
-            } else {
-                this.selectedIndex = foundIndex;
-            }
-
-            this.database = this.chartdata.datasets[0].data[this.selectedIndex].databaseId;
 
             this.chartdata.datasets[0].pointBackgroundColor = this.colorOnClick;
             this.chartdata.datasets[0].pointBorderColor = this.colorOnClick;
-            this.$data._chart.update();
+
+            if (this.$data._chart) {
+                this.$data._chart.update();
+            }
         },
         /**
          * Return colors array
@@ -165,40 +176,68 @@ export default {
             if (!clickedItem) {
                 return;
             } else {
-                this.selectedIndex = clickedItem._index;
-                this.database = this.chartdata.datasets[0].data[clickedItem._index].databaseId;
-                this.updateStoreDatabase(this.database);
+                const clickedDb = this.chartdata.datasets[0].data[clickedItem._index].databaseId;
+
+                /* New DB is clicked > update the URL */
+                if (clickedDb !== this.routeDatabase) {
+                    this.redirectToUpdateDb(clickedDb);
+                }
+            }
+        },
+        /**
+         * Update the Timeline selected point
+         * @param {string} newDb - The ID of the new DB to select
+         */
+        selectTimelineDb(newDb) {
+            let foundDb = null;
+            let foundIndex = -1;
+
+            this.chartdata.datasets[0].data.forEach((db, dbIndex) => {
+                if (db.databaseId === newDb) {
+                    foundIndex = dbIndex;
+                    foundDb = db;
+                }
+            });
+
+            if (foundDb) {
+                [this.selectedDatabase, this.selectedIndex] = [foundDb, foundIndex];
+            }
+
+            if (this.$data._chart) {
                 this.$data._chart.update();
             }
         },
-        ...mapActions(['updateStoreDatabase', 'updateStoreInfoMessage']),
-    },
-    computed: {
-        ...mapGetters(['storeEntity']),
+        /**
+         * Redirect to an updated URL with a database ID
+         * @param {string} dbToUpdate - The ID of the new DB to update in the URL
+         */
+        redirectToUpdateDb(dbToUpdate) {
+            const redirection = { ...this.$route };
+            const newQuery = { ...this.$route.query };
+            newQuery.db = dbToUpdate;
+            redirection.query = newQuery;
+
+            this.$router.push(redirection).catch(() => {});
+        },
     },
     watch: {
-        database() {
-            this.updateStoreDatabase(this.database);
+        storeEntityDatabases: {
+            immediate: true,
+            handler(newEntityDatabases) {
+                if (newEntityDatabases) {
+                    this.updateTimeLineDbs(newEntityDatabases);
+                }
+            },
+        },
+        routeDatabase: {
+            immediate: true,
+            handler(newDb) {
+                /* If the DB in the URL changes, select it in the Timeline */
+                this.selectTimelineDb(newDb);
+            },
         },
     },
     mounted() {
-        this.updateStoreDatabase(this.database);
-        if (this.storeEntity) {
-            this.$api
-                .get(`/entity/${this.storeEntity}/databases`)
-                .then((response) => {
-                    this.updateTimeLine(response.data);
-                    this.updateStoreInfoMessage({});
-                })
-                .catch((err) => {
-                    console.log(err);
-                    this.updateStoreInfoMessage({
-                        type: 'error',
-                        content: 'Cannot load databases, problem with the query.',
-                        error: err,
-                    });
-                });
-        }
         this.renderChart(this.chartdata, this.options);
     },
 };

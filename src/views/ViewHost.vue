@@ -247,8 +247,6 @@
 </style>
 
 <script>
-import { mapGetters } from 'vuex';
-
 export default {
     name: 'ViewHost',
     components: {},
@@ -262,22 +260,30 @@ export default {
         };
     },
     computed: {
-        ...mapGetters(['storeDatabase', 'storeEntity', 'storeSearch']),
+        apiStateParams() {
+            return {
+                entity: this.$route.query.entity,
+                database: this.$route.query.db,
+                search: this.$route.query.search,
+                id: this.$route.params.id,
+            };
+        },
     },
     watch: {
-        /* FIXME: workaround bug on entity change
-         * also add redirect to inventory main view on search
-         * this is probably not the right way to do it, need to check */
-        storeEntity() {
-            this.$router.push('/main/inventory');
-        },
-        storeSearch() {
-            this.$router.push('/main/inventory');
-        },
         '$route.params.id': {
             immediate: true,
             handler() {
                 this.getDeviceInfo();
+            },
+        },
+        apiStateParams: {
+            immediate: true,
+            handler(newParams, oldParams) {
+                if (oldParams) {
+                    if (oldParams.database !== newParams.database || oldParams.search !== newParams.search) {
+                        this.getDeviceInfo();
+                    }
+                }
             },
         },
     },
@@ -286,22 +292,8 @@ export default {
          * Fetch Host device and interface information from API
          */
         getDeviceInfo() {
-            const deviceUrl =
-                '/entity/' +
-                encodeURIComponent(this.storeEntity) +
-                '/' +
-                'devices?database=' +
-                encodeURIComponent(this.storeDatabase) +
-                '&id=' +
-                encodeURIComponent(this.$route.params.id);
-            const ifaceUrl =
-                '/entity/' +
-                encodeURIComponent(this.storeEntity) +
-                '/' +
-                'interfaces?database=' +
-                encodeURIComponent(this.storeDatabase) +
-                '&id=' +
-                encodeURIComponent(this.$route.params.id);
+            const deviceUrl = this.$utils.getUpdatedApiUrl(this.apiStateParams, 'device');
+            const ifaceUrl = this.$utils.getUpdatedApiUrl(this.apiStateParams, 'interface');
 
             this.$api
                 .all([deviceUrl, ifaceUrl].map((query) => this.$api.get(query)))

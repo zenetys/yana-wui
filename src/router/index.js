@@ -32,29 +32,29 @@ const routes = [
         },
         children: [
             {
-                path: 'inventory',
+                path: '/main/inventory',
                 name: 'ViewInventory',
                 component: ViewInventory,
                 children: [
                     {
-                        path: 'host/:id',
+                        path: '/main/inventory/host/:id',
                         name: 'ViewHost',
                         component: ViewHost,
                     },
                     {
-                        path: 'switch/:id',
+                        path: '/main/inventory/switch/:id',
                         name: 'ViewSwitch',
                         component: ViewSwitch,
                     },
                 ],
             },
             {
-                path: 'vlan-matrix',
+                path: '/main/vlan-matrix',
                 name: 'ViewVlanMatrix',
                 component: ViewVlanMatrix,
             },
             {
-                path: 'oui',
+                path: '/main/oui',
                 name: 'ViewOui',
                 component: ViewOui,
             },

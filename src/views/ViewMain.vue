@@ -19,8 +19,7 @@
                     clearable
                     @click:clear="clearSearch"
                     @mouseup.middle="onClickMouseMiddle(search)"
-                    @keyup="updateStoreSearchOnAnyKeyUp(search)"
-                    @keyup.enter="updateStoreSearchOnEnterPress(search)"></v-text-field>
+                    @keyup.enter="redirectToUpdateSearch()"></v-text-field>
                 <v-btn icon small @click="toggleKeepSearch" class="mt-1 ml-1" title="keep / disable your search">
                     <v-icon class="pt-1">
                         {{ keepSearch ? 'mdi-pin' : 'mdi-pin-off' }}
@@ -28,7 +27,7 @@
                 </v-btn>
             </v-col>
             <v-col cols="12" sm="3" md="4" lg="3" xl="4" class="d-flex justify-end">
-                <div v-if="this.$route.path === '/main/inventory'" class="pt-2 rounded select-inventory-mode">
+                <div v-if="this.$route.name === 'ViewInventory'" class="pt-2 rounded select-inventory-mode">
                     <v-checkbox
                         v-for="(mode, modeIndex) in inventoryModes"
                         :key="modeIndex"
@@ -46,7 +45,7 @@
                 <v-autocomplete
                     class="select-entity-menu"
                     :items="storeEntities"
-                    v-model="storeEntity"
+                    v-model="selectedEntity"
                     label="Select Entity"
                     placeholder="Select Entity"
                     solo
@@ -55,7 +54,7 @@
                     flat
                     background-color="#e8e8e8d6"
                     prepend-inner-icon="mdi-server-network"></v-autocomplete>
-                <v-btn icon small @click="setBookmarks" class="mt-1 ml-1" title="Add to Favorites">
+                <v-btn icon small @click="setSavedQueries('bookmarks')" class="mt-1 ml-1" title="Add to Favorites">
                     <v-icon> mdi-bookmark </v-icon>
                 </v-btn>
             </v-col>
@@ -84,11 +83,11 @@
                 <div v-for="(sectionLink, linkIndex) in menuSide" :key="linkIndex">
                     <v-list-item
                         v-if="!sectionLink.subMenus"
-                        :to="sectionLink.url"
+                        :to="getNavLinkFullRoute(sectionLink.route)"
                         active-class="deep-cyan--text text--accent-4"
                         class="v-list-item"
                         dense
-                        :style="sectionLink.url ? '' : 'opacity:0.5'">
+                        :style="sectionLink.route ? '' : 'opacity:0.5'">
                         <v-list-item-action class="mr-4">
                             <v-icon size="20">{{ sectionLink.icon }}</v-icon>
                         </v-list-item-action>
@@ -117,7 +116,7 @@
                                 v-text="getHistoryQueryText(query)"></v-list-item-title>
                         </v-list-item-content>
                         <v-icon
-                            @click="removeRecentQuery(query)"
+                            @click="removeSavedQuery('recent-queries', query)"
                             size="14"
                             class="list-item-remove-icon algin-end justify-end"
                             >mdi-close</v-icon
@@ -142,7 +141,7 @@
                                 v-text="getBookmarksQueryText(bookmark)"></v-list-item-title>
                         </v-list-item-content>
                         <v-icon
-                            @click="removeBookmark(bookmark)"
+                            @click="removeSavedQuery('bookmarks', bookmark)"
                             size="14"
                             class="list-item-remove-icon algin-end justify-end"
                             >mdi-close</v-icon
@@ -164,7 +163,7 @@
         <v-bottom-navigation id="bottombar" fixed hide-on-scroll grow height="" :style="this.bottomBarStyle">
             <v-col cols="12">
                 <v-card>
-                    <TimeLine :key="timeLineKey" @error="onError" class="bottom-timeline" />
+                    <TimeLine @error="onError" class="bottom-timeline" />
                 </v-card>
             </v-col>
         </v-bottom-navigation>
@@ -243,7 +242,7 @@ a {
 </style>
 
 <script>
-import { mapActions, mapGetters } from 'vuex';
+import { mapActions } from 'vuex';
 import TimeLine from '@/components/TimeLine.vue';
 import Message from '@/components/Message.vue';
 
@@ -257,22 +256,20 @@ export default {
         return {
             inventoryModes: ['devices', 'fdb'],
             defaultInventoryMode: 'devices',
-            search: '',
             drawer: true,
-            timeLineKey: 0,
             searchUpdateTimeOut: 500,
-            searchTimeOutId: 0,
+            searchTimeOutId: null,
             keepSearch: true,
             menuSide: [
                 {
                     name: 'Inventory',
-                    url: '/main/inventory',
                     icon: 'mdi-grid',
+                    route: { name: 'ViewInventory' },
                 },
                 {
                     name: 'VLAN matrix',
-                    url: '/main/vlan-matrix',
                     icon: 'mdi-table',
+                    route: { name: 'ViewVlanMatrix' },
                 },
                 {
                     name: 'L2 schema',
@@ -280,26 +277,33 @@ export default {
                 },
                 {
                     name: 'OUI lookup',
-                    url: '/main/oui',
                     icon: 'mdi-help-network-outline',
+                    route: { name: 'ViewOui' },
                 },
             ],
             recentQueries: [],
             bookMarks: [],
+            entityDatabases: [],
+            selectedEntity: null,
+            search: '',
         };
     },
     computed: {
-        ...mapGetters(['storeEntities']),
-        /* like mapGetters + mapActions to be able to use v-model */
-        storeEntity: {
-            get() {
-                return this.$store.getters.storeEntity;
-            },
-            set(newEntity) {
-                this.$store.commit('EDIT_STORE_ENTITY', newEntity);
-            },
+        storeEntities() {
+            return this.$store.state.storeEntities;
         },
-        /* like mapGetters + mapActions to be able to use v-model */
+        routeEntity() {
+            return this.$route.query.entity;
+        },
+        routeDatabase() {
+            return this.$route.query.db;
+        },
+        routeSearch() {
+            return this.$route.query.search;
+        },
+        routeName() {
+            return this.$route.name;
+        },
         storeInventoryMode: {
             get() {
                 return this.$store.getters.storeInventoryMode;
@@ -308,13 +312,12 @@ export default {
                 this.$store.commit('EDIT_STORE_INVENTORY_MODE', newInventoryMode);
             },
         },
-        /* like mapGetters + mapActions to be able to use v-model */
-        storeSearch: {
+        storeEntityDatabases: {
             get() {
-                return this.$store.getters.storeSearch;
+                return this.$store.state.storeEntityDatabases;
             },
-            set(newSearch) {
-                this.$store.commit('EDIT_STORE_SEARCH', newSearch);
+            set(newEntityDatabases) {
+                this.$store.commit('EDIT_STORE_ENTITY_DATABASES', newEntityDatabases);
             },
         },
         /**
@@ -327,23 +330,13 @@ export default {
         },
     },
     methods: {
+        ...mapActions(['updateStoreInfoMessage']),
         /**
          * Run a new search query on a middlemouse click (paste) in the search input
          */
         onClickMouseMiddle() {
-            setTimeout(() => this.updateStoreSearchOnAnyKeyUp(this.search), 100);
-        },
-        ...mapActions(['updateStoreDatabase']),
-        updateStoreSearchOnEnterPress(searchValue) {
             clearTimeout(this.searchTimeOutId);
-            this.$store.commit('EDIT_STORE_SEARCH', searchValue);
-        },
-        updateStoreSearchOnAnyKeyUp(searchValue) {
-            clearTimeout(this.searchTimeOutId);
-            this.searchTimeOutId = setTimeout(() => {
-                this.$store.commit('EDIT_STORE_SEARCH', searchValue);
-                this.setRecentQueries();
-            }, this.searchUpdateTimeOut);
+            setTimeout(() => this.redirectToUpdateSearch(), 100);
         },
         /**
          * Set the drawer value depending on the current breakpoint
@@ -370,7 +363,6 @@ export default {
          */
         clearSearch() {
             this.search = '';
-            this.$store.commit('EDIT_STORE_SEARCH', this.search);
         },
         /**
          * Generate a label for a recent search query
@@ -397,16 +389,37 @@ export default {
          * @param {object} query - The query object
          */
         loadRecentQuery(query) {
-            this.storeSearch = this.search = query.query.search;
-
-            if (query.url === '/main/inventory') {
+            if (query.url === '/main/inventory' && query.query.inventoryMode) {
                 this.storeInventoryMode = query.query.inventoryMode;
-                this.$router.push('/main/inventory').catch(() => {});
-            } else {
-                this.$router.push('' + query.url).catch(() => {});
             }
+
+            const resolvedQueryRoute = this.$router.resolve(query.url).route;
+
+            let newRoute = {};
+            newRoute.query = {
+                db: resolvedQueryRoute.query.db || query.query.db || this.routeDatabase,
+                search: resolvedQueryRoute.query.search || query.query.search,
+                entity: query.query.entity || this.routeEntity,
+            };
+
+            const mode = query.query.inventoryMode;
+            switch (mode) {
+                case 'devices':
+                case 'fdb':
+                    newRoute.name = 'ViewInventory';
+                    break;
+                case 'host':
+                case 'switch':
+                    newRoute.path = query.url;
+                    break;
+            }
+            this.$router.push(newRoute).catch(() => {});
         },
-        getRecentQueries() {
+        /**
+         * Fetch recent queries & bookmarks from local storage and filter them
+         * If none are found, an empty array is save in storage
+         */
+        getRecentQueriesAndBookmarks() {
             const rQueries = JSON.parse(localStorage.getItem('recent-queries'));
             const bookmarks = JSON.parse(localStorage.getItem('bookmarks'));
 
@@ -418,29 +431,37 @@ export default {
                 ? (this.bookMarks = this.filterQueries(bookmarks))
                 : localStorage.setItem('bookmarks', JSON.stringify([]));
         },
-        setRecentQueries() {
-            const tab = JSON.parse(localStorage.getItem('recent-queries'));
+        /**
+         * Save a new search query or bookmark in local storage and update the view's data
+         * @param {string['recent-queries'|'bookmarks']} type - The type of the query to save
+         */
+        setSavedQueries(type) {
+            const queriesFromStorage = JSON.parse(localStorage.getItem(type));
 
-            localStorage.setItem('recent-queries', JSON.stringify(this.newRecentQuery(tab)));
-            this.getRecentQueries();
-        },
-        setBookmarks() {
-            const bookmarks = JSON.parse(localStorage.getItem('bookmarks'));
+            if (type === 'bookmarks') {
+                localStorage.setItem(type, JSON.stringify(this.newBookmark(queriesFromStorage)));
+            } else if (type === 'recent-queries') {
+                localStorage.setItem(type, JSON.stringify(this.newRecentQuery(queriesFromStorage)));
+            }
 
-            localStorage.setItem('bookmarks', JSON.stringify(this.newBookmark(bookmarks)));
-            this.getRecentQueries();
+            this.getRecentQueriesAndBookmarks();
         },
-        newRecentQuery(tab) {
-            const allQueries = tab;
-            const currentEntityQueries = this.filterQueries(tab);
-            const newQuery = {
-                entity: this.storeEntity,
-                query: {
-                    inventoryMode: this.storeInventoryMode,
-                    search: this.search,
-                },
-                url: this.search ? '/main/inventory' : this.$route.path,
-                id: this.$route.params.id,
+        /**
+         * Generate a new recent search query object and add it to the list of entity queries
+         * @param {array} recentQueries - The array of current recent queries
+         * @return {array} The updated recent queries array
+         */
+        newRecentQuery(recentQueries) {
+            const allQueries = recentQueries;
+            const currentEntityQueries = this.filterQueries(recentQueries);
+            const newSearchQuery = { ...this.$route.query };
+            newSearchQuery.search = this.search;
+            newSearchQuery.inventoryMode = this.storeInventoryMode;
+
+            const newSearch = {
+                entity: this.routeEntity,
+                query: newSearchQuery,
+                url: '/main/inventory',
                 label: document.querySelector('#device-name') ? document.querySelector('#device-name').textContent : '',
                 index: new Date().getTime(),
             };
@@ -448,26 +469,29 @@ export default {
             /* Only save the new query if it doesn't already exist */
             if (
                 this.search &&
-                !currentEntityQueries.find(
-                    (entity) =>
-                        entity.query.search === this.search &&
-                        entity.query.inventoryMode === this.storeInventoryMode
-                )
+                !currentEntityQueries.find((query) => {
+                    return query.query.search === this.search && query.query.inventoryMode === this.storeInventoryMode;
+                })
             ) {
                 /* 5 queries maximum in storage */
                 if (currentEntityQueries.length >= 5) {
                     currentEntityQueries.pop();
                 }
-                currentEntityQueries.push(newQuery);
+                currentEntityQueries.push(newSearch);
             }
 
-            return allQueries.filter((query) => query.entity !== this.storeEntity).concat(currentEntityQueries);
+            return allQueries.filter((query) => query.entity !== this.routeEntity).concat(currentEntityQueries);
         },
-        newBookmark(tab) {
-            const allQueries = tab;
-            const currentEntityQueries = this.filterQueries(tab);
+        /**
+         * Generate a new bookmark object and add it to the list of entity queries
+         * @param {array} existingBookmarks - The array of current bookmarks
+         * @return {array} The updated bookmarks array
+         */
+        newBookmark(existingBookmarks) {
+            const allQueries = existingBookmarks;
+            const currentEntityQueries = this.filterQueries(existingBookmarks);
             const newQuery = {
-                entity: this.storeEntity,
+                entity: this.routeEntity,
                 query: {
                     inventoryMode:
                         this.$route.path === '/main/inventory'
@@ -475,9 +499,9 @@ export default {
                             : this.$route.path.includes('switch')
                             ? 'switch'
                             : 'host',
-                    search: this.$route.path === '/main/inventory' ? this.storeSearch : '',
+                    search: this.$route.path === 'inventory' ? this.search : '',
                 },
-                url: this.$route.path,
+                url: this.$route.fullPath,
                 id: this.$route.params.id,
                 label: document.querySelector('#device-name') ? document.querySelector('#device-name').textContent : '',
                 index: new Date().getTime(),
@@ -485,11 +509,10 @@ export default {
 
             if (
                 !currentEntityQueries.find(
-                    (el) =>
-                        el.url === this.$route.path &&
-                        el.query.search === this.search &&
-                        el.id === this.$route.params.id &&
-                        el.query.inventoryMode === newQuery.query.inventoryMode
+                    (q) =>
+                        q.url === this.$route.fullPath &&
+                        q.id === this.$route.params.id &&
+                        q.query.inventoryMode === newQuery.query.inventoryMode
                 )
             ) {
                 if (currentEntityQueries.length >= 10) {
@@ -498,57 +521,203 @@ export default {
                 currentEntityQueries.push(newQuery);
             }
 
-            return allQueries.filter((el) => el.entity !== this.storeEntity).concat(currentEntityQueries);
+            return allQueries.filter((el) => el.entity !== this.routeEntity).concat(currentEntityQueries);
         },
-        removeBookmark(bookmark) {
-            const bookmarks = JSON.parse(localStorage.getItem('bookmarks'));
+        /**
+         * Delete a recent query from history
+         * @param {string} type - The type of the query to delete
+         * @param {object} query - The query object to delete
+         */
+        removeSavedQuery(type, query) {
+            const savedQueries = JSON.parse(localStorage.getItem(type));
 
-            bookmarks.splice(
-                bookmarks.findIndex((el) => el.index === bookmark.index),
+            savedQueries.splice(
+                savedQueries.findIndex((el) => el.index === query.index),
                 1
             );
 
-            localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
-            this.getRecentQueries();
+            localStorage.setItem(type, JSON.stringify(savedQueries));
+            this.getRecentQueriesAndBookmarks();
         },
-        removeRecentQuery(query) {
-            const rQueries = JSON.parse(localStorage.getItem('recent-queries'));
+        /**
+         * Filter the queries array to only keep the ones for the current entity
+         * @param {object[]} queries - The array of queries to filter
+         * @return {object[]} The filtered queries array
+         */
+        filterQueries(queries) {
+            return queries.filter((query) => query.entity === this.routeEntity).sort((a, b) => b.index - a.index);
+        },
+        /**
+         * Fetch all DBs for the selected entity from the API
+         * @return {array|null} The array of DBs for the current entity
+         */
+        fetchDatabasesFromEntity() {
+            return this.$api
+                .get(`/entity/${this.routeEntity}/databases`)
+                .then((response) => response.data)
+                .catch((err) => {
+                    this.updateStoreInfoMessage({
+                        type: 'error',
+                        content: 'Cannot load databases, problem with the query.',
+                        error: err,
+                    });
+                    return null;
+                });
+        },
+        /**
+         * @async
+         * Handle the selected entity from the current route
+         * > Fetch DBs from the entity
+         * > Select the latest DB if none is set in the route
+         * > Set queries history & bookmarks for this entity
+         */
+        async handleRouteEntity() {
+            /* redirect to the entity-picker if none is set */
+            if (!this.routeEntity) {
+                this.$router.push('/entity-picker');
+            }
 
-            rQueries.splice(
-                rQueries.findIndex((rQuery) => rQuery.index === query.index),
-                1
-            );
-            localStorage.setItem('recent-queries', JSON.stringify(rQueries));
-            this.getRecentQueries();
+            /* fetch the databases for the current entity */
+            this.entityDatabases = await this.fetchDatabasesFromEntity();
+            this.storeEntityDatabases = this.entityDatabases;
+
+            /* Try to match the URL's Database with the ones from this entity */
+            /* If no match > select the most recent Database */
+            if (
+                (this.routeDatabase && !this.entityDatabases?.some((db) => db.id === this.routeDatabase)) ||
+                !this.routeDatabase
+            ) {
+                this.selectLastAvailableDb();
+            }
+
+            this.setSavedQueries('recent-queries');
+
+            if (!this.keepSearch) {
+                this.search = '';
+            }
         },
-        filterQueries(queriesArray) {
-            return queriesArray.filter((query) => query.entity === this.storeEntity).sort((a, b) => b.index - a.index);
+        /**
+         * Update the search query param in the route, and redirect
+         * @param {boolean} forceInventory - If true, always redirect to the inventory page with the new search
+         */
+        redirectToUpdateSearch(forceInventory = false) {
+            /* Update search history */
+            this.setSavedQueries('recent-queries');
+
+            const params = this.$route.params;
+            const query = { ...this.$route.query };
+            query.search = this.search;
+
+            const redirection = {
+                params,
+                query,
+                name: forceInventory ? 'ViewInventory' : this.routeName,
+            };
+
+            if (query.search !== '' || (this.routeSearch && this.routeSearch !== '')) {
+                this.$router.push(redirection).catch(() => {});
+            } else {
+                /* If search was simply reset, replace the current route without redirecting */
+                this.$router.replace(redirection).catch(() => {});
+            }
+        },
+        /**
+         * Select the latest available DB from the current entity,
+         * and replace the query param in the current route
+         */
+        selectLastAvailableDb() {
+            let dbToSelect = '';
+
+            if (this.entityDatabases?.length > 0) {
+                dbToSelect = this.entityDatabases[this.entityDatabases.length - 1].id;
+            }
+
+            const newQuery = { ...this.$route.query };
+            newQuery.db = dbToSelect;
+            this.$router.replace({ query: newQuery }).catch(() => {});
+        },
+        /**
+         * Generate a full navigation link from a partial route
+         * @param {object} navRoute - The partial route to generate the link from
+         */
+        getNavLinkFullRoute(navRoute) {
+            if (!navRoute || !navRoute.name) {
+                return;
+            }
+
+            const newRoute = {
+                name: navRoute.name,
+                query: this.$route.query,
+                params: this.$route.params,
+            };
+            return newRoute;
         },
     },
     watch: {
-        /* FIXME: We could pass and update the api url to TimeLine like
-         * for the AutoTable. */
-        storeEntity() {
-            this.updateStoreDatabase('');
-
-            // Reset search field
-            if (!this.keepSearch) {
-                this.search = '';
-                this.$store.commit('EDIT_STORE_SEARCH', '');
-            }
-
-            if (this.$route.name !== 'ViewVlanMatrix') {
-                this.$router.push('/main/inventory').catch(() => {});
-            }
-
-            this.timeLineKey++;
-            this.setRecentQueries();
+        routeEntity: {
+            immediate: true,
+            handler(newEntity, oldEntity) {
+                /* Only handle a new entity from the route if none was set,
+                or if it's a different one */
+                if (!oldEntity || newEntity !== oldEntity) {
+                    this.handleRouteEntity();
+                }
+            },
         },
-        $route(to) {
-            if (to.path !== '/main/inventory' && !this.keepSearch) {
-                this.search = '';
-                this.$store.commit('EDIT_STORE_SEARCH', '');
-            }
+        routeDatabase: {
+            immediate: true,
+            handler(newDatabase) {
+                /* Always check if the DB from the route exists on the current entity */
+                if (this.entityDatabases?.length > 0 && !this.entityDatabases?.some((db) => db.id === newDatabase)) {
+                    this.selectLastAvailableDb();
+                }
+            },
+        },
+        selectedEntity: {
+            immediate: true,
+            handler(newEntity, oldEntity) {
+                /* On entity change > Update query param and redirect */
+                if (oldEntity && newEntity !== oldEntity) {
+                    const redirection = { ...this.$route };
+                    const newQueryParams = { ...this.$route.query };
+                    newQueryParams.entity = newEntity;
+                    redirection.query = newQueryParams;
+
+                    this.$router.push(redirection).catch(() => {});
+                }
+            },
+        },
+        routeName: {
+            immediate: true,
+            handler(newRouteName) {
+                if (newRouteName !== 'ViewInventory' && !this.keepSearch) {
+                    this.search = '';
+                }
+            },
+        },
+        routeSearch: {
+            immediate: true,
+            handler(newSearch) {
+                this.search = newSearch || '';
+            },
+        },
+        search: {
+            immediate: true,
+            handler(newSearch, oldSearch) {
+                clearTimeout(this.searchTimeOutId);
+
+                this.searchTimeOutId = setTimeout(() => {
+                    if (oldSearch) {
+                        if (oldSearch !== newSearch && newSearch !== '') {
+                            /* If search has changed, update the query param and redirect to Inventory */
+                            this.redirectToUpdateSearch(true);
+                        }
+                    } else {
+                        /* Otherwise, just update the query param */
+                        this.redirectToUpdateSearch();
+                    }
+                }, this.searchUpdateTimeOut);
+            },
         },
     },
     mounted() {
@@ -556,16 +725,19 @@ export default {
             this.drawerValueByBreakpoint();
         });
 
-        this.getRecentQueries();
+        this.getRecentQueriesAndBookmarks();
     },
     beforeMount() {
         if (!this.inventoryModes.includes(this.storeInventoryMode)) {
             this.storeInventoryMode = this.defaultInventoryMode;
         }
 
-        /* redirect to the entity-picker if none is set, at least for now */
-        if (!this.storeEntity)
-            this.$router.push('/entity-picker');
+        this.selectedEntity = this.routeEntity;
+        clearTimeout(this.searchTimeOutId);
+        this.redirectToUpdateSearch();
+    },
+    beforeUnmount() {
+        clearTimeout(this.searchTimeOutId);
     },
 };
 </script>

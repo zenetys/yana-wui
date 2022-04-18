@@ -75,7 +75,6 @@
 </style>
 
 <script>
-import { mapGetters } from 'vuex';
 import AutoTable from '@/components/AutoTable.vue';
 
 export default {
@@ -249,26 +248,6 @@ export default {
     },
     methods: {
         /**
-         * Update the query api link to make the query
-         */
-        updateApiUrl() {
-            const params = this.apiStateParams;
-            let url = '';
-
-            if (params.entity && params.database) {
-                url +=
-                    '/entity/' +
-                    encodeURIComponent(params.entity) +
-                    '/devices?database=' +
-                    encodeURIComponent(params.database) +
-                    '&q=' +
-                    encodeURIComponent(params.search) +
-                    '&short';
-            }
-
-            this.apiUrl = url;
-        },
-        /**
          * Compute the headers
          * @param {array<object>} headers
          */
@@ -294,21 +273,37 @@ export default {
         },
     },
     computed: {
-        ...mapGetters(['storeEntity', 'storeDatabase', 'storeSearch']),
+        storeEntityDatabases() {
+            return this.$store.getters.storeEntityDatabases;
+        },
         apiStateParams() {
             return {
-                entity: this.storeEntity,
-                database: this.storeDatabase,
-                search: this.storeSearch,
+                entity: this.$route.query.entity,
+                database: this.$route.query.db,
+                search: this.$route.query.search,
             };
         },
     },
     watch: {
         apiStateParams: {
             immediate: true,
-            handler() {
-                this.updateApiUrl();
+            handler(newParams, oldParams) {
+                /* Fetch new inventory data if the database or the search query changed */
+                if (oldParams) {
+                    if (oldParams.database !== newParams.database || oldParams.search !== newParams.search) {
+                        this.apiUrl = this.$utils.getUpdatedApiUrl(newParams, 'devices');
+                    }
+                }
             },
+        },
+        storeEntityDatabases: {
+            handler(newDatabases) {
+                /* When the entity DBs change, only fetch new inventory data if the current DB exists on this entity */
+                if (newDatabases?.some((db) => db.id === this.apiStateParams.database)) {
+                    this.apiUrl = this.$utils.getUpdatedApiUrl(this.apiStateParams, 'devices');
+                }
+            },
+            immediate: true,
         },
     },
 };

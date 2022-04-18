@@ -5,33 +5,23 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
     state: {
-        storeDatabase: '',
+        storeEntityDatabases: [],
         storeEntities: [],
-        storeEntity: '',
         storeInventoryMode: '',
-        storeSearch: '',
         storeInfoMessage: {},
     },
     mutations: {
-        EDIT_STORE_DATABASE(state, value) {
-            console.log('from store: mutation EDIT_STORE_DATABASE', value);
-            state.storeDatabase = value;
+        EDIT_STORE_ENTITY_DATABASES(state, value) {
+            console.log('from store: mutation EDIT_STORE_ENTITY_DATABASES', value);
+            state.storeEntityDatabases = value;
         },
         EDIT_STORE_ENTITIES(state, value) {
             console.log('from store: mutation EDIT_STORE_ENTITIES', value);
             state.storeEntities = value;
         },
-        EDIT_STORE_ENTITY(state, value) {
-            console.log('from store: mutation EDIT_STORE_ENTITY', value);
-            state.storeEntity = value;
-        },
         EDIT_STORE_INVENTORY_MODE(state, value) {
             console.log('from store: mutation EDIT_STORE_INVENTORY_MODE', value);
             state.storeInventoryMode = value;
-        },
-        EDIT_STORE_SEARCH(state, value) {
-            console.log('from store: mutation EDIT_STORE_SEARCH', value);
-            state.storeSearch = value || '';
         },
         EDIT_STORE_INFO_MESSAGE(state, value) {
             console.log('from store: mutation EDIT_STORE_INFO_MESSAGE', value);
@@ -39,40 +29,28 @@ export default new Vuex.Store({
         },
     },
     actions: {
-        updateStoreDatabase({ commit }, value) {
-            commit('EDIT_STORE_DATABASE', value);
+        updateStoreEntityDatabases({ commit }, value) {
+            commit('EDIT_STORE_ENTITY_DATABASES', value);
         },
         updateStoreEntities({ commit }, value) {
             commit('EDIT_STORE_ENTITIES', value);
         },
-        updateStoreEntity({ commit }, value) {
-            commit('EDIT_STORE_ENTITY', value);
-        },
         updateStoreInventoryMode({ commit }, value) {
             commit('EDIT_STORE_INVENTORY_MODE', value);
-        },
-        updateStoreSearch({ commit }, value) {
-            commit('EDIT_STORE_SEARCH', value);
         },
         updateStoreInfoMessage({ commit }, value) {
             commit('EDIT_STORE_INFO_MESSAGE', value);
         },
     },
     getters: {
-        storeDatabase: (state) => {
-            return state.storeDatabase;
+        storeEntityDatabases: (state) => {
+            return state.storeEntityDatabases;
         },
         storeEntities: (state) => {
             return state.storeEntities;
         },
-        storeEntity: (state) => {
-            return state.storeEntity;
-        },
         storeInventoryMode: (state) => {
             return state.storeInventoryMode;
-        },
-        storeSearch: (state) => {
-            return state.storeSearch;
         },
         storeInfoMessage: (state) => {
             return state.storeInfoMessage;

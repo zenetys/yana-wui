@@ -80,7 +80,6 @@
 </style>
 
 <script>
-import { mapGetters } from 'vuex';
 import AutoTable from '@/components/AutoTable.vue';
 
 export default {
@@ -137,19 +136,25 @@ export default {
                      * @return {string} - joined HTML links of formatted peers
                      */
                     format: (peers) => {
+                        const peerRouteBase = { name: 'ViewSwitch' };
+                        peerRouteBase.query = this.$route.query;
+                        peerRouteBase.params = { ...this.$route.params };
+
                         const formattedPeers = peers.map((peer) => {
                             let label = peer.label;
 
                             if (peer.type?.includes('switch')) {
                                 if (peer.id) {
-                                    label = `<a href="#/main/inventory/switch/${peer.id}">${label}</a>`;
+                                    const peerRoute = peerRouteBase;
+                                    peerRoute.params.id = peer.id;
+                                    /** Working URL fully generated with params & query params */
+                                    const peerLink = this.$router.resolve(peerRoute).href;
+                                    label = `<a href="${peerLink}">${label}</a>`;
                                 }
-
                                 label = '<span class="mdi mdi-swap-horizontal-bold"></span> ' + label;
                             }
 
                             const tab = [];
-
                             Object.keys(peer).forEach((key) => {
                                 if (key !== 'label' && key !== 'id') {
                                     tab.push(key + ': ' + peer[key]);
@@ -169,21 +174,18 @@ export default {
             },
             tableHeight: 0,
             device: {},
+            apiUrl: '',
         };
     },
     computed: {
-        apiUrl() {
-            return (
-                '/entity/' +
-                encodeURIComponent(this.storeEntity) +
-                '/' +
-                'interfaces?database=' +
-                encodeURIComponent(this.storeDatabase) +
-                '&id=' +
-                encodeURIComponent(this.$route.params.id)
-            );
+        apiStateParams() {
+            return {
+                entity: this.$route.query.entity,
+                database: this.$route.query.db,
+                search: this.$route.query.search,
+                id: this.$route.params.id,
+            };
         },
-        ...mapGetters(['storeDatabase', 'storeEntity', 'storeSearch']),
         deviceName() {
             return this.$utils.unArray(this.device.name);
         },
@@ -198,20 +200,17 @@ export default {
         deviceIp() {
             return Array.isArray(this.device.ip) ? this.device.ip.join(', ') : this.device.ip;
         },
+        storeEntityDatabases() {
+            return this.$store.state.storeEntityDatabases;
+        },
     },
     methods: {
         /**
          * Get all the information about the switch from the API
          */
         getDeviceInfo() {
-            const url =
-                '/entity/' +
-                encodeURIComponent(this.storeEntity) +
-                '/' +
-                'devices?database=' +
-                encodeURIComponent(this.storeDatabase) +
-                '&id=' +
-                encodeURIComponent(this.$route.params.id);
+            const url = this.$utils.getUpdatedApiUrl(this.apiStateParams, 'device');
+
             this.$api
                 .get(url)
                 .then((response) => {
@@ -266,25 +265,33 @@ export default {
         },
     },
     watch: {
-        /* FIXME: workaround bug on entity change
-         * also add redirect to inventory main view on search
-         * this is probably not the right way to do it, need to check */
-        storeEntity() {
-            this.$router.push('/main/inventory');
-        },
-        storeSearch() {
-            this.$router.push('/main/inventory');
-        },
         '$route.params.id': {
             immediate: true,
             handler() {
+                this.apiUrl = this.$utils.getUpdatedApiUrl(this.apiStateParams, 'interface');
                 this.getDeviceInfo();
             },
         },
-    },
-    beforeMount() {
-        /* redirect to the entity-picker if none is set, at least for now */
-        if (!this.storeEntity) this.$router.push('/entity-picker');
+        apiStateParams: {
+            immediate: true,
+            handler(newParams, oldParams) {
+                if (oldParams) {
+                    if (oldParams.database !== newParams.database || oldParams.search !== newParams.search) {
+                        this.apiUrl = this.$utils.getUpdatedApiUrl(newParams, 'interface');
+                        this.getDeviceInfo();
+                    }
+                }
+            },
+        },
+        storeEntityDatabases: {
+            handler(newDatabases) {
+                if (newDatabases?.some((db) => db.id === this.apiStateParams.database)) {
+                    this.apiUrl = this.$utils.getUpdatedApiUrl(this.apiStateParams, 'interface');
+                    this.getDeviceInfo();
+                }
+            },
+            immediate: true,
+        },
     },
     updated() {
         window.dispatchEvent(new Event('resize'));

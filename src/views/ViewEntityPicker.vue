@@ -63,12 +63,11 @@
                             md="3"
                             lg="2"
                             xl="1">
-                            <router-link class="entity" :to="'/main'">
+                            <router-link class="entity" :to="'/main?entity=' + entity.name">
                                 <v-card
                                     class="d-flex align-center justify-center px-3 entity-card"
                                     color="secondary"
-                                    min-height="100"
-                                    @click="updateStoreEntity(entity.name)">
+                                    min-height="100">
                                     <v-card-actions>
                                         <span class="entity-name"> {{ entity.name }}</span>
                                     </v-card-actions>
@@ -95,8 +94,8 @@
                                     v-for="(header, headerIndex) in headers"
                                     v-slot:[`item.${header.value}`]="{ item }">
                                     <div :key="`entity-${headerIndex}`">
-                                        <router-link :to="'/main'">
-                                            <span v-if="header.value === 'name'" @click="updateStoreEntity(item.name)">
+                                        <router-link :to="'/main?' + item.name">
+                                            <span v-if="header.value === 'name'">
                                                 {{ item.name }}
                                             </span>
                                         </router-link>
@@ -134,7 +133,6 @@ a {
 
 <script>
 import Message from '@/components/Message.vue';
-import { mapActions, mapGetters } from 'vuex';
 
 export default {
     name: 'ViewEntityPicker',
@@ -153,7 +151,9 @@ export default {
         };
     },
     computed: {
-        ...mapGetters(['storeEntities']),
+        storeEntities() {
+            return this.$store.state.storeEntities;
+        },
         filteredEntities() {
             return this.storeEntities
                 .map((entity) => ({ name: entity }))
@@ -161,7 +161,6 @@ export default {
         },
     },
     methods: {
-        ...mapActions(['updateStoreEntity', 'updateStoreSearch']),
         /**
          * Set the entity picker display mode
          * @param {string} type - The display mode
@@ -184,7 +183,6 @@ export default {
         this.setTableHeight();
         this.$refs.entitySearch.$refs.input.focus();
         window.addEventListener('resize', this.setTableHeight);
-        this.updateStoreSearch('');
     },
     destroyed() {
         window.removeEventListener('resize', this.setTableHeight);
