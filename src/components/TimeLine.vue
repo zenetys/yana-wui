@@ -202,11 +202,6 @@ export default {
         this.renderChart(this.chartdata, this.options);
     },
 };
-
-/*
-Notes:
-- Force update the grph:
-*/
 </script>
 
 <style></style>

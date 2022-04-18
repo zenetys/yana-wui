@@ -11,21 +11,21 @@
                         scope="col"
                         v-for="formattedVlan in formattedVlans"
                         :key="formattedVlan.id"
-                        :class="'cell-' + formattedVlan.id"
-                    >
+                        :class="'cell-' + formattedVlan.id">
                         {{ formattedVlan.id }}
                     </th>
                 </tr>
                 <tr v-for="vlan in vlans" :key="vlan.id">
                     <th scope="row" class="font-weight-regular">
-                        <router-link :to="'/main/inventory/switch/' + vlan.id">{{ vlan.name }}</router-link>
+                        <router-link :to="'/main/inventory/switch/' + vlan.id">
+                            {{ vlan.name }}
+                        </router-link>
                     </th>
                     <td
                         class="vlan-number"
                         :class="'cell-' + vlan.id"
                         @mouseover="onOverCell(vlan.id)"
-                        @mouseout="onOutCell(vlan.id)"
-                    >
+                        @mouseout="onOutCell(vlan.id)">
                         {{ vlan.vlan.length }}
                     </td>
                     <td
@@ -33,12 +33,10 @@
                         :key="formattedVlan.id"
                         :class="getVlanClass(vlan, formattedVlan)"
                         @mouseover="onOverCell(formattedVlan.id)"
-                        @mouseout="onOutCell(formattedVlan.id)"
-                    >
+                        @mouseout="onOutCell(formattedVlan.id)">
                         <span
                             v-if="findMatchingVlan(vlan.vlan, formattedVlan)"
-                            :title="findMatchingVlan(vlan.vlan, formattedVlan).name"
-                        >
+                            :title="findMatchingVlan(vlan.vlan, formattedVlan).name">
                             {{ findMatchingVlan(vlan.vlan, formattedVlan).name }}
                         </span>
                     </td>

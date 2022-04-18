@@ -4,8 +4,7 @@
         <v-app-bar id="navbar" height="48" app elevation="0" color="#ffffff">
             <v-app-bar-nav-icon
                 v-if="$vuetify.breakpoint.mdAndDown"
-                @click.stop="drawer = !drawer"
-            ></v-app-bar-nav-icon>
+                @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
             <v-col cols="9" sm="5" md="4" lg="4" xl="5" class="pl-0 d-inline-flex">
                 <v-text-field
                     label="Search..."
@@ -21,8 +20,7 @@
                     @click:clear="clearSearch"
                     @mouseup.middle="onClickMouseMiddle(search)"
                     @keyup="updateStoreSearchOnAnyKeyUp(search)"
-                    @keyup.enter="updateStoreSearchOnEnterPress(search)"
-                ></v-text-field>
+                    @keyup.enter="updateStoreSearchOnEnterPress(search)"></v-text-field>
                 <v-btn icon small @click="updateKeepSearch" class="mt-1 ml-1" title="keep / disable your search">
                     <v-icon class="pt-1">
                         {{ keepSearch ? 'mdi-pin' : 'mdi-pin-off' }}
@@ -40,8 +38,7 @@
                         hide-details=""
                         :ripple="false"
                         tile
-                        class="px-3 font-weight-light"
-                    ></v-checkbox>
+                        class="px-3 font-weight-light"></v-checkbox>
                 </div>
             </v-col>
 
@@ -57,8 +54,7 @@
                     hide-details=""
                     flat
                     background-color="#e8e8e8d6"
-                    prepend-inner-icon="mdi-server-network"
-                ></v-autocomplete>
+                    prepend-inner-icon="mdi-server-network"></v-autocomplete>
                 <v-btn icon small @click="setBookmarks" class="mt-1 ml-1" title="Add to Favorites">
                     <v-icon> mdi-bookmark </v-icon>
                 </v-btn>
@@ -81,8 +77,7 @@
                         class="py-1 pl-4 d-flex justify-start align-center"
                         height="40"
                         src="assets/images/zenetys-fg-black-bg-full-transparent_LD.png"
-                        alt=""
-                    />
+                        alt="" />
                 </router-link>
             </v-toolbar-title>
             <v-list class="pt-0 mt-0">
@@ -93,8 +88,7 @@
                         active-class="deep-cyan--text text--accent-4"
                         class="v-list-item"
                         dense
-                        :style="sectionLink.url ? '' : 'opacity:0.5'"
-                    >
+                        :style="sectionLink.url ? '' : 'opacity:0.5'">
                         <v-list-item-action class="mr-4">
                             <v-icon size="20">{{ sectionLink.icon }}</v-icon>
                         </v-list-item-action>
@@ -111,8 +105,7 @@
                         v-for="(query, queryIndex) in recentQueries"
                         :key="queryIndex"
                         active-class="black"
-                        class="list-item"
-                    >
+                        class="list-item">
                         <v-list-item-icon class="mr-0 align-start item-icon">
                             <v-icon size="14">mdi-history</v-icon>
                         </v-list-item-icon>
@@ -121,8 +114,7 @@
                                 @click="loadRecentQuery(query)"
                                 class="font-weight-regular"
                                 :title="getHistoryQueryText(query)"
-                                v-text="getHistoryQueryText(query)"
-                            ></v-list-item-title>
+                                v-text="getHistoryQueryText(query)"></v-list-item-title>
                         </v-list-item-content>
                         <v-icon
                             @click="removeRecentQuery(query)"
@@ -147,8 +139,7 @@
                             <v-list-item-title
                                 class="font-weight-regular"
                                 :title="getBookmarksQueryText(bookmark)"
-                                v-text="getBookmarksQueryText(bookmark)"
-                            ></v-list-item-title>
+                                v-text="getBookmarksQueryText(bookmark)"></v-list-item-title>
                         </v-list-item-content>
                         <v-icon
                             @click="removeBookmark(bookmark)"

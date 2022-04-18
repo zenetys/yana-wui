@@ -9,8 +9,7 @@
         :height-offsets="[-120]"
         :column-definition="columnDefinition"
         :custom-headers-computation="computeHeaders"
-        @error="onError"
-    >
+        @error="onError">
     </auto-table>
 </template>
 
@@ -91,31 +90,25 @@ export default {
             columnDefinition: {
                 flag: {
                     format: (input, tableItem) => {
-                        const type = unArray(tableItem.type) ? unArray(tableItem.type).toLowerCase() : '';
+                        const type = unArray(tableItem.type)
+                            ? unArray(tableItem.type).toLowerCase()
+                            : '';
                         const descr = unArray(tableItem.description)
                             ? unArray(tableItem.description).toLowerCase()
                             : '';
 
                         if (type) {
-                            if (type.includes('switch'))
-                                return '<span class="mdi mdi-swap-horizontal-bold"></span>';
-                            if (type.includes('router'))
-                                return '<span class="mdi mdi-router"></span>';
-                            if (type.includes('wlan'))
-                                return '<span class="mdi mdi-wifi"></span>';
-                            if (type.includes('phone'))
-                                return '<span class="mdi mdi-phone"></span>';
-                            if (type.includes('print'))
-                                return '<span class="mdi mdi-printer"></span>';
+                            if (type.includes('switch')) return '<span class="mdi mdi-swap-horizontal-bold"></span>';
+                            if (type.includes('router')) return '<span class="mdi mdi-router"></span>';
+                            if (type.includes('wlan')) return '<span class="mdi mdi-wifi"></span>';
+                            if (type.includes('phone')) return '<span class="mdi mdi-phone"></span>';
+                            if (type.includes('print')) return '<span class="mdi mdi-printer"></span>';
                         }
 
                         if (descr) {
-                            if (descr.includes('linux'))
-                                return '<span class="mdi mdi-linux"></span>';
-                            if (descr.includes('windows'))
-                                return '<span class="mdi mdi-microsoft-windows"></span>';
-                            if (descr.includes('print'))
-                                return '<span class="mdi mdi-printer"></span>';
+                            if (descr.includes('linux')) return '<span class="mdi mdi-linux"></span>';
+                            if (descr.includes('windows')) return '<span class="mdi mdi-microsoft-windows"></span>';
+                            if (descr.includes('print')) return '<span class="mdi mdi-printer"></span>';
                         }
 
                         return '<span class="mdi mdi-monitor-small"></span>';
@@ -192,7 +185,8 @@ export default {
 
                         if (firstValue) {
                             formatted +=
-                                '<span class="mdi mdi-swap-horizontal-bold"></span> <a href="#/main/inventory/switch/' +
+                                '<span class="mdi mdi-swap-horizontal-bold"></span>' +
+                                ' <a href="#/main/inventory/switch/' +
                                 firstValue.id +
                                 '">' +
                                 firstValue.name +

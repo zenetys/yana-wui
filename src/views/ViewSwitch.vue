@@ -5,9 +5,11 @@
                 <tr>
                     <th class="text-left px-2">Name</th>
                     <td class="text-left pl-2">
-                        <router-link :to="'/main/inventory/host/' + this.device.id" id="device-name">{{
-                            this.deviceName
-                        }}</router-link>
+                        <router-link
+                            :to="'/main/inventory/host/' + this.device.id"
+                            id="device-name">
+                            {{ this.deviceName }}
+                        </router-link>
                         <span class="secondary-names">{{ this.deviceSecondaryNames }}</span>
                     </td>
                 </tr>
@@ -30,8 +32,7 @@
             height="auto"
             :height-offsets="[-120]"
             :column-definition="columnDefinition"
-            :item-class="itemClass"
-        />
+            :item-class="itemClass" />
     </div>
 </template>
 

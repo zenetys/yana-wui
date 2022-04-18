@@ -105,8 +105,7 @@
                             <td
                                 v-for="(header, headerIndex) in interfaceHeaders"
                                 :key="headerIndex"
-                                :class="cellClass(header, iface.status)"
-                            >
+                                :class="cellClass(header, iface.status)">
                                 <span v-if="header !== 'ip'">
                                     {{ iface[header] }}
                                 </span>

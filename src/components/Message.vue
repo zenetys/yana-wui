@@ -9,8 +9,7 @@
                 style="white-space: pre-line"
                 centered
                 ref="messageOverlay"
-                id="messageSnackbar"
-            >
+                id="messageSnackbar">
                 <span class="message"> {{ this.messageContent }} </span>
                 <template v-slot:action="{ attrs }">
                     <v-btn icon v-bind="attrs" top @click="closeSnackbar()">
@@ -75,8 +74,7 @@ export default {
             this.$store.commit('EDIT_STORE_INFO_MESSAGE', {});
         },
         closeSnackbarOnWindowKeyUp(e) {
-            if (e.key === 'Escape')
-                this.closeSnackbar();
+            if (e.key === 'Escape') this.closeSnackbar();
         },
     },
     mounted() {

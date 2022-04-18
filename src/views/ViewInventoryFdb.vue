@@ -8,8 +8,7 @@
             array-data=""
             height="auto"
             :height-offsets="[-120]"
-            :column-definition="columnDefinition"
-        />
+            :column-definition="columnDefinition" />
         <span v-if="storeSearch === ''">Please enter something to search</span>
     </div>
 </template>
@@ -70,7 +69,6 @@ export default {
                                 '</a> ' +
                                 input.iface;
                         }
-
                         return output;
                     },
                     getTooltip: (inputs) => {

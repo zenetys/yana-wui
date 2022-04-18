@@ -7,8 +7,7 @@
                     <img
                         class="py-1 pl-0 d-flex justify-start align-center"
                         src="assets/images/zenetys-fg-black-bg-full-transparent_LD.png"
-                        height="40"
-                    />
+                        height="40" />
                 </router-link>
             </v-toolbar-title>
             <v-spacer></v-spacer>
@@ -20,8 +19,7 @@
                 dark
                 x-small
                 color="primary"
-                class="view-type-button"
-            >
+                class="view-type-button">
                 <v-icon dark v-if="entityPickerDisplayMode === 'grid'"> mdi-table </v-icon>
                 <v-icon dark v-if="entityPickerDisplayMode === 'table'"> mdi-view-grid </v-icon>
             </v-btn>
@@ -40,8 +38,7 @@
                             outlined
                             dense
                             prepend-inner-icon="mdi-magnify"
-                            :hide-details="true"
-                        ></v-text-field>
+                            :hide-details="true"></v-text-field>
                     </v-col>
                 </v-row>
             </v-container>
@@ -65,15 +62,13 @@
                             sm="4"
                             md="3"
                             lg="2"
-                            xl="1"
-                        >
+                            xl="1">
                             <router-link class="entity" :to="'/main'">
                                 <v-card
                                     class="d-flex align-center justify-center px-3 entity-card"
                                     color="secondary"
                                     min-height="100"
-                                    @click="updateStoreEntity(entity.name)"
-                                >
+                                    @click="updateStoreEntity(entity.name)">
                                     <v-card-actions>
                                         <span class="entity-name"> {{ entity.name }}</span>
                                     </v-card-actions>
@@ -95,12 +90,10 @@
                                 :height="tableHeight"
                                 fixed-header
                                 :footer-props="entityTableProps.itemPerPageOptions"
-                                :items-per-page="-1"
-                            >
+                                :items-per-page="-1">
                                 <template
                                     v-for="(header, headerIndex) in headers"
-                                    v-slot:[`item.${header.value}`]="{ item }"
-                                >
+                                    v-slot:[`item.${header.value}`]="{ item }">
                                     <div :key="`entity-${headerIndex}`">
                                         <router-link :to="'/main'">
                                             <span v-if="header.value === 'name'" @click="updateStoreEntity(item.name)">
