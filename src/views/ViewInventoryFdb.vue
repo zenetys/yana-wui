@@ -47,6 +47,12 @@ export default {
                     getStyle: () => 'color: #666;',
                 },
                 swName: {
+                    /**
+                     * Format the switch name to generate an anchor tag linking to the device
+                     * @param {string} input - The switch name
+                     * @param {object} tableItem - The corresponding table item
+                     * @return {string} - The anchor tag for the switch name
+                     */
                     format: (input, tableItem) => {
                         input = unArray(input);
 
@@ -55,6 +61,11 @@ export default {
                     isHtml: true,
                 },
                 swIfUplink: {
+                    /**
+                     * Format the swIfUplink value to generate an anchor tag linking to the device
+                     * @param {string} input - The device name
+                     * @return {string} - The anchor tag generated
+                     */
                     format: (input) => {
                         input = unArray(input);
 

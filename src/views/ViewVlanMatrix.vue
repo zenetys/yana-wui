@@ -196,12 +196,22 @@ export default {
         };
     },
     methods: {
+        /**
+         * Find a matching VLAN from an array of VLANs
+         * @param {object[]} vlanArray - The array to search
+         * @param {Object} vlanToMatch - The VLAN to match against
+         * @returns {object|undefined} - If found in the array, the VLAN object
+         */
         findMatchingVlan(vlanArray, vlanToMatch) {
             return vlanArray.find((vlan) => vlan.id === vlanToMatch.id);
         },
+        /**
+         * Format VLANs into a unique sorted array
+         */
         formatVlans() {
             let filteredVlans = [];
 
+            /* Push all unique VLANs into a filtered array */
             this.vlans.forEach((vlan) => {
                 vlan.vlan.filter((subVlan) => {
                     if (!filteredVlans.some((fVlan) => fVlan.id === subVlan.id)) {
@@ -210,10 +220,14 @@ export default {
                 });
             });
 
+            /* Sort the array */
             this.formattedVlans = filteredVlans.sort((a, b) => {
                 return a.id - b.id;
             });
         },
+        /**
+         * Fetch all VLANs from the API
+         */
         getVlans() {
             this.isLoading = true;
             const url =
@@ -247,11 +261,22 @@ export default {
                     });
                 });
         },
+        /**
+         * Get a class for a VLAN depending on its matching against another VLAN
+         * @param {object} vlan - The VLAN to match
+         * @param {object} formattedVlan - The VLAN to match against
+         * @returns {string} - The class to apply to the VLAN
+         */
         getVlanClass(vlan, formattedVlan) {
             return vlan.vlan.find((subVlan) => subVlan.id === formattedVlan.id)
                 ? 'vlan-found cell-' + formattedVlan.id
                 : 'vlan-not-found cell-' + formattedVlan.id;
         },
+        /**
+         * Calculate the number of switches for a given VLAN
+         * @param {object} vlan - The VLAN to count
+         * @returns {number} - The number of switches
+         */
         amountOfswitchesFromVlan(vlan) {
             let amount = 0;
 
@@ -263,6 +288,10 @@ export default {
 
             return amount;
         },
+        /**
+         * Handle the hovering of a VLAN cell
+         * @param {string} cellId - The id of the cell to handle
+         */
         onOverCell(cellId) {
             const columnCells = document.querySelectorAll('.cell-' + cellId);
 
@@ -275,6 +304,10 @@ export default {
                 }
             });
         },
+        /**
+         * Handle the mouse leaving a VLAN cell
+         * @param {string} cellId - The id of the cell to handle
+         */
         onOutCell(cellId) {
             const columnCells = document.querySelectorAll('.cell-' + cellId);
 
@@ -284,6 +317,9 @@ export default {
                 }
             });
         },
+        /**
+         * Calculate and set the dimensions of the data table
+         */
         setTableDimensions() {
             const tableVlan = document.getElementById('table-vlan');
 

@@ -132,6 +132,11 @@ export default {
                 },
                 peers: {
                     getStyle: () => 'white-space: normal;',
+                    /**
+                     * Format peers to generate a links to devices
+                     * @param {array} peers - array of peers
+                     * @return {string} - joined HTML links of formatted peers
+                     */
                     format: (peers) => {
                         const formattedPeers = peers.map((peer) => {
                             let label = peer.label;
@@ -196,6 +201,9 @@ export default {
         },
     },
     methods: {
+        /**
+         * Get all the information about the switch from the API
+         */
         getDeviceInfo() {
             const url =
                 '/entity/' +
@@ -219,6 +227,11 @@ export default {
                     });
                 });
         },
+        /**
+         * Get the class for a table item depending on its status
+         * @param {string} item - the item to get the class for
+         * @return {string} - classes to apply to the table item
+         */
         itemClass(item) {
             let classes = '';
 
@@ -226,11 +239,23 @@ export default {
 
             return classes;
         },
+        /**
+         * Get a custom class for table items that have a meta field
+         * @param {string} itemKey - the key of the table item
+         * @param {object} tableItem - the table item
+         * @return {string} class to apply
+         */
         getClass(itemKey, tableItem) {
             if (tableItem && tableItem._meta && tableItem._meta[itemKey])
                 return tableItem._meta[itemKey].level !== undefined ? 'level-' + tableItem._meta[itemKey].level : '';
             return '';
         },
+        /**
+         * Get a custom title for table items that have a meta field
+         * @param {string} itemKey - the key of the table item
+         * @param {object} tableItem - the table item
+         * @return {string} title to apply
+         */
         getTitle(itemKey, tableItem) {
             if (tableItem?._meta[itemKey]?.text) {
                 return Array.isArray(tableItem._meta[itemKey].text)

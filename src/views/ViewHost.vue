@@ -282,6 +282,9 @@ export default {
         },
     },
     methods: {
+        /**
+         * Fetch Host device and interface information from API
+         */
         getDeviceInfo() {
             const deviceUrl =
                 '/entity/' +
@@ -320,6 +323,9 @@ export default {
                     });
                 });
         },
+        /**
+         * Calculate the height of the host card
+         */
         setCardHeight() {
             const hostCard = document.getElementById('host-card');
             const extraHeight = 120;
@@ -343,9 +349,19 @@ export default {
                 }
             }
         },
+        /**
+         * Format a property key with a capitalised first letter
+         * @param {string} key - The property key
+         * @return {string} The formatted property key
+         */
         formatPropertyKey(propertyKey) {
             return propertyKey.charAt(0).toUpperCase() + propertyKey.slice(1);
         },
+        /**
+         * Check if an input is an object
+         * @param {*} input - The input to check
+         * @return {boolean} True if the input is an object
+         */
         isObject(input) {
             return typeof input === 'object';
         },
@@ -353,7 +369,7 @@ export default {
          * Get a cell color class depending on the status of the interface
          * @param {string} header - Current header
          * @param {string} interfaceStatus - Status of the current interface
-         * @returns {string} Class name assigning cell color
+         * @return {string} Class name assigning cell color
          */
         cellClass(header, interfaceStatus) {
             return interfaceStatus && header === 'status'
@@ -362,13 +378,19 @@ export default {
                     : 'cell-green'
                 : '';
         },
+        /**
+         * Get the content of a cell
+         * @param {*} element
+         * @param {*} item
+         * @return {*} The content of the cell
+         */
         cellContent(element, item) {
             return element[item];
         },
         /**
          * Return the ip list
          * @param {string} ifname - Element name
-         * @returns {string|array} The equivalent ip format
+         * @return {string|array} The equivalent ip format
          */
         formatIfaceIp(ifname) {
             if (this.device.iface && this.device.iface[ifname] && this.device.iface[ifname].ip)

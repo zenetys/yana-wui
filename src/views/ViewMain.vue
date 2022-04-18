@@ -317,6 +317,9 @@ export default {
                 this.$store.commit('EDIT_STORE_SEARCH', newSearch);
             },
         },
+        /**
+         * Dynamic bottom bar style depending on the current breakpoint
+         */
         bottomBarStyle() {
             return this.$vuetify.breakpoint.mdAndDown
                 ? 'padding-left:5px;padding-right:5px;'
@@ -324,6 +327,9 @@ export default {
         },
     },
     methods: {
+        /**
+         * Run a new search query on a middlemouse click (paste) in the search input
+         */
         onClickMouseMiddle() {
             setTimeout(() => this.updateStoreSearchOnAnyKeyUp(this.search), 100);
         },
@@ -339,23 +345,46 @@ export default {
                 this.setRecentQueries();
             }, this.searchUpdateTimeOut);
         },
+        /**
+         * Set the drawer value depending on the current breakpoint
+         */
         drawerValueByBreakpoint() {
             this.drawer = !this.$vuetify.breakpoint.mdAndDown;
         },
+        /**
+         * Handle API errors
+         * @param {*} payload - error payload
+         */
         onError(payload) {
             this.$store.commit('EDIT_STORE_INFO_MESSAGE', payload);
             console.log(this.$store.state.storeInfoMessage);
         },
+        /**
+         * Toggle the persistence of the search query upon navigation
+         */
         toggleKeepSearch() {
             this.keepSearch = !this.keepSearch;
         },
+        /**
+         * Empties the search query
+         */
         clearSearch() {
             this.search = '';
             this.$store.commit('EDIT_STORE_SEARCH', this.search);
         },
+        /**
+         * Generate a label for a recent search query
+         * @param {object} query - The query object
+         * @return {string} The generated recent query label
+         */
         getHistoryQueryText(query) {
             return query.query.inventoryMode + ' / ' + query.query.search;
         },
+        /**
+         * Generate a label for a bookmark
+         * @param {object} bookmark - The bookmark object
+         * @return {string} The generated bookmarked label
+         */
         getBookmarksQueryText(bookmark) {
             return (
                 bookmark.query.inventoryMode +
@@ -363,6 +392,10 @@ export default {
                 (bookmark.label ? ' / ' + bookmark.label : '')
             );
         },
+        /**
+         * Navigate to a recent search query or bookmark.
+         * @param {object} query - The query object
+         */
         loadRecentQuery(query) {
             this.storeSearch = this.search = query.query.search;
 
@@ -412,6 +445,7 @@ export default {
                 index: new Date().getTime(),
             };
 
+            /* Only save the new query if it doesn't already exist */
             if (
                 this.search &&
                 !currentEntityQueries.find(
@@ -420,6 +454,7 @@ export default {
                         entity.query.inventoryMode === this.storeInventoryMode
                 )
             ) {
+                /* 5 queries maximum in storage */
                 if (currentEntityQueries.length >= 5) {
                     currentEntityQueries.pop();
                 }

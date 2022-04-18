@@ -89,6 +89,12 @@ export default {
             apiUrl: '',
             columnDefinition: {
                 flag: {
+                    /**
+                     * Format the flag column and apply different icons depending on device type
+                     * @param {*} input -
+                     * @param {object} tableItem - The table item to format the flag for
+                     * @return {string} - An HTML element with the corresponding icon
+                     */
                     format: (input, tableItem) => {
                         const type = unArray(tableItem.type)
                             ? unArray(tableItem.type).toLowerCase()
@@ -121,6 +127,12 @@ export default {
                     hidden: true,
                 },
                 ip: {
+                    /**
+                     * Format the IP and create a link to the corresponding device
+                     * @param {string} input
+                     * @param {object} tableItem - the corresponding table item
+                     * @return {string} - The formatted IP as an anchor tag linking to a device
+                     */
                     format: (input, tableItem) => {
                         const inputValue = unArray(input);
 
@@ -144,6 +156,12 @@ export default {
                     isHtml: true,
                 },
                 name: {
+                    /**
+                     * Format the name and create a link to the corresponding device
+                     * @param {string} input
+                     * @param {object} tableItem - the corresponding table item
+                     * @return {string} - The formatted name as an anchor tag linking to a device
+                     */
                     format: (input, tableItem) => {
                         input = unArray(input);
 
@@ -178,6 +196,12 @@ export default {
                     format: unArray,
                 },
                 swPort: {
+                    /**
+                     * Format the switch port value, create a link to the corresponding device,
+                     * display the interface and the amount of additional ports
+                     * @param {string} input
+                     * @return {string} - The formatted switch port as an anchor tag linking to a device
+                     */
                     format: (input) => {
                         const total = Array.isArray(input) ? input.length : input ? 1 : 0;
                         const firstValue = unArray(input);
@@ -199,6 +223,11 @@ export default {
 
                         return formatted;
                     },
+                    /**
+                     * Generate a tooltip for the switch port
+                     * @param {any[]} inputs -
+                     * @return {string} - The generated tooltip
+                     */
                     getTooltip: (inputs) => {
                         let tooltip = [];
 

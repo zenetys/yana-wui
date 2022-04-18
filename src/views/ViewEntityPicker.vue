@@ -162,9 +162,16 @@ export default {
     },
     methods: {
         ...mapActions(['updateStoreEntity', 'updateStoreSearch']),
+        /**
+         * Set the entity picker display mode
+         * @param {string} type - The display mode
+         */
         setEntityPickerDisplayMode(type) {
             this.entityPickerDisplayMode = type === 'table' ? 'grid' : 'table';
         },
+        /**
+         * Calculate and set the height of the table
+         */
         setTableHeight() {
             const header = document.querySelector('header');
             const searchField = document.getElementById('search-field');

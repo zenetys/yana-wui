@@ -31,16 +31,20 @@ export function copyToClipboard(textToCopy) {
 }
 
 /**
- *
  * Transform an input that can be an array into a litteral value
  * If it's an array, return the first value of the array
  * @param {any} input - The value to check
- * @returns {any}
+ * @return {any}
  */
 export function unArray(input) {
     return Array.isArray(input) ? input[0] : input;
 }
 
+/**
+ * Check if an object is empty or not
+ * @param {object} object - The object to check
+ * @return {boolean} - True if the object is empty, false otherwise
+ */
 export function isEmptyObject(object) {
     return Object.keys(object).length === 0;
 }
