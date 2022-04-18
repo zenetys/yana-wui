@@ -54,7 +54,13 @@ export default {
                      */
                     format: (input, tableItem) => {
                         input = this.$utils.unArray(input);
-                        return '<a href="#/main/inventory/switch/' + tableItem.swId + '"> ' + input + ' </a>';
+                        return this.$utils.generateDeviceAnchorTag(
+                            tableItem.swId,
+                            input,
+                            'switch',
+                            this.$route,
+                            this.$router
+                        );
                     },
                     isHtml: true,
                 },
@@ -71,12 +77,13 @@ export default {
 
                         if (input) {
                             output =
-                                '<a href="#/main/inventory/switch/' +
-                                input.id +
-                                '"> ' +
-                                input.name +
-                                '</a> ' +
-                                input.iface;
+                                this.$utils.generateDeviceAnchorTag(
+                                    input.id,
+                                    input.name,
+                                    'switch',
+                                    this.$route,
+                                    this.$router
+                                ) + input.iface;
                         }
                         return output;
                     },
@@ -131,7 +138,7 @@ export default {
         },
     },
     mounted() {
-        this.updateApiUrl();
+        this.apiUrl = this.$utils.getUpdatedApiUrl(this.apiStateParams, 'fdb');
     },
 };
 </script>

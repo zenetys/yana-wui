@@ -139,9 +139,9 @@ export default {
                             const type = this.$utils.unArray(tableItem.type);
 
                             if (type && type.toLowerCase().includes('switch')) {
-                                return '<a href="#/main/inventory/switch/' + tableItem.id + '">' + inputValue + '</a>';
+                                return this.fetchDeviceAnchorTag(tableItem.id, inputValue, 'switch');
                             }
-                            return '<a href="#/main/inventory/host/' + tableItem.id + '">' + inputValue + '</a>';
+                            return this.fetchDeviceAnchorTag(tableItem.id, inputValue, 'host');
                         }
                         return '';
                     },
@@ -168,9 +168,9 @@ export default {
                             const type = this.$utils.unArray(tableItem.type);
 
                             if (type && type.toLowerCase().includes('switch')) {
-                                return '<a href="#/main/inventory/switch/' + tableItem.id + '">' + input + '</a>';
+                                return this.fetchDeviceAnchorTag(tableItem.id, input, 'switch');
                             }
-                            return '<a href="#/main/inventory/host/' + tableItem.id + '">' + input + '</a>';
+                            return this.fetchDeviceAnchorTag(tableItem.id, input, 'host');
                         }
                         return '';
                     },
@@ -209,11 +209,7 @@ export default {
                         if (firstValue) {
                             formatted +=
                                 '<span class="mdi mdi-swap-horizontal-bold"></span>' +
-                                ' <a href="#/main/inventory/switch/' +
-                                firstValue.id +
-                                '">' +
-                                firstValue.name +
-                                '</a> ' +
+                                this.fetchDeviceAnchorTag(firstValue.id, firstValue.name, 'switch') +
                                 firstValue.iface;
                             if (total > 1)
                                 formatted += ` <span class="additional-ports-counter">(+${total - 1})</span>`;
@@ -285,6 +281,16 @@ export default {
          */
         onError(payload) {
             this.$store.commit('EDIT_STORE_INFO_MESSAGE', payload);
+        },
+        /**
+         * Fetch an anchor tag for a given device
+         * @param {string} deviceId - The device id
+         * @param {string} label - The label to display in the anchor tag
+         * @param {string} type - The type of the device
+         * @return {string} The anchor tag generated for the device
+         */
+        fetchDeviceAnchorTag(deviceId, label, type) {
+            return this.$utils.generateDeviceAnchorTag(deviceId, label, type, this.$route, this.$router);
         },
     },
     computed: {

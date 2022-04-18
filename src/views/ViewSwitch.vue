@@ -6,7 +6,7 @@
                     <th class="text-left px-2">Name</th>
                     <td class="text-left pl-2">
                         <router-link
-                            :to="'/main/inventory/host/' + this.device.id"
+                            :to="$utils.getDeviceRoute(this.device.id, 'host', $route, false)"
                             id="device-name">
                             {{ this.deviceName }}
                         </router-link>
