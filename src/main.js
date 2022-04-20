@@ -16,6 +16,13 @@ Vue.prototype.$utils = Utils;
 Vue.prototype.$store = Store;
 Vue.prototype.$ev = Ev;
 
+/* Imports related to optional features */
+import ViewInventory from '@/views/ViewInventory.vue';
+import ViewMain from '@/views/ViewMain.vue';
+import mixinMainBackup from '@/mixins/main-backup.js';
+import mixinInventoryBackup from '@/mixins/inventory-backup.js';
+import backupRoutes from '@/router/backup.js'
+
 async function init() {
     const earlyErrors = [];
 
@@ -31,6 +38,15 @@ async function init() {
     catch (e) {
         earlyErrors.push({ title: 'Failed to initialize API',
             error: e, duration: null });
+    }
+
+    /* Backup optional feature */
+    if (Api.jsonConfig?.BACKUP_ENABLED) {
+        console.log('main: enable backup addon');
+        ViewInventory.mixins = [...ViewInventory.mixins || [], mixinInventoryBackup];
+        ViewMain.mixins = [...ViewMain.mixins || [], mixinMainBackup];
+        for (let route of backupRoutes)
+            router.addRoute('ViewMain', route);
     }
 
     /* Fetch entities */

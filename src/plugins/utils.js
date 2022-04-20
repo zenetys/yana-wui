@@ -98,6 +98,100 @@ export function eq(x, y) {
 }
 
 /**
+ * Simple date formatting helper, producing rfc3339 format by default.
+ * @param {Date|string|number} input - Input date, suitable to be passed to
+ *      the Date constructor
+ * @param {object} [options] - Formatting options
+ * @param {boolean} [options.tzOffset=true] - Include timezone
+ * @param {string} [options.tzSeparator=''] - Separator before timezone
+ * @param {string} [options.timeSeparator='T'] - Separator before time
+ * @param {boolean} [options.milliseconds=true] - Include milliseconds
+ * @return {string} Date formatted according to the given options
+ */
+export function formatDate(input, options) {
+    const defaultOptions = {
+        tzOffset: true,
+        tzSeparator: '',
+        timeSeparator: 'T',
+        milliseconds: true,
+    };
+    options = Object.assign({}, defaultOptions, options);
+    let now = new Date(input);
+    let out = now.getFullYear() +
+        '-' + (now.getMonth() + 1).toString().padStart(2, '0') +
+        '-' + now.getDate().toString().padStart(2, '0') +
+        options.timeSeparator + now.getHours().toString().padStart(2, '0') +
+        ':' + now.getMinutes().toString().padStart(2, '0') +
+        ':' + now.getSeconds().toString().padStart(2, '0');
+    if (options.milliseconds)
+        out += '.' + now.getMilliseconds().toString().padStart(3, '0');
+
+    if (options.tzOffset) {
+        let tzOffset = now.getTimezoneOffset() * -1;
+        out += options.tzSeparator;
+        if (tzOffset == 0)
+            out += 'Z'
+        else {
+            let tzOffsetHours = Math.floor(tzOffset / 60);
+            let tzOffsetMinutes = tzOffset % 60;
+            out += (tzOffset >= 0 ? '+' : '-') +
+                tzOffsetHours.toString().padStart(2, '0') + ':' +
+                tzOffsetMinutes.toString().padStart(2, '0');
+        }
+    }
+    return out;
+}
+
+/**
+ * Duration formatting helper.
+ * @param {number} s - Number of seconds
+ * @return {string} Duration formatted as a number of days (d), hours (h),
+ *      minutes (m) and seconds (s)
+ */
+export function formatDuration(s /* seconds */) {
+    s = Math.round(s);
+    var d = Math.floor(s/86400);
+    s = s - d*86400;
+    var h = Math.floor(s/3600);
+    s = s - h*3600;
+    var m = Math.floor(s/60);
+    s = s - m*60;
+
+    if (m == 0 && h == 0 && d == 0)
+        return s.toString().padStart(2, '0') + 's';
+    else if (h == 0 && d == 0)
+        return m.toString().padStart(2, '0') + 'm ' +
+               s.toString().padStart(2, '0') + 's';
+    else if (d == 0)
+        return h.toString().padStart(2, '0') + 'h ' +
+               m.toString().padStart(2, '0') + 'm';
+    else
+        return d.toString() + 'd ' +
+               h.toString().padStart(2, '0') + 'h';
+}
+
+/**
+ * Format a number with kilo (K), mega (M), ... unit prefix.
+ * @param {number|string} input - Input value, suitable for Number()
+ * @param {number} mult - Prefix factor, use 1024 for bytes, 1000 otherwise
+ * @param {string} separator - Separator beteen value and unit prefix
+ * @return {string} The number formatted accordingly to the given options
+ */
+export function formatNumber(input, mult, separator) {
+    /* accept number as string */
+    input = Number(input);
+    if (isNaN(input))
+        return 'NaN';
+    const humanSymbols = [ '', 'K', 'M', 'G', 'T' ];
+    let symbolIndex = 0;
+    while (input >= mult && symbolIndex < humanSymbols.length) {
+        symbolIndex++;
+        input /= mult;
+    }
+    return input.toFixed(2) + separator + humanSymbols[symbolIndex];
+}
+
+/**
  * Generate an anchor tag with the given text and href
  * @param {string} deviceId - The id of the device
  * @param {string} label - The text to display in the anchor
@@ -158,6 +252,30 @@ export function isEmptyObject(object) {
  */
 export function isPlainObject(value) {
     return !!value && Object.getPrototypeOf(value) === Object.prototype;
+}
+
+/**
+ * Simplification and normalization of a device name.
+ * @param {string} name - Raw device name
+ * @return {string} Simplified and normalized representation of the given
+ *      device name, NOT collision free, but good enough (at least for now) to
+ *      join data from various sources using a (short) hostname as key.
+ */
+export function simplifyDeviceName(name) {
+    return stripDomain(name).toLowerCase();
+}
+
+/**
+ * Get the hostname part of a fully qualified domain name. In other words,
+ * strip the domain part of an hostname.
+ * @param {string} name - Device name, with or without FQDN
+ * @return {string} Hostname part of the given name, domain stripped
+ */
+export function stripDomain(name) {
+    var dot = name.indexOf('.');
+    if (dot > 0) /* use 0 instead of -1, so we do not make an empty name */
+        return name.substr(0, dot);
+    return name;
 }
 
 /**

@@ -64,6 +64,29 @@ const apiBaseDefinition = {
     },
 }
 
+const apiBackupDefinition = {
+    id: 'backup',
+    jsonConfigPrefix: 'BACKUP_',
+    methods: {
+        getStats: (entity) => ({
+            url: '/ls',
+            params: { entity, json: 1, verbose: 3 },
+        }),
+        getLog: (name) => ({
+            url: '/log',
+            params: { name, json: 1, verbose: 1 },
+        }),
+        getDiff: (name, commit) => ({
+            url: '/diff',
+            params: { name, commit, context: 5 },
+        }),
+        getShow: (name, commit) => ({
+            url: '/show',
+            params: { name, commit },
+        }),
+    },
+}
+
 /**
  * Axios error interceptor used to emit error messages from a central point,
  * The interceptor is registered in axios via axiosInstance(). That function
@@ -190,6 +213,7 @@ export default {
 
         /* register our apis */
         this.registerApi(apiBaseDefinition);
+        this.registerApi(apiBackupDefinition);
 
         /* compat */
         this.id = this.base.id;
