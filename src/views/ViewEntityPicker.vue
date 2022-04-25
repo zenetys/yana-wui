@@ -94,7 +94,7 @@
                                     v-for="(header, headerIndex) in headers"
                                     v-slot:[`item.${header.value}`]="{ item }">
                                     <div :key="`entity-${headerIndex}`">
-                                        <router-link :to="'/main?' + item.name">
+                                        <router-link :to="'/main?entity=' + item.name">
                                             <span v-if="header.value === 'name'">
                                                 {{ item.name }}
                                             </span>
