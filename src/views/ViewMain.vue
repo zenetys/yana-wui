@@ -242,7 +242,6 @@ a {
 </style>
 
 <script>
-import { mapActions } from 'vuex';
 import TimeLine from '@/components/TimeLine.vue';
 import Message from '@/components/Message.vue';
 
@@ -292,17 +291,15 @@ export default {
         storeEntities() {
             return this.$store.state.storeEntities;
         },
-        routeEntity() {
-            return this.$route.query.entity;
-        },
-        routeDatabase() {
-            return this.$route.query.db;
-        },
-        routeSearch() {
-            return this.$route.query.search;
-        },
         routeName() {
             return this.$route.name;
+        },
+        apiStateParams() {
+            return {
+                entity: this.$route.query.entity,
+                database: this.$route.query.db,
+                search: this.$route.query.search,
+            };
         },
         storeInventoryMode: {
             get() {
@@ -330,7 +327,6 @@ export default {
         },
     },
     methods: {
-        ...mapActions(['updateStoreInfoMessage']),
         /**
          * Run a new search query on a middlemouse click (paste) in the search input
          */
@@ -397,9 +393,9 @@ export default {
 
             let newRoute = {};
             newRoute.query = {
-                db: resolvedQueryRoute.query.db || query.query.db || this.routeDatabase,
+                db: resolvedQueryRoute.query.db || query.query.db || this.apiStateParams.database,
                 search: resolvedQueryRoute.query.search || query.query.search,
-                entity: query.query.entity || this.routeEntity,
+                entity: query.query.entity || this.apiStateParams.entity,
             };
 
             const mode = query.query.inventoryMode;
@@ -459,7 +455,7 @@ export default {
             newSearchQuery.inventoryMode = this.storeInventoryMode;
 
             const newSearch = {
-                entity: this.routeEntity,
+                entity: this.apiStateParams.entity,
                 query: newSearchQuery,
                 url: '/main/inventory',
                 label: document.querySelector('#device-name') ? document.querySelector('#device-name').textContent : '',
@@ -480,7 +476,9 @@ export default {
                 currentEntityQueries.push(newSearch);
             }
 
-            return allQueries.filter((query) => query.entity !== this.routeEntity).concat(currentEntityQueries);
+            return allQueries
+                .filter((query) => query.entity !== this.apiStateParams.entity)
+                .concat(currentEntityQueries);
         },
         /**
          * Generate a new bookmark object and add it to the list of entity queries
@@ -491,7 +489,7 @@ export default {
             const allQueries = existingBookmarks;
             const currentEntityQueries = this.filterQueries(existingBookmarks);
             const newQuery = {
-                entity: this.routeEntity,
+                entity: this.apiStateParams.entity,
                 query: {
                     inventoryMode:
                         this.$route.path === '/main/inventory'
@@ -499,7 +497,7 @@ export default {
                             : this.$route.path.includes('switch')
                             ? 'switch'
                             : 'host',
-                    search: this.$route.path === 'inventory' ? this.search : '',
+                    search: this.$route.path === '/main/inventory' ? this.search : '',
                 },
                 url: this.$route.fullPath,
                 id: this.$route.params.id,
@@ -521,7 +519,7 @@ export default {
                 currentEntityQueries.push(newQuery);
             }
 
-            return allQueries.filter((el) => el.entity !== this.routeEntity).concat(currentEntityQueries);
+            return allQueries.filter((el) => el.entity !== this.apiStateParams.entity).concat(currentEntityQueries);
         },
         /**
          * Delete a recent query from history
@@ -545,55 +543,39 @@ export default {
          * @return {object[]} The filtered queries array
          */
         filterQueries(queries) {
-            return queries.filter((query) => query.entity === this.routeEntity).sort((a, b) => b.index - a.index);
+            return queries
+                .filter((query) => query.entity === this.apiStateParams.entity)
+                .sort((a, b) => b.index - a.index);
         },
         /**
-         * Fetch all DBs for the selected entity from the API
+         * @async
+         * Fetch all DBs for an entity from the API
+         * @param {string} entity - The entity to fetch DBs for
          * @return {array|null} The array of DBs for the current entity
          */
-        fetchDatabasesFromEntity() {
-            return this.$api
-                .get(`/entity/${this.routeEntity}/databases`)
-                .then((response) => response.data)
-                .catch((err) => {
-                    this.updateStoreInfoMessage({
-                        type: 'error',
-                        content: 'Cannot load databases, problem with the query.',
-                        error: err,
-                    });
-                    return null;
-                });
+        async fetchDatabasesFromEntity(entity = null) {
+            const errorContext = 'Could not fetch databases from entity.';
+            /* if no entity is provided, use the currently selected one */
+            const url = '/entity/' + (entity || this.apiStateParams.entity) + '/databases';
+
+            return await this.$api.get(url, errorContext);
         },
         /**
          * @async
          * Handle the selected entity from the current route
-         * > Fetch DBs from the entity
-         * > Select the latest DB if none is set in the route
+         * > Fetch DBs from the current entity & store them
          * > Set queries history & bookmarks for this entity
          */
         async handleRouteEntity() {
             /* redirect to the entity-picker if none is set */
-            if (!this.routeEntity) {
-                this.$router.push('/entity-picker');
-            }
-
+            if (!this.apiStateParams.entity) {
+                this.$router.replace('/entity-picker');
+            } else {
             /* fetch the databases for the current entity */
+                this.selectedEntity = this.apiStateParams.entity;
             this.entityDatabases = await this.fetchDatabasesFromEntity();
             this.storeEntityDatabases = this.entityDatabases;
-
-            /* Try to match the URL's Database with the ones from this entity */
-            /* If no match > select the most recent Database */
-            if (
-                (this.routeDatabase && !this.entityDatabases?.some((db) => db.id === this.routeDatabase)) ||
-                !this.routeDatabase
-            ) {
-                this.selectLastAvailableDb();
-            }
-
             this.setSavedQueries('recent-queries');
-
-            if (!this.keepSearch) {
-                this.search = '';
             }
         },
         /**
@@ -614,7 +596,7 @@ export default {
                 name: forceInventory ? 'ViewInventory' : this.routeName,
             };
 
-            if (query.search !== '' || (this.routeSearch && this.routeSearch !== '')) {
+            if (query.search !== '' || (this.apiStateParams.search && this.apiStateParams.search !== '')) {
                 this.$router.push(redirection).catch(() => {});
             } else {
                 /* If search was simply reset, replace the current route without redirecting */
@@ -732,9 +714,8 @@ export default {
             this.storeInventoryMode = this.defaultInventoryMode;
         }
 
-        this.selectedEntity = this.routeEntity;
+        this.selectedEntity = this.apiStateParams.entity;
         clearTimeout(this.searchTimeOutId);
-        this.redirectToUpdateSearch();
     },
     beforeUnmount() {
         clearTimeout(this.searchTimeOutId);

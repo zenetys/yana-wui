@@ -187,13 +187,13 @@ export default {
         },
         storeEntityDatabases: {
             immediate: true,
-            handler(newDatabases) {
+            async handler(newDatabases) {
                 if (
                     this.apiStateParams.database &&
                     newDatabases.length > 0 &&
                     newDatabases.some((db) => db.id === this.apiStateParams.database)
                 ) {
-                    this.getVlans();
+                    await this.getVlans();
                 }
             },
         },
@@ -237,37 +237,29 @@ export default {
             });
         },
         /**
+         * @async
          * Fetch all VLANs from the API
          */
-        getVlans() {
+        async getVlans() {
             this.isLoading = true;
 
             const url = this.$utils.getUpdatedApiUrl(this.apiStateParams, 'vlans');
+            const errorContext = 'Could not fetch VLANs from the server.';
 
-            this.$api
-                .get(url)
-                .then((response) => {
-                    this.vlans = response.data.sort((a, b) => {
-                        if (a.name.toLowerCase() < b.name.toLowerCase()) {
-                            return -1;
-                        } else if (a.name.toLowerCase() > b.name.toLowerCase()) {
-                            return 1;
-                        }
+            const vlansResponse = await this.$api.get(url, errorContext);
 
-                        return 0;
-                    });
+            this.vlans = vlansResponse.sort((a, b) => {
+                if (a.name.toLowerCase() < b.name.toLowerCase()) {
+                    return -1;
+                } else if (a.name.toLowerCase() > b.name.toLowerCase()) {
+                    return 1;
+                }
 
-                    this.formatVlans();
-                    this.isLoading = false;
-                })
-                .catch((error) => {
-                    console.log(error);
-                    this.$store.commit('EDIT_STORE_INFO_MESSAGE', {
-                        type: 'error',
-                        content: 'Can not load vlans, problem with the query.',
-                        error: error,
-                    });
-                });
+                return 0;
+            });
+
+            this.formatVlans();
+            this.isLoading = false;
         },
         /**
          * Get a class for a VLAN depending on its matching against another VLAN

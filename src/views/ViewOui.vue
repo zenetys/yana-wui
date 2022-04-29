@@ -52,11 +52,15 @@ export default {
         };
     },
     methods: {
-        handleOuiLookupClick() {
+        /**
+         * Initiate a OUI search query from the API.
+         */
+        async handleOuiLookupClick() {
             if (!this.ouiSearch) {
                 this.ouiMessage = 'Please enter MAC addresses to search';
                 return;
             } else {
+                const errorContext = 'Could not complete OUI lookup.';
                 const searchOptions = {
                     params: {
                         q: this.ouiSearch,
@@ -64,20 +68,15 @@ export default {
                     timeout: 5000,
                 };
 
-                this.$api
-                    .get('/oui', searchOptions)
-                    .then((response) => {
-                        if (isEmptyObject(response.data)) {
-                            this.ouiMessage = 'Nothing found';
-                        } else {
-                            this.ouiMessage = response.data;
-                        }
-                    })
-                    .catch((e) => {
-                        this.ouiMessage = e.toString();
-                    });
-
                 this.ouiMessage = 'Searching, please wait...';
+
+                const result = await this.$api.get('/oui', errorContext, searchOptions);
+
+                if (isEmptyObject(result)) {
+                    this.ouiMessage = 'Nothing found';
+                } else {
+                    this.ouiMessage = result;
+                }
             }
         },
     },

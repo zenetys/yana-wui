@@ -284,7 +284,7 @@ export default {
                 }
 
                 if (shouldFetchDevice) {
-                        this.getDeviceInfo();
+                    this.getDeviceInfo();
                 }
             },
         },
@@ -296,16 +296,17 @@ export default {
         getDeviceInfo() {
             const deviceUrl = this.$utils.getUpdatedApiUrl(this.apiStateParams, 'device');
             const ifaceUrl = this.$utils.getUpdatedApiUrl(this.apiStateParams, 'interface');
+            const errorContext = 'Could not fetch host information.';
 
             this.$api
-                .all([deviceUrl, ifaceUrl].map((query) => this.$api.get(query)))
+                .all([deviceUrl, ifaceUrl].map((query) => this.$api.get(query, errorContext)))
                 .then(
                     this.$api.spread((deviceResponse, interfaceResponse) => {
-                        this.device = deviceResponse.data;
+                        this.device = deviceResponse || {};
                         if (this.device.vlan) {
                             this.device.vlan = Object.values(this.device.vlan);
                         }
-                        this.interfaces = interfaceResponse.data;
+                        this.interfaces = interfaceResponse || [];
                     })
                 )
                 .catch((error) => {

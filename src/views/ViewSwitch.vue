@@ -207,25 +207,16 @@ export default {
     },
     methods: {
         /**
+         * @async
          * Get all the information about the switch from the API
          */
         async getDeviceInfo() {
             this.apiUrl = this.$utils.getUpdatedApiUrl(this.apiStateParams, 'interface');
             const url = this.$utils.getUpdatedApiUrl(this.apiStateParams, 'device');
+            const errorContext = 'Could not fetch switch information.';
 
-            this.$api
-                .get(url)
-                .then((response) => {
-                    this.device = response.data;
-                })
-                .catch((error) => {
-                    console.log(error);
-                    this.$store.commit('EDIT_STORE_INFO_MESSAGE', {
-                        type: 'error',
-                        content: 'Cannot load device informations, problem with the query.',
-                        error: error,
-                    });
-                });
+            const deviceResponse = await this.$api.get(url, errorContext);
+            this.device = deviceResponse || {};
         },
         /**
          * Get the class for a table item depending on its status
