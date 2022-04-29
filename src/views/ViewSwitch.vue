@@ -6,20 +6,21 @@
                     <th class="text-left px-2">Name</th>
                     <td class="text-left pl-2">
                         <router-link
-                            :to="$utils.getDeviceRoute(this.device.id, 'host', $route, false)"
-                            id="device-name">
-                            {{ this.deviceName }}
-                        </router-link>
-                        <span class="secondary-names">{{ this.deviceSecondaryNames }}</span>
+                            v-if="device.id"
+                            :to="$utils.getDeviceRoute(device.id, 'host', $route, false)"
+                            id="device-name"
+                            >{{ deviceName }}</router-link
+                        >
+                        <span class="secondary-names">{{ deviceSecondaryNames }}</span>
                     </td>
                 </tr>
                 <tr>
                     <th class="text-left px-2">Description</th>
-                    <td class="text-left pl-2">{{ this.deviceDescription }}</td>
+                    <td class="text-left pl-2">{{ deviceDescription }}</td>
                 </tr>
                 <tr>
                     <th class="text-left px-2">IP</th>
-                    <td class="text-left pl-2">{{ this.deviceIp }}</td>
+                    <td class="text-left pl-2">{{ deviceIp }}</td>
                 </tr>
             </tbody>
         </table>

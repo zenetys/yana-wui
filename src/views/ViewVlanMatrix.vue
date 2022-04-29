@@ -1,6 +1,6 @@
 <template>
     <v-card class="elevation-2">
-        <table id="table-vlan" :height="this.tableDimensions.height">
+        <table id="table-vlan" :height="tableDimensions.height">
             <tbody>
                 <tr>
                     <th rowspan="2"></th>

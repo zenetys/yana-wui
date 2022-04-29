@@ -10,7 +10,7 @@
                 centered
                 ref="messageOverlay"
                 id="messageSnackbar">
-                <span class="message"> {{ this.messageContent }} </span>
+                <span class="message"> {{ messageContent }} </span>
                 <template v-slot:action="{ attrs }">
                     <v-btn icon v-bind="attrs" top @click="closeSnackbar()">
                         <v-icon class="message">mdi-close</v-icon>

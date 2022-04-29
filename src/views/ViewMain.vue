@@ -27,7 +27,7 @@
                 </v-btn>
             </v-col>
             <v-col cols="12" sm="3" md="4" lg="3" xl="4" class="d-flex justify-end">
-                <div v-if="this.$route.name === 'ViewInventory'" class="pt-2 rounded select-inventory-mode">
+                <div v-if="$route.name === 'ViewInventory'" class="pt-2 rounded select-inventory-mode">
                     <v-checkbox
                         v-for="(mode, modeIndex) in inventoryModes"
                         :key="modeIndex"
