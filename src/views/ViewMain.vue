@@ -10,6 +10,7 @@
                     label="Search..."
                     placeholder="Search..."
                     v-model="search"
+                    @keyup="handleSearchChange()"
                     solo
                     dense
                     flat
@@ -52,6 +53,7 @@
                     dense
                     hide-details=""
                     flat
+                    @change="handleEntityPick()"
                     background-color="#e8e8e8d6"
                     prepend-inner-icon="mdi-server-network"></v-autocomplete>
                 <v-btn icon small @click="setSavedQueries('bookmarks')" class="mt-1 ml-1" title="Add to Favorites">
@@ -571,11 +573,11 @@ export default {
             if (!this.apiStateParams.entity) {
                 this.$router.replace('/entity-picker');
             } else {
-            /* fetch the databases for the current entity */
+                /* fetch the databases for the current entity */
                 this.selectedEntity = this.apiStateParams.entity;
-            this.entityDatabases = await this.fetchDatabasesFromEntity();
-            this.storeEntityDatabases = this.entityDatabases;
-            this.setSavedQueries('recent-queries');
+                this.entityDatabases = await this.fetchDatabasesFromEntity();
+                this.storeEntityDatabases = this.entityDatabases;
+                this.setSavedQueries('recent-queries');
             }
         },
         /**
@@ -606,17 +608,23 @@ export default {
         /**
          * Select the latest available DB from the current entity,
          * and replace the query param in the current route
+         * @param {boolean} shouldReplace - If true, replace the current route, otherwise redirect
          */
-        selectLastAvailableDb() {
-            let dbToSelect = '';
-
+        selectLastAvailableDb(shouldReplace = false) {
             if (this.entityDatabases?.length > 0) {
-                dbToSelect = this.entityDatabases[this.entityDatabases.length - 1].id;
-            }
+                const lastDb = this.entityDatabases[this.entityDatabases.length - 1].id;
 
-            const newQuery = { ...this.$route.query };
-            newQuery.db = dbToSelect;
-            this.$router.replace({ query: newQuery }).catch(() => {});
+                if (lastDb !== this.apiStateParams.database) {
+                    const newQuery = { ...this.$route.query };
+                    newQuery.db = lastDb;
+
+                    if (shouldReplace) {
+                        this.$router.replace({ query: newQuery });
+                    } else {
+                        this.$router.push({ query: newQuery }).catch(() => {});
+                    }
+                }
+            }
         },
         /**
          * Generate a full navigation link from a partial route
@@ -634,39 +642,62 @@ export default {
             };
             return newRoute;
         },
+        /**
+         * Handle the selection of another entity using the select menu :
+         * Redirect to inventory if current view is a device view ;
+         * Update URL params otherwise
+         */
+        async handleEntityPick() {
+            const newEntityDatabases = await this.fetchDatabasesFromEntity(this.selectedEntity);
+            const newLastDb = newEntityDatabases[newEntityDatabases.length - 1].id;
+            const newQueryParams = { ...this.$route.query };
+            newQueryParams.entity = this.selectedEntity;
+            newQueryParams.db = newLastDb;
+
+            if (this.$route.name === 'ViewSwitch' || this.$route.name === 'ViewHost') {
+                const inventoryRedirect = {
+                    name: 'ViewInventory',
+                    query: newQueryParams,
+                };
+                this.$router.push(inventoryRedirect).catch(() => {});
+            } else {
+                const redirection = { ...this.$route };
+                redirection.query = newQueryParams;
+                this.$router.push(redirection).catch(() => {});
+            }
+        },
+        /**
+         * Handle a new search being typed in the input
+         */
+        handleSearchChange() {
+            clearTimeout(this.searchTimeOutId);
+
+            this.searchTimeOutId = setTimeout(() => {
+                this.redirectToUpdateSearch(true);
+            }, this.searchUpdateTimeOut);
+        },
     },
     watch: {
-        routeEntity: {
+        apiStateParams: {
             immediate: true,
-            handler(newEntity, oldEntity) {
+            async handler(newParams, oldParams) {
                 /* Only handle a new entity from the route if none was set,
                 or if it's a different one */
-                if (!oldEntity || newEntity !== oldEntity) {
-                    this.handleRouteEntity();
+                if (newParams.entity !== oldParams?.entity) {
+                    await this.handleRouteEntity();
                 }
-            },
-        },
-        routeDatabase: {
-            immediate: true,
-            handler(newDatabase) {
-                /* Always check if the DB from the route exists on the current entity */
-                if (this.entityDatabases?.length > 0 && !this.entityDatabases?.some((db) => db.id === newDatabase)) {
-                    this.selectLastAvailableDb();
-                }
-            },
-        },
-        selectedEntity: {
-            immediate: true,
-            handler(newEntity, oldEntity) {
-                /* On entity change > Update query param and redirect */
-                if (oldEntity && newEntity !== oldEntity) {
-                    const redirection = { ...this.$route };
-                    const newQueryParams = { ...this.$route.query };
-                    newQueryParams.entity = newEntity;
-                    redirection.query = newQueryParams;
 
-                    this.$router.push(redirection).catch(() => {});
+                if (newParams.database && oldParams?.database && oldParams?.database !== newParams.database) {
+                    if (
+                        this.entityDatabases?.length > 0 &&
+                        !this.entityDatabases?.some((db) => db.id === newParams.database)
+                    ) {
+                        const shouldReplace = !oldParams.database || oldParams.entity === newParams.entity;
+                        this.selectLastAvailableDb(shouldReplace);
+                    }
                 }
+
+                this.search = newParams.search ?? '';
             },
         },
         routeName: {
@@ -677,28 +708,20 @@ export default {
                 }
             },
         },
-        routeSearch: {
+        entityDatabases: {
             immediate: true,
-            handler(newSearch) {
-                this.search = newSearch || '';
-            },
-        },
-        search: {
-            immediate: true,
-            handler(newSearch, oldSearch) {
-                clearTimeout(this.searchTimeOutId);
-
-                this.searchTimeOutId = setTimeout(() => {
-                    if (oldSearch) {
-                        if (oldSearch !== newSearch && newSearch !== '') {
-                            /* If search has changed, update the query param and redirect to Inventory */
-                            this.redirectToUpdateSearch(true);
-                        }
-                    } else {
-                        /* Otherwise, just update the query param */
-                        this.redirectToUpdateSearch();
+            handler(newDatabases) {
+                if (newDatabases?.length > 0) {
+                    /* Select the appropriate database from the current entity, either the one from the URL, 
+                    or the last available one */
+                    if (
+                        !this.apiStateParams.database ||
+                        (this.apiStateParams.database &&
+                            !newDatabases?.some((db) => db.id === this.apiStateParams.database))
+                    ) {
+                        this.selectLastAvailableDb(true);
                     }
-                }, this.searchUpdateTimeOut);
+                }
             },
         },
     },
