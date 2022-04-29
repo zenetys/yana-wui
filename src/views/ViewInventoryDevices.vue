@@ -273,9 +273,6 @@ export default {
         },
     },
     computed: {
-        storeEntityDatabases() {
-            return this.$store.getters.storeEntityDatabases;
-        },
         apiStateParams() {
             return {
                 entity: this.$route.query.entity,
@@ -288,23 +285,30 @@ export default {
         apiStateParams: {
             immediate: true,
             handler(newParams, oldParams) {
-                /* Fetch new inventory data if the database or the search query changed */
-                if (oldParams) {
-                    if (oldParams.database !== newParams.database || oldParams.search !== newParams.search) {
-                        this.apiUrl = this.$utils.getUpdatedApiUrl(newParams, 'devices');
+                /* Fetch new inventory data only upon reception of new data */
+                let shouldUpdateApiUrl = false;
+
+                if (oldParams) {                    
+                    if (oldParams.search !== newParams.search) {
+                        shouldUpdateApiUrl = true;
                     }
+
+                    if (oldParams.database !== newParams.database) {
+                        shouldUpdateApiUrl = true;
+                    }
+
+                } else {
+                    shouldUpdateApiUrl = true;
+                }
+
+                if (shouldUpdateApiUrl) {
+                    this.apiUrl = this.$utils.getUpdatedApiUrl(newParams, 'devices');
                 }
             },
         },
-        storeEntityDatabases: {
-            handler(newDatabases) {
-                /* When the entity DBs change, only fetch new inventory data if the current DB exists on this entity */
-                if (newDatabases?.some((db) => db.id === this.apiStateParams.database)) {
-                    this.apiUrl = this.$utils.getUpdatedApiUrl(this.apiStateParams, 'devices');
-                }
-            },
-            immediate: true,
-        },
+    },
+    beforeMount() {
+        this.apiUrl = this.$utils.getUpdatedApiUrl(this.apiStateParams, 'devices');
     },
 };
 </script>
