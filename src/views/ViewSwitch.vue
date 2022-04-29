@@ -209,7 +209,8 @@ export default {
         /**
          * Get all the information about the switch from the API
          */
-        getDeviceInfo() {
+        async getDeviceInfo() {
+            this.apiUrl = this.$utils.getUpdatedApiUrl(this.apiStateParams, 'interface');
             const url = this.$utils.getUpdatedApiUrl(this.apiStateParams, 'device');
 
             this.$api
@@ -266,32 +267,23 @@ export default {
         },
     },
     watch: {
-        '$route.params.id': {
-            immediate: true,
-            handler() {
-                this.apiUrl = this.$utils.getUpdatedApiUrl(this.apiStateParams, 'interface');
-                this.getDeviceInfo();
-            },
-        },
         apiStateParams: {
             immediate: true,
             handler(newParams, oldParams) {
-                if (oldParams) {
-                    if (oldParams.database !== newParams.database || oldParams.search !== newParams.search) {
-                        this.apiUrl = this.$utils.getUpdatedApiUrl(newParams, 'interface');
-                        this.getDeviceInfo();
+                let shouldFetchDevice = false;
+
+                if (!oldParams) {
+                    shouldFetchDevice = true;
+                } else {
+                    if (oldParams.id !== newParams.id || oldParams.database !== newParams.database) {
+                        shouldFetchDevice = true;
                     }
                 }
-            },
-        },
-        storeEntityDatabases: {
-            handler(newDatabases) {
-                if (newDatabases?.some((db) => db.id === this.apiStateParams.database)) {
-                    this.apiUrl = this.$utils.getUpdatedApiUrl(this.apiStateParams, 'interface');
+
+                if (shouldFetchDevice) {
                     this.getDeviceInfo();
                 }
             },
-            immediate: true,
         },
     },
     updated() {

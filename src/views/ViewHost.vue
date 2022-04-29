@@ -270,19 +270,21 @@ export default {
         },
     },
     watch: {
-        '$route.params.id': {
-            immediate: true,
-            handler() {
-                this.getDeviceInfo();
-            },
-        },
         apiStateParams: {
             immediate: true,
             handler(newParams, oldParams) {
-                if (oldParams) {
-                    if (oldParams.database !== newParams.database || oldParams.search !== newParams.search) {
-                        this.getDeviceInfo();
+                let shouldFetchDevice = false;
+
+                if (!oldParams) {
+                    shouldFetchDevice = true;
+                } else {
+                    if (oldParams.id !== newParams.id || oldParams.database !== newParams.database) {
+                        shouldFetchDevice = true;
                     }
+                }
+
+                if (shouldFetchDevice) {
+                        this.getDeviceInfo();
                 }
             },
         },
