@@ -63,8 +63,8 @@ export default {
                                 },
                             },
                             ticks: {
-                                min: new Date().getTime() - 15 * 86400 * 1000,
-                                max: new Date().getTime(),
+                                min: 0,
+                                max: 0,
                                 maxRotation: 0,
                                 autoSkipPadding: 25,
                                 fontSize: 10,
@@ -107,6 +107,8 @@ export default {
             },
             selectedIndex: -1,
             selectedDatabase: null,
+            windowInDays: 15,
+            timeMarginInDays: 1,
         };
     },
     computed: {
@@ -119,7 +121,7 @@ export default {
     },
     methods: {
         /**
-         * Update the timeline databases with new data.
+         * Update the timeline databases with new data, calculate new bounds, and update the chart.
          * @param {object[]} newDatabases - Databases fetched from API upon entity change/selection.
          */
         updateTimeLineDbs(newDatabases) {
@@ -143,8 +145,19 @@ export default {
 
             this.chartdata.datasets[0].pointBackgroundColor = this.colorOnClick;
             this.chartdata.datasets[0].pointBorderColor = this.colorOnClick;
-
-            if (this.$data._chart) {
+            /* Calculate the new bounds */
+            this.setTimelineBounds();
+            /* Re-render the chart to apply the new bounds */
+            this.updateChartData(true);
+        },
+        /**
+         * Update the chart with new data or new options.
+         * @param {boolean} shouldRender - Whether the chart should be re-rendered with new options or just updated.
+         */
+        updateChartData(shouldRender = false) {
+            if (shouldRender) {
+                this.renderChart(this.chartdata, this.options);
+            } else if (this.$data._chart) {
                 this.$data._chart.update();
             }
         },
@@ -200,9 +213,7 @@ export default {
                 [this.selectedDatabase, this.selectedIndex] = [foundDb, foundIndex];
             }
 
-            if (this.$data._chart) {
-                this.$data._chart.update();
-            }
+            this.updateChartData();
         },
         /**
          * Redirect to an updated URL with a database ID
@@ -216,12 +227,42 @@ export default {
 
             this.$router.push(redirection).catch(() => {});
         },
+        /**
+         * Calculate a duration in milliseconds from a number of days
+         * @param {number} days - The number of days to convert to milliseconds
+         * @returns {number} - The duration in milliseconds
+         */
+        getTimeFromDays(days) {
+            return days * 86400 * 1000;
+        },
+        /**
+         * Set new bounds for the timeline
+         */
+        setTimelineBounds() {
+            if (!this.storeEntityDatabases?.length > 0) {
+                return;
+            }
+            const now = new Date().getTime();
+            const timeWindow = this.getTimeFromDays(this.windowInDays);
+            const lastDbTime = this.storeEntityDatabases[this.storeEntityDatabases.length - 1].ts * 1000;
+
+            /** If the last available DB is in the last X days (time window set in data), use this as a time window;
+             * otherwise, use an X-day time window leading up to the last available DB + a margin */
+            if (now - timeWindow < lastDbTime && lastDbTime < now) {
+                this.options.scales.xAxes[0].ticks.min = now - timeWindow;
+                this.options.scales.xAxes[0].ticks.max = now;
+            } else {
+                const timeMargin = this.getTimeFromDays(this.timeMarginInDays);
+                this.options.scales.xAxes[0].ticks.min = lastDbTime + timeMargin - timeWindow;
+                this.options.scales.xAxes[0].ticks.max = lastDbTime + timeMargin;
+            }
+        },
     },
     watch: {
         storeEntityDatabases: {
-            immediate: true,
+            immediate: false,
             handler(newEntityDatabases) {
-                if (newEntityDatabases) {
+                if (newEntityDatabases?.length > 0) {
                     this.updateTimeLineDbs(newEntityDatabases);
                 }
             },
