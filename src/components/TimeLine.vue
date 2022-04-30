@@ -110,9 +110,6 @@ export default {
         };
     },
     computed: {
-        routeEntity() {
-            return this.$route.query.entity;
-        },
         routeDatabase() {
             return this.$route.query.db;
         },
