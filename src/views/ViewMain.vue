@@ -308,7 +308,7 @@ export default {
                 return this.$mystore.getInventoryMode();
             },
             set(newInventoryMode) {
-                return this.$mystore.setInventoryMode(newInventoryMode);
+                this.$mystore.setInventoryMode(newInventoryMode);
             },
         },
         storeEntityDatabases: {
