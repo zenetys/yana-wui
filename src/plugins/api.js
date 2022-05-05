@@ -1,5 +1,5 @@
 import axios from 'axios';
-import store from '@/store';
+import MyStore from '@/plugins/myStore';
 /**
  * Handle errors from the API and display them to the user.
  * @param {object} error - The error object from the API
@@ -7,11 +7,12 @@ import store from '@/store';
  */
 function handleError(error, errorContext) {
     const defaultErrorMessage = 'Something went wrong while communicating with the server.';
-    store.commit('EDIT_STORE_INFO_MESSAGE', {
+    const message = {
         type: 'error',
         content: 'Error : ' + errorContext || defaultErrorMessage,
         error: error,
-    });
+    };
+    MyStore.setInfoMessage(message);
 }
 
 export default {

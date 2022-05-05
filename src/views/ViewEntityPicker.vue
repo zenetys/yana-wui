@@ -152,7 +152,7 @@ export default {
     },
     computed: {
         storeEntities() {
-            return this.$store.state.storeEntities;
+            return this.$mystore.getEntities();
         },
         filteredEntities() {
             return this.storeEntities

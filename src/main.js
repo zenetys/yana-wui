@@ -8,11 +8,12 @@ import vuetify from '@/plugins/vuetify';
 import Api from '@/plugins/api';
 import * as Utils from '@/plugins/utils';
 import Entities from '@/plugins/entities';
-import store from '@/store';
+import MyStore from '@/plugins/myStore';
 
 Vue.config.productionTip = false;
 Vue.prototype.$api = Api;
 Vue.prototype.$utils = Utils;
+Vue.prototype.$mystore = MyStore;
 
 async function init() {
     /* Initialise the API plugin */
@@ -23,7 +24,6 @@ async function init() {
     new Vue({
         router,
         vuetify,
-        store,
         render: (h) => h(App),
     }).$mount('#app');
 }

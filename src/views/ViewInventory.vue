@@ -1,7 +1,7 @@
 <template>
     <div v-if="$route.name !== 'ViewSwitch' && $route.name !== 'ViewHost'">
-        <ViewInventoryDevices v-if="$store.getters.storeInventoryMode === 'devices'" />
-        <ViewInventoryFdb v-if="$store.getters.storeInventoryMode === 'fdb'" />
+        <ViewInventoryDevices v-if="$mystore.getInventoryMode() === 'devices'" />
+        <ViewInventoryFdb v-if="$mystore.getInventoryMode() === 'fdb'" />
     </div>
     <div v-else>
         <router-view></router-view>

@@ -28,8 +28,6 @@
 </style>
 
 <script>
-import { mapState } from 'vuex';
-
 export default {
     name: 'Message',
     props: {},
@@ -40,9 +38,14 @@ export default {
         };
     },
     computed: {
-        ...mapState({
-            message: 'storeInfoMessage',
-        }),
+        message: {
+            get() {
+                return this.$mystore.getInfoMessage();
+            },
+            set(newMessage) {
+                this.$mystore.setInfoMessage(newMessage);
+            },
+        },
         messageColor() {
             switch (this.message.type) {
                 case 'error':
@@ -71,7 +74,7 @@ export default {
     methods: {
         closeSnackbar() {
             this.snackbarIsDisplayed = false;
-            this.$store.commit('EDIT_STORE_INFO_MESSAGE', {});
+            this.message = {};
         },
         closeSnackbarOnWindowKeyUp(e) {
             if (e.key === 'Escape') this.closeSnackbar();

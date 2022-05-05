@@ -1,0 +1,65 @@
+import Vue from 'vue';
+
+export default {
+    data: Vue.observable({
+        entities: [],
+        entityDatabases: [],
+        infoMessage: {},
+        inventoryMode: 'devices',
+    }),
+    /**
+     * Getter for entity databases.
+     * @returns {array} - Array of entity databases.
+     */
+    getEntityDatabases() {
+        return this.data.entityDatabases;
+    },
+    /**
+     * Set new values to the entity databases.
+     * @param {array} newDatabases - New entity databases to set.
+     */
+    setEntityDatabases(newDatabases) {
+        this.data.entityDatabases = newDatabases;
+    },
+    /**
+     * Getter for entities.
+     * @returns {array} - Array of entities.
+     */
+    getEntities() {
+        return this.data.entities;
+    },
+    /**
+     * Set new values to the entities.
+     * @param {array} newEntities - New entities to set.
+     */
+    setEntities(newEntities) {
+        this.data.entities = newEntities;
+    },
+    /**
+     * Getter for the info message alert.
+     * @returns {object} - The info message.
+     */ getInfoMessage() {
+        return this.data.infoMessage;
+    },
+    /**
+     * Set a new value for the info message.
+     * @param {object} newMessage - The new info message to set.
+     */
+    setInfoMessage(newMessage) {
+        this.data.infoMessage = newMessage;
+    },
+    /**
+     * Getter for the inventory mode.
+     * @returns {string} - The inventory mode.
+     */
+    getInventoryMode() {
+        return this.data.inventoryMode;
+    },
+    /**
+     * Set a new value for the inventory mode.
+     * @param {string} newMode - The new inventory mode to set.
+     */
+    setInventoryMode(newMode) {
+        this.data.inventoryMode = newMode;
+    },
+};

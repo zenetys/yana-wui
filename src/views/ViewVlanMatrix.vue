@@ -171,7 +171,7 @@ export default {
             };
         },
         storeEntityDatabases() {
-            return this.$store.state.storeEntityDatabases;
+            return this.$mystore.getEntityDatabases();
         },
     },
     watch: {

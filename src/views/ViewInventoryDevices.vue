@@ -259,7 +259,7 @@ export default {
          * @param {object} payload
          */
         onError(payload) {
-            this.$store.commit('EDIT_STORE_INFO_MESSAGE', payload);
+            this.$mystore.setInfoMessage(payload);
         },
         /**
          * Fetch an anchor tag for a given device

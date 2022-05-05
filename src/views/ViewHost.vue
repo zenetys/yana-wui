@@ -311,11 +311,12 @@ export default {
                 )
                 .catch((error) => {
                     console.log(error);
-                    this.$store.commit('EDIT_STORE_INFO_MESSAGE', {
+                    const message = {
                         type: 'error',
                         content: 'Can not load host informations, problem with the query.',
                         error: error,
-                    });
+                    } 
+                    this.$mystore.setInfoMessage(message);
                 });
         },
         /**

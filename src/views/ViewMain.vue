@@ -291,7 +291,7 @@ export default {
     },
     computed: {
         storeEntities() {
-            return this.$store.state.storeEntities;
+            return this.$mystore.getEntities();
         },
         routeName() {
             return this.$route.name;
@@ -305,18 +305,18 @@ export default {
         },
         storeInventoryMode: {
             get() {
-                return this.$store.getters.storeInventoryMode;
+                return this.$mystore.getInventoryMode();
             },
             set(newInventoryMode) {
-                this.$store.commit('EDIT_STORE_INVENTORY_MODE', newInventoryMode);
+                return this.$mystore.setInventoryMode(newInventoryMode);
             },
         },
         storeEntityDatabases: {
             get() {
-                return this.$store.state.storeEntityDatabases;
+                return this.$mystore.getEntityDatabases();
             },
-            set(newEntityDatabases) {
-                this.$store.commit('EDIT_STORE_ENTITY_DATABASES', newEntityDatabases);
+            set(newDatabases) {
+                this.$mystore.setEntityDatabases(newDatabases);
             },
         },
         /**
@@ -347,8 +347,7 @@ export default {
          * @param {*} payload - error payload
          */
         onError(payload) {
-            this.$store.commit('EDIT_STORE_INFO_MESSAGE', payload);
-            console.log(this.$store.state.storeInfoMessage);
+            this.$mystore.setInfoMessage(payload);
         },
         /**
          * Toggle the persistence of the search query upon navigation
