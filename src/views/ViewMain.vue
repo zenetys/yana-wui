@@ -32,7 +32,7 @@
                     <v-checkbox
                         v-for="(mode, modeIndex) in inventoryModes"
                         :key="modeIndex"
-                        v-model="storeInventoryMode"
+                        v-model="inventoryMode"
                         :label="mode"
                         :value="mode"
                         hide-details=""
@@ -287,6 +287,7 @@ export default {
             entityDatabases: [],
             selectedEntity: null,
             search: '',
+            inventoryMode: 'devices',
         };
     },
     computed: {
@@ -296,20 +297,15 @@ export default {
         routeName() {
             return this.$route.name;
         },
+        routeInventoryMode() {
+            return this.$route.query.inventoryMode;
+        },
         apiStateParams() {
             return {
                 entity: this.$route.query.entity,
                 database: this.$route.query.db,
                 search: this.$route.query.search,
             };
-        },
-        storeInventoryMode: {
-            get() {
-                return this.$mystore.getInventoryMode();
-            },
-            set(newInventoryMode) {
-                this.$mystore.setInventoryMode(newInventoryMode);
-            },
         },
         storeEntityDatabases: {
             get() {
@@ -387,7 +383,7 @@ export default {
          */
         loadRecentQuery(query) {
             if (query.url === '/main/inventory' && query.query.inventoryMode) {
-                this.storeInventoryMode = query.query.inventoryMode;
+                this.inventoryMode = query.query.inventoryMode;
             }
 
             const resolvedQueryRoute = this.$router.resolve(query.url).route;
@@ -397,6 +393,8 @@ export default {
                 db: resolvedQueryRoute.query.db || query.query.db || this.apiStateParams.database,
                 search: resolvedQueryRoute.query.search || query.query.search,
                 entity: query.query.entity || this.apiStateParams.entity,
+                inventoryMode:
+                    resolvedQueryRoute.query.inventoryMode || query.query.inventoryMode || this.routeInventoryMode,
             };
 
             const mode = query.query.inventoryMode;
@@ -453,7 +451,7 @@ export default {
             const currentEntityQueries = this.filterQueries(recentQueries);
             const newSearchQuery = { ...this.$route.query };
             newSearchQuery.search = this.search;
-            newSearchQuery.inventoryMode = this.storeInventoryMode;
+            newSearchQuery.inventoryMode = this.inventoryMode;
 
             const newSearch = {
                 entity: this.apiStateParams.entity,
@@ -467,7 +465,7 @@ export default {
             if (
                 this.search &&
                 !currentEntityQueries.find((query) => {
-                    return query.query.search === this.search && query.query.inventoryMode === this.storeInventoryMode;
+                    return query.query.search === this.search && query.query.inventoryMode === this.inventoryMode;
                 })
             ) {
                 /* 5 queries maximum in storage */
@@ -494,7 +492,7 @@ export default {
                 query: {
                     inventoryMode:
                         this.$route.path === '/main/inventory'
-                            ? this.storeInventoryMode
+                            ? this.inventoryMode
                             : this.$route.path.includes('switch')
                             ? 'switch'
                             : 'host',
@@ -605,6 +603,26 @@ export default {
             }
         },
         /**
+         * Update the url with a new inventory mode
+         * @param {boolean} shouldReplace - Whether or not the redirect should be "silent" (url replace)
+         */
+        redirectToUpdateInventoryMode(shouldReplace = false) {
+            const params = this.$route.params;
+            const query = { ...this.$route.query };
+            query.inventoryMode = this.inventoryMode;
+            const redirection = {
+                params,
+                query,
+                name: this.routeName,
+            };
+
+            if (shouldReplace) {
+                this.$router.replace(redirection).catch(() => {});
+            } else {
+                this.$router.push(redirection).catch(() => {});
+            }
+        },
+        /**
          * Select the latest available DB from the current entity,
          * and replace the query param in the current route
          * @param {boolean} shouldReplace - If true, replace the current route, otherwise redirect
@@ -707,6 +725,16 @@ export default {
                 }
             },
         },
+        routeInventoryMode: {
+            immediate: true,
+            handler(newMode) {
+                if (this.routeName === 'ViewInventory') {
+                    this.inventoryMode = this.inventoryModes.includes(newMode) ? newMode : this.defaultInventoryMode;
+                } else {
+                    this.inventoryMode = newMode;
+                }
+            },
+        },
         entityDatabases: {
             immediate: true,
             handler(newDatabases) {
@@ -723,6 +751,18 @@ export default {
                 }
             },
         },
+        inventoryMode: {
+            immediate: true,
+            handler(newMode, oldMode) {
+                if (oldMode && oldMode !== newMode) {
+                    /* If mode has changed, update the query param and redirect */
+                    this.redirectToUpdateInventoryMode();
+                } else {
+                    /* Otherwise, just update the query param (silent redirect) */
+                    this.redirectToUpdateInventoryMode(true);
+                }
+            },
+        },
     },
     mounted() {
         this.$nextTick(function () {
@@ -732,10 +772,6 @@ export default {
         this.getRecentQueriesAndBookmarks();
     },
     beforeMount() {
-        if (!this.inventoryModes.includes(this.storeInventoryMode)) {
-            this.storeInventoryMode = this.defaultInventoryMode;
-        }
-
         this.selectedEntity = this.apiStateParams.entity;
         clearTimeout(this.searchTimeOutId);
     },

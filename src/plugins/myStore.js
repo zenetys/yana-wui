@@ -5,7 +5,6 @@ export default {
     data: Vue.observable({
         entityDatabases: [],
         infoMessage: {},
-        inventoryMode: 'devices',
     }),
     /**
      * Getter for entity databases.
@@ -47,19 +46,5 @@ export default {
      */
     setInfoMessage(newMessage) {
         this.data.infoMessage = newMessage;
-    },
-    /**
-     * Getter for the inventory mode.
-     * @returns {string} - The inventory mode.
-     */
-    getInventoryMode() {
-        return this.data.inventoryMode;
-    },
-    /**
-     * Set a new value for the inventory mode.
-     * @param {string} newMode - The new inventory mode to set.
-     */
-    setInventoryMode(newMode) {
-        this.data.inventoryMode = newMode;
     },
 };

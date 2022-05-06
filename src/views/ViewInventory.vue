@@ -1,7 +1,7 @@
 <template>
     <div v-if="$route.name !== 'ViewSwitch' && $route.name !== 'ViewHost'">
-        <ViewInventoryDevices v-if="$mystore.getInventoryMode() === 'devices'" />
-        <ViewInventoryFdb v-if="$mystore.getInventoryMode() === 'fdb'" />
+        <ViewInventoryDevices v-if="inventoryMode === 'devices'" />
+        <ViewInventoryFdb v-if="inventoryMode === 'fdb'" />
     </div>
     <div v-else>
         <router-view></router-view>
@@ -17,6 +17,11 @@ export default {
     components: {
         ViewInventoryDevices,
         ViewInventoryFdb,
+    },
+    computed: {
+        inventoryMode() {
+            return this.$route.query?.inventoryMode;
+        },
     },
 };
 </script>
