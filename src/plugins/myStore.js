@@ -1,8 +1,8 @@
 import Vue from 'vue';
 
 export default {
+    entities: [],
     data: Vue.observable({
-        entities: [],
         entityDatabases: [],
         infoMessage: {},
         inventoryMode: 'devices',
@@ -26,14 +26,14 @@ export default {
      * @returns {array} - Array of entities.
      */
     getEntities() {
-        return this.data.entities;
+        return this.entities;
     },
     /**
      * Set new values to the entities.
      * @param {array} newEntities - New entities to set.
      */
     setEntities(newEntities) {
-        this.data.entities = newEntities;
+        this.entities = newEntities;
     },
     /**
      * Getter for the info message alert.
