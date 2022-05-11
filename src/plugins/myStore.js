@@ -37,7 +37,8 @@ export default {
     /**
      * Getter for the info message alert.
      * @returns {object} - The info message.
-     */ getInfoMessage() {
+     */
+    getInfoMessage() {
         return this.data.infoMessage;
     },
     /**
