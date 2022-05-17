@@ -259,7 +259,7 @@ export default {
          * @param {object} payload
          */
         onError(payload) {
-            this.$mystore.setInfoMessage(payload);
+            this.$store.setInfoMessage(payload);
         },
         /**
          * Fetch an anchor tag for a given device

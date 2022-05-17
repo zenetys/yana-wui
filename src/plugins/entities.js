@@ -1,5 +1,5 @@
 import Api from '@/plugins/api';
-import MyStore from '@/plugins/myStore';
+import Store from '@/plugins/store';
 
 export default {
     /**
@@ -9,7 +9,7 @@ export default {
     async fetchStoreEntities() {
         const errorContext = 'Could not fetch entities.';
         const entities = await Api.get('/entities', errorContext);
-        MyStore.setEntities(entities);
-        MyStore.setInfoMessage({});
+        Store.setEntities(entities);
+        Store.setInfoMessage({});
     },
 };

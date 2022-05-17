@@ -1,5 +1,5 @@
 import axios from 'axios';
-import MyStore from '@/plugins/myStore';
+import Store from '@/plugins/store';
 /**
  * Handle errors from the API and display them to the user.
  * @param {object} error - The error object from the API
@@ -12,7 +12,7 @@ function handleError(error, errorContext) {
         content: 'Error : ' + errorContext || defaultErrorMessage,
         error: error,
     };
-    MyStore.setInfoMessage(message);
+    Store.setInfoMessage(message);
 }
 
 export default {

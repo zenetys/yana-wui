@@ -202,7 +202,7 @@ export default {
             return Array.isArray(this.device.ip) ? this.device.ip.join(', ') : this.device.ip;
         },
         storeEntityDatabases() {
-            return this.$mystore.entityDatabases;
+            return this.$store.entityDatabases;
         },
     },
     methods: {

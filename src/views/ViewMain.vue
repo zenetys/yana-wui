@@ -292,7 +292,7 @@ export default {
     },
     computed: {
         storeEntities() {
-            return this.$mystore.getEntities();
+            return this.$store.getEntities();
         },
         routeName() {
             return this.$route.name;
@@ -309,10 +309,10 @@ export default {
         },
         storeEntityDatabases: {
             get() {
-                return this.$mystore.getEntityDatabases();
+                return this.$store.getEntityDatabases();
             },
             set(newDatabases) {
-                this.$mystore.setEntityDatabases(newDatabases);
+                this.$store.setEntityDatabases(newDatabases);
             },
         },
         /**
@@ -343,7 +343,7 @@ export default {
          * @param {*} payload - error payload
          */
         onError(payload) {
-            this.$mystore.setInfoMessage(payload);
+            this.$store.setInfoMessage(payload);
         },
         /**
          * Toggle the persistence of the search query upon navigation

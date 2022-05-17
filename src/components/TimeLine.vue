@@ -116,7 +116,7 @@ export default {
             return this.$route.query.db;
         },
         storeEntityDatabases() {
-            return this.$mystore.getEntityDatabases();
+            return this.$store.getEntityDatabases();
         },
     },
     methods: {

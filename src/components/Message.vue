@@ -40,10 +40,10 @@ export default {
     computed: {
         message: {
             get() {
-                return this.$mystore.getInfoMessage();
+                return this.$store.getInfoMessage();
             },
             set(newMessage) {
-                this.$mystore.setInfoMessage(newMessage);
+                this.$store.setInfoMessage(newMessage);
             },
         },
         messageColor() {

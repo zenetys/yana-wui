@@ -316,7 +316,7 @@ export default {
                         content: 'Can not load host informations, problem with the query.',
                         error: error,
                     } 
-                    this.$mystore.setInfoMessage(message);
+                    this.$store.setInfoMessage(message);
                 });
         },
         /**
