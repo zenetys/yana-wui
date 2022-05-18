@@ -60,6 +60,13 @@ const routes = [
             },
         ],
     },
+    /* redirect any invalid hash-path to slash */
+    {
+        path: '*',
+        redirect: {
+            path: '/',
+        },
+    },
 ];
 
 const router = new VueRouter({
