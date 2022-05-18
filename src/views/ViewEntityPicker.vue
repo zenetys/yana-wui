@@ -152,9 +152,10 @@ export default {
     },
     computed: {
         filteredEntities() {
+            const lcSearch = this.entitySearch.toLowerCase();
             return this.$store.getEntities()
-                .map((entity) => ({ name: entity }))
-                .filter((el) => el.name.toLowerCase().includes(this.entitySearch.toLowerCase()));
+                .filter((entity) => entity.toLowerCase().includes(lcSearch))
+                .map((entity) => ({ name: entity }));
         },
     },
     methods: {
