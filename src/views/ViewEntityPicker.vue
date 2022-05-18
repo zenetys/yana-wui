@@ -81,17 +81,17 @@
                         <!-- Entities -->
                         <v-col cols="12" sm="6" md="6" lg="4" xl="4">
                             <v-data-table
-                                :headers="headers"
+                                :headers="entityTableHeaders"
                                 :items="filteredEntities"
                                 class="elevation-2"
                                 mobile-breakpoint="0"
                                 width=""
                                 :height="tableHeight"
                                 fixed-header
-                                :footer-props="entityTableProps.itemPerPageOptions"
+                                :footer-props="entityTableFooterProps"
                                 :items-per-page="-1">
                                 <template
-                                    v-for="(header, headerIndex) in headers"
+                                    v-for="(header, headerIndex) in entityTableHeaders"
                                     v-slot:[`item.${header.value}`]="{ item }">
                                     <div :key="`entity-${headerIndex}`">
                                         <router-link :to="'/main?entity=' + item.name">
@@ -141,12 +141,10 @@ export default {
     },
     data() {
         return {
-            headers: [{ text: 'Entity Name', value: 'name' }],
             entityPickerDisplayMode: 'grid',
             entitySearch: '',
-            entityTableProps: {
-                itemPerPageOptions: { 'items-per-page-options': [10, 20, -1] },
-            },
+            entityTableHeaders: [{ text: 'Entity Name', value: 'name' }],
+            entityTableFooterProps: { 'items-per-page-options': [10, 20, -1] },
             tableHeight: 0,
         };
     },
