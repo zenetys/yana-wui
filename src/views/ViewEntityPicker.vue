@@ -151,11 +151,8 @@ export default {
         };
     },
     computed: {
-        storeEntities() {
-            return this.$store.getEntities();
-        },
         filteredEntities() {
-            return this.storeEntities
+            return this.$store.getEntities()
                 .map((entity) => ({ name: entity }))
                 .filter((el) => el.name.toLowerCase().includes(this.entitySearch.toLowerCase()));
         },
