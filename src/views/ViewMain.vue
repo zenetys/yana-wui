@@ -165,7 +165,7 @@
         <v-bottom-navigation id="bottombar" fixed hide-on-scroll grow height="" :style="this.bottomBarStyle">
             <v-col cols="12">
                 <v-card>
-                    <TimeLine @error="onError" class="bottom-timeline" />
+                    <TimeLine class="bottom-timeline" />
                 </v-card>
             </v-col>
         </v-bottom-navigation>
@@ -337,13 +337,6 @@ export default {
          */
         drawerValueByBreakpoint() {
             this.drawer = !this.$vuetify.breakpoint.mdAndDown;
-        },
-        /**
-         * Handle API errors
-         * @param {*} payload - error payload
-         */
-        onError(payload) {
-            this.$store.setInfoMessage(payload);
         },
         /**
          * Toggle the persistence of the search query upon navigation
