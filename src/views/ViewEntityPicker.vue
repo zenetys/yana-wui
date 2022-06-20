@@ -52,58 +52,63 @@
 
             <v-container>
                 <v-row class="row justify-center align-center">
-                    <!-- Grid Display Mode -->
-                    <template v-if="entityPickerDisplayMode === 'grid' && filteredEntities.length !== 0">
-                        <!-- Entities -->
-                        <v-col
-                            :key="`entity-${entityIndex}`"
-                            v-for="(entity, entityIndex) in filteredEntities"
-                            cols="6"
-                            sm="4"
-                            md="3"
-                            lg="2"
-                            xl="1">
-                            <router-link class="entity" :to="getRoute(entity.name)">
-                                <v-card
-                                    class="d-flex align-center justify-center px-3 entity-card"
-                                    color="secondary"
-                                    min-height="100">
-                                    <v-card-actions>
-                                        <span class="entity-name"> {{ entity.name }}</span>
-                                    </v-card-actions>
-                                </v-card>
-                            </router-link>
-                        </v-col>
+                    <!-- Entities -->
+                    <template v-if="filteredEntities.length > 0">
+                        <!-- Grid Display Mode -->
+                        <template v-if="entityPickerDisplayMode === 'grid'">
+                            <v-col
+                                :key="`entity-${entityIndex}`"
+                                v-for="(entity, entityIndex) in filteredEntities"
+                                cols="6"
+                                sm="4"
+                                md="3"
+                                lg="2"
+                                xl="1">
+                                <router-link class="entity" :to="getRoute(entity.name)">
+                                    <v-card
+                                        class="d-flex align-center justify-center px-3 entity-card"
+                                        color="secondary"
+                                        min-height="100">
+                                        <v-card-actions>
+                                            <span class="entity-name"> {{ entity.name }}</span>
+                                        </v-card-actions>
+                                    </v-card>
+                                </router-link>
+                            </v-col>
+                        </template>
+
+                        <!-- Table Display Mode -->
+                        <template v-if="entityPickerDisplayMode === 'table'">
+                            <v-col cols="12" sm="6" md="6" lg="4" xl="4">
+                                <v-data-table
+                                    :headers="entityTableHeaders"
+                                    :items="filteredEntities"
+                                    class="elevation-2"
+                                    mobile-breakpoint="0"
+                                    width=""
+                                    :height="tableHeight"
+                                    fixed-header
+                                    :footer-props="entityTableFooterProps"
+                                    :items-per-page="-1">
+                                    <template
+                                        v-for="(header, headerIndex) in entityTableHeaders"
+                                        v-slot:[`item.${header.value}`]="{ item }">
+                                        <div :key="`entity-${headerIndex}`">
+                                            <router-link :to="getRoute(item.name)">
+                                                <span v-if="header.value === 'name'">
+                                                    {{ item.name }}
+                                                </span>
+                                            </router-link>
+                                        </div>
+                                    </template>
+                                </v-data-table>
+                            </v-col>
+                        </template>
                     </template>
 
-                    <!-- Table Display Mode -->
-                    <template v-if="entityPickerDisplayMode === 'table' && filteredEntities.length !== 0">
-                        <!-- Entities -->
-                        <v-col cols="12" sm="6" md="6" lg="4" xl="4">
-                            <v-data-table
-                                :headers="entityTableHeaders"
-                                :items="filteredEntities"
-                                class="elevation-2"
-                                mobile-breakpoint="0"
-                                width=""
-                                :height="tableHeight"
-                                fixed-header
-                                :footer-props="entityTableFooterProps"
-                                :items-per-page="-1">
-                                <template
-                                    v-for="(header, headerIndex) in entityTableHeaders"
-                                    v-slot:[`item.${header.value}`]="{ item }">
-                                    <div :key="`entity-${headerIndex}`">
-                                        <router-link :to="getRoute(item.name)">
-                                            <span v-if="header.value === 'name'">
-                                                {{ item.name }}
-                                            </span>
-                                        </router-link>
-                                    </div>
-                                </template>
-                            </v-data-table>
-                        </v-col>
-                    </template>
+                    <v-col v-else cols="auto" class="red--text">
+                        There is no entity available!
+                    </v-col>
                 </v-row>
             </v-container>
         </v-main>
