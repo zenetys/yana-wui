@@ -310,13 +310,7 @@ export default {
                     })
                 )
                 .catch((error) => {
-                    console.log(error);
-                    const message = {
-                        type: 'error',
-                        content: 'Can not load host informations, problem with the query.',
-                        error: error,
-                    } 
-                    this.$store.setInfoMessage(message);
+                    this.$ev.$emit('error', error, 'Cannot load host data');
                 });
         },
         /**
