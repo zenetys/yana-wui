@@ -4,7 +4,6 @@ export default {
     entities: [],
     data: Vue.observable({
         entityDatabases: [],
-        infoMessage: {},
     }),
     /**
      * Getter for entity databases.
@@ -33,19 +32,5 @@ export default {
      */
     setEntities(newEntities) {
         this.entities = newEntities;
-    },
-    /**
-     * Getter for the info message alert.
-     * @returns {object} - The info message.
-     */
-    getInfoMessage() {
-        return this.data.infoMessage;
-    },
-    /**
-     * Set a new value for the info message.
-     * @param {object} newMessage - The new info message to set.
-     */
-    setInfoMessage(newMessage) {
-        this.data.infoMessage = newMessage;
     },
 };

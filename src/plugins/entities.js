@@ -10,6 +10,5 @@ export default {
         const errorContext = 'Could not fetch entities.';
         const entities = await Api.get('/entities', errorContext);
         Store.setEntities(entities);
-        Store.setInfoMessage({});
     },
 };
