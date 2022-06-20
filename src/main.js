@@ -9,11 +9,13 @@ import Api from '@/plugins/api';
 import * as Utils from '@/plugins/utils';
 import Entities from '@/plugins/entities';
 import Store from '@/plugins/store';
+import Ev from '@/plugins/evbus';
 
 Vue.config.productionTip = false;
 Vue.prototype.$api = Api;
 Vue.prototype.$utils = Utils;
 Vue.prototype.$store = Store;
+Vue.prototype.$ev = Ev;
 
 async function init() {
     /* Initialise the API plugin */
