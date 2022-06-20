@@ -9,8 +9,7 @@
         :height-offsets="[-120]"
         :column-definition="columnDefinition"
         :custom-headers-computation="computeHeaders"
-        @error="onError">
-    </auto-table>
+    />
 </template>
 
 <style lang="scss" scoped>
@@ -253,13 +252,6 @@ export default {
          */
         computeHeaders(headers) {
             headers.unshift({ value: 'flag' });
-        },
-        /**
-         * Add error object in the store
-         * @param {object} payload
-         */
-        onError(payload) {
-            this.$store.setInfoMessage(payload);
         },
         /**
          * Fetch an anchor tag for a given device
