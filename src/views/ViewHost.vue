@@ -298,17 +298,15 @@ export default {
             const ifaceUrl = this.$utils.getUpdatedApiUrl(this.apiStateParams, 'interface');
             const errorContext = 'Could not fetch host information.';
 
-            this.$api
-                .all([deviceUrl, ifaceUrl].map((query) => this.$api.get(query, errorContext)))
-                .then(
-                    this.$api.spread((deviceResponse, interfaceResponse) => {
+            Promise.all([deviceUrl, ifaceUrl].map((query) => this.$api.get(query, errorContext)))
+                .then((results) => {
+                    const [deviceResponse, interfaceResponse] = [...results];
                         this.device = deviceResponse || {};
                         if (this.device.vlan) {
                             this.device.vlan = Object.values(this.device.vlan);
                         }
                         this.interfaces = interfaceResponse || [];
-                    })
-                )
+                })
                 .catch((error) => {
                     this.$ev.$emit('error', error, 'Cannot load host data');
                 });
