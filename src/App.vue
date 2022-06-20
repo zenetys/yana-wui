@@ -1,5 +1,6 @@
 <template>
     <v-app>
+        <Message />
         <v-main>
             <router-view />
         </v-main>
@@ -26,9 +27,13 @@ a {
 </style>
 
 <script>
+import Message from '@/components/Message.vue';
+
 export default {
     name: 'App',
-
+    components: {
+        Message,
+    },
     data: () => ({}),
 };
 </script>

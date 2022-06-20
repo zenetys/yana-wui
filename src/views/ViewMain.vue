@@ -158,7 +158,6 @@
         <v-row>
             <v-col cols="12">
                 <router-view class="mx-4 mt-4"></router-view>
-                <Message />
             </v-col>
         </v-row>
 
@@ -245,13 +244,11 @@ a {
 
 <script>
 import TimeLine from '@/components/TimeLine.vue';
-import Message from '@/components/Message.vue';
 
 export default {
     name: 'Home',
     components: {
         TimeLine,
-        Message,
     },
     data() {
         return {

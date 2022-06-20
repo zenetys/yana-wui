@@ -43,13 +43,6 @@
                 </v-row>
             </v-container>
 
-            <!-- Message component -->
-            <v-container>
-                <v-row class="justify-center">
-                    <Message />
-                </v-row>
-            </v-container>
-
             <v-container>
                 <v-row class="row justify-center align-center">
                     <!-- Entities -->
@@ -137,13 +130,8 @@ a {
 </style>
 
 <script>
-import Message from '@/components/Message.vue';
-
 export default {
     name: 'ViewEntityPicker',
-    components: {
-        Message,
-    },
     data() {
         return {
             entityPickerDisplayMode: 'grid',
