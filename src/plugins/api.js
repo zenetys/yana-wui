@@ -25,64 +25,7 @@ export default {
             .then((response) => response.data)
             .catch((error) => handleError(error, errorContext));
     },
-    /**
-     * Make a PUT request to the API
-     * @param {string} url - the URL to call
-     * @param {object} data - The data to send to the API
-     * @param {string} errorContext - The context to be displayed in case of error
-     * @param {AxiosRequestConfig} config - The config to be passed to axios
-     * @returns {*} - The response from the API
-     */
-    async put(url, data, errorContext, config) {
-        return await axios
-            .put(url, data, config)
-            .then((response) => response.data)
-            .catch((error) => handleError(error, errorContext));
-    },
-    /**
-     * Make a POST request to the API
-     * @param {string} url - the URL to call
-     * @param {object} data - The data to send to the API
-     * @param {string} errorContext - The context to be displayed in case of error
-     * @param {AxiosRequestConfig} config - The config to be passed to axios
-     * @returns {*} - The response from the API
-     */
-    async post(url, data, errorContext, config) {
-        return await axios
-            .post(url, data, config)
-            .then((response) => response.data)
-            .catch((error) => handleError(error, errorContext));
-    },
-    /**
-     * Make a DELETE request to the API
-     * @param {string} url - the URL to call
-     * @param {object} data - The data to send to the API to delete the right resource
-     * @param {string} errorContext - The context to be displayed in case of error
-     * @param {AxiosRequestConfig} config - The config to be passed to axios
-     * @returns {*} - The response from the API
-     */
-    async delete(url, data, errorContext, config) {
-        return await axios
-            .delete(url, data, config)
-            .then((response) => response.data)
-            .catch((error) => handleError(error, errorContext));
-    },
-    /**
-     * Execute multiple Axios queries in parallel
-     * @param {*} queries - The queries to execute
-     * @returns {*} - The responses from the API
-     */
-    async all(queries) {
-        return await axios.all(queries);
-    },
-    /**
-     * Spread multiple Axios responses from a callback
-     * @param {*} callback - The callback to execute
-     * @returns - An array of responses from the API
-     */
-    spread(callback) {
-        return axios.spread(callback);
-    },
+
     /**
      * Initialise the API plugin and set Axios default values
      */
