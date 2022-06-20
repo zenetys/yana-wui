@@ -63,7 +63,7 @@
                             md="3"
                             lg="2"
                             xl="1">
-                            <router-link class="entity" :to="'/main?entity=' + entity.name">
+                            <router-link class="entity" :to="getRoute(entity.name)">
                                 <v-card
                                     class="d-flex align-center justify-center px-3 entity-card"
                                     color="secondary"
@@ -94,7 +94,7 @@
                                     v-for="(header, headerIndex) in entityTableHeaders"
                                     v-slot:[`item.${header.value}`]="{ item }">
                                     <div :key="`entity-${headerIndex}`">
-                                        <router-link :to="'/main?entity=' + item.name">
+                                        <router-link :to="getRoute(item.name)">
                                             <span v-if="header.value === 'name'">
                                                 {{ item.name }}
                                             </span>
@@ -173,6 +173,13 @@ export default {
             if (header && searchField) {
                 this.tableHeight = window.innerHeight - (header.clientHeight + searchField.clientHeight + 136);
             }
+        },
+        /**
+         * Build a route location to be used on an entity link
+         * @param {string} entity - Name of the entity
+         */
+        getRoute(entity) {
+            return { name: 'ViewMain', query: { entity } };
         },
     },
     mounted() {
