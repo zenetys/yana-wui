@@ -19,7 +19,7 @@
                 dark
                 x-small
                 color="primary"
-                class="view-type-button">
+                class="view-type-button pr-2">
                 <v-icon dark v-if="entityPickerDisplayMode === 'grid'"> mdi-table </v-icon>
                 <v-icon dark v-if="entityPickerDisplayMode === 'table'"> mdi-view-grid </v-icon>
             </v-btn>
