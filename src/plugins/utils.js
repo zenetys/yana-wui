@@ -118,6 +118,19 @@ export function isEmptyObject(object) {
 }
 
 /**
+ * Test if a value is a "plain object", as created by the {} object
+ * literal or with new Object(). Note this returns false for objects
+ * created with a null prototype like Object.create(null).
+ *
+ * @param {*} value - The value to test.
+ * @return {boolean} - True is the given value is a "plain object",
+ *      false otherwise.
+ */
+export function isPlainObject(value) {
+    return !!value && Object.getPrototypeOf(value) === Object.prototype;
+}
+
+/**
  * Transform an input that can be an array into a litteral value
  * If it's an array, return the first value of the array
  * @param {any} input - The value to check
