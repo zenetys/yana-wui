@@ -3,6 +3,8 @@ import Ev from '@/plugins/evbus';
 
 /**
  * Handle errors from the API and display them to the user.
+ * @deprecated Will be removed along with get() from the exported object
+ *
  * @param {object} error - The error object from the API
  * @param {string} errorContext - The context to be displayed in the error message
  */
@@ -14,6 +16,8 @@ function handleError(error, errorContext) {
 export default {
     /**
      * Make a GET request to the API
+     * @deprecated Use axiosData instead
+     *
      * @param {string} url - the URL to call
      * @param {string} errorContext - The context to be displayed in case of error
      * @param {AxiosRequestConfig} config - The config to be passed to axios
@@ -26,11 +30,28 @@ export default {
             .catch((error) => handleError(error, errorContext));
     },
 
+    axiosData(urlOrConfig, errorMessage) {
+        const config = typeof urlOrConfig === 'string' ? { url: urlOrConfig } : urlOrConfig;
+        console.log('api: axiosData: config =', config);
+        Object.assign(config, { interceptorErrorMessage: errorMessage });
+        return axios(config).then((response) => response.data);
+    },
+
     /**
      * Initialise the API plugin and set Axios default values
      */
     async init() {
         axios.defaults.timeout = 20000;
+        axios.interceptors.response.use(
+            (response) => response,
+            (error) => {
+                if (error.config.interceptorErrorMessage !== false) {
+                    Ev.$emit('error', error, error.config.interceptorErrorMessage ||
+                        'Something went wrong while communicating with the server');
+                }
+                return Promise.reject(error);
+            }
+        );
 
         try {
             const response = await this.get('config.json');
