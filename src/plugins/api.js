@@ -1,5 +1,6 @@
 import axios from 'axios';
-import Store from '@/plugins/store';
+import Ev from '@/plugins/evbus';
+
 /**
  * Handle errors from the API and display them to the user.
  * @param {object} error - The error object from the API
@@ -7,12 +8,7 @@ import Store from '@/plugins/store';
  */
 function handleError(error, errorContext) {
     const defaultErrorMessage = 'Something went wrong while communicating with the server.';
-    const message = {
-        type: 'error',
-        content: 'Error : ' + errorContext || defaultErrorMessage,
-        error: error,
-    };
-    Store.setInfoMessage(message);
+    Ev.$emit('error', error, errorContext || defaultErrorMessage);
 }
 
 export default {
