@@ -161,7 +161,12 @@
             </v-col>
         </v-row>
 
-        <v-bottom-navigation id="bottombar" fixed hide-on-scroll grow height="" :style="this.bottomBarStyle">
+        <v-bottom-navigation
+            v-if="this.$route.meta.hasTimeline"
+            id="bottombar"
+            fixed hide-on-scroll grow height=""
+            :style="this.bottomBarStyle"
+        >
             <v-col cols="12">
                 <v-card>
                     <TimeLine class="bottom-timeline" />
