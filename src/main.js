@@ -19,6 +19,13 @@ Vue.prototype.$ev = Ev;
 async function init() {
     const earlyErrors = [];
 
+    /* Load browser local storage */
+    try { Store.loadLocalStorage() }
+    catch (e) {
+        earlyErrors.push({ title: 'Failed to load browser storage',
+            error: e, duration: null });
+    }
+
     /* Initialise the API plugin */
     try { await Api.init() }
     catch (e) {

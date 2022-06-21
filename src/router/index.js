@@ -43,6 +43,16 @@ const routes = [
                         },
                     ],
                     hasTimeline: true,
+                    buildHistory: (r) => {
+                        const inventoryMode = r.query.inventoryMode;
+                        const search = r.query.search;
+                        if (!inventoryMode || !search)
+                            return false;
+                        return {
+                            label: `${inventoryMode} / ${search}`,
+                            entry: { path: r.path, query: { inventoryMode, search } },
+                        };
+                    },
                 },
                 children: [
                     {
@@ -51,6 +61,17 @@ const routes = [
                         component: ViewHost,
                         meta: {
                             hasTimeline: true,
+                            buildBookmark: (r) => {
+                                const id = r.params.id;
+                                if (!id)
+                                    return false;
+                                let label = document.querySelector('#device-name');
+                                label = (label && label.textContent) ? label.textContent : `id ${id}`;
+                                return {
+                                    label: `host / ${label}`,
+                                    entry: { path: r.path, params: { id } }
+                                };
+                            },
                         },
                     },
                     {
@@ -59,6 +80,17 @@ const routes = [
                         component: ViewSwitch,
                         meta: {
                             hasTimeline: true,
+                            buildBookmark: (r) => {
+                                const id = r.params.id;
+                                if (!id)
+                                    return false;
+                                let label = document.querySelector('#device-name');
+                                label = (label && label.textContent) ? label.textContent : `id ${id}`;
+                                return {
+                                    label: `switch / ${label}`,
+                                    entry: { path: r.path, params: { id } }
+                                };
+                            },
                         },
                     },
                 ],
