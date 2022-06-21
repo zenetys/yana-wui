@@ -82,19 +82,20 @@
                 </router-link>
             </v-toolbar-title>
             <v-list class="pt-0 mt-0">
-                <div v-for="(sectionLink, linkIndex) in menuSide" :key="linkIndex" class="menu">
+                <v-list-item-group class="menu">
                     <v-list-item
-                        v-if="!sectionLink.subMenus"
-                        :to="getNavLinkFullRoute(sectionLink.route)"
-                        :disabled="!sectionLink.route"
+                        v-for="(menuEntry, menuIndex) in routerMenu"
+                        :key="menuIndex"
+                        :to="getRelativeMenuRoute(menuEntry.route)"
+                        :disabled="!menuEntry.route"
                         dense
                     >
                         <v-list-item-action class="mr-4">
-                            <v-icon size="20">{{ sectionLink.icon }}</v-icon>
+                            <v-icon size="20">{{ menuEntry.icon }}</v-icon>
                         </v-list-item-action>
-                        <v-list-item-title v-text="sectionLink.name" />
+                        <v-list-item-title v-text="menuEntry.label" />
                     </v-list-item>
-                </div>
+                </v-list-item-group>
             </v-list>
             <v-spacer></v-spacer>
             <v-list dense class="mt-5 mb-2">
@@ -193,6 +194,9 @@
     }
 }
 
+.menu .v-list-item {
+    text-decoration: none;
+}
 .menu .v-list-item--disabled .v-list-item__action {
     opacity: 0.38;
 }
@@ -261,27 +265,6 @@ export default {
             searchUpdateTimeOut: 500,
             searchTimeOutId: null,
             keepSearch: true,
-            menuSide: [
-                {
-                    name: 'Inventory',
-                    icon: 'mdi-grid',
-                    route: { name: 'ViewInventory' },
-                },
-                {
-                    name: 'VLAN matrix',
-                    icon: 'mdi-table',
-                    route: { name: 'ViewVlanMatrix' },
-                },
-                {
-                    name: 'L2 schema',
-                    icon: 'mdi-graph',
-                },
-                {
-                    name: 'OUI lookup',
-                    icon: 'mdi-help-network-outline',
-                    route: { name: 'ViewOui' },
-                },
-            ],
             recentQueries: [],
             bookMarks: [],
             entityDatabases: [],
@@ -291,6 +274,11 @@ export default {
         };
     },
     computed: {
+        /* Cached menu, not meant to change during app life. */
+        routerMenu() {
+            return this.$router.getMenu();
+        },
+
         storeEntities() {
             return this.$store.getEntities();
         },
@@ -325,6 +313,17 @@ export default {
         },
     },
     methods: {
+        getRelativeMenuRoute(menuRoute) {
+            if (!menuRoute)
+                return undefined;
+            const relativeRoute = this.$utils.deriveRoute(menuRoute, this.$route);
+            /* always clear params */
+            delete relativeRoute.params;
+            /* keep search depending on the toggle button state */
+            if (!this.keepSearch)
+                delete relativeRoute.query?.search;
+            return relativeRoute;
+        },
         /**
          * Run a new search query on a middlemouse click (paste) in the search input
          */
@@ -635,22 +634,6 @@ export default {
                     }
                 }
             }
-        },
-        /**
-         * Generate a full navigation link from a partial route
-         * @param {object} navRoute - The partial route to generate the link from
-         */
-        getNavLinkFullRoute(navRoute) {
-            if (!navRoute || !navRoute.name) {
-                return;
-            }
-
-            const newRoute = {
-                name: navRoute.name,
-                query: this.$route.query,
-                params: this.$route.params,
-            };
-            return newRoute;
         },
         /**
          * Handle the selection of another entity using the select menu :
