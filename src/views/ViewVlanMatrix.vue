@@ -97,7 +97,7 @@ table {
         > tr:nth-child(2) > th {
             position: sticky;
             position: -webkit-sticky;
-            z-index: 7;
+            z-index: 1;
             box-shadow: inset 0px -1px rgb(0 0 0 / 12%);
             color: rgba(0, 0, 0, 0.6);
             background: #fcfcfc;
@@ -152,7 +152,7 @@ table {
             position: -webkit-sticky;
             top: 0;
             left: 0;
-            z-index: 8;
+            z-index: 2;
             background: rgb(255, 255, 255);
         }
     }
