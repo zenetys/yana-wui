@@ -254,10 +254,6 @@ header {
         margin-top: 2px !important;
     }
 }
-
-a {
-    text-decoration: none;
-}
 </style>
 
 <script>
