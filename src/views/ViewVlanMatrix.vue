@@ -93,12 +93,13 @@ table {
     }
 
     > tbody {
+        // first row and first column headers
         > tr > th:nth-child(1),
         > tr:nth-child(2) > th {
             position: sticky;
             position: -webkit-sticky;
             z-index: 1;
-            box-shadow: inset 0px -1px rgb(0 0 0 / 12%);
+            box-shadow: inset -1px -1px rgb(0 0 0 / 12%);
             color: rgba(0, 0, 0, 0.6);
             background: #fcfcfc;
         }
@@ -144,6 +145,7 @@ table {
         > tr > td:nth-child(2),
         > tr:nth-child(2) > th:nth-child(1) {
             background-color: #ebebeb;
+            box-shadow: inset 0px -1px 0 rgb(0 0 0 / 12%);
         }
 
         // top left cell
