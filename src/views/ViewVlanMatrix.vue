@@ -153,7 +153,6 @@ table {
             top: 0;
             left: 0;
             z-index: 2;
-            background: rgb(255, 255, 255);
         }
     }
 }
