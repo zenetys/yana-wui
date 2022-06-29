@@ -44,7 +44,6 @@
 
             <v-col cols="12" sm="3" md="3" lg="4" xl="2" class="d-flex">
                 <v-autocomplete
-                    class="select-entity-menu"
                     :items="storeEntities"
                     v-model="selectedEntity"
                     label="Select Entity"
@@ -236,10 +235,6 @@
     }
 }
 
-.select-entity-menu {
-    z-index: 10;
-}
-
 header {
     border-bottom: solid 1px rgba(0, 0, 0, 0.12) !important;
 }
@@ -255,8 +250,6 @@ header {
 }
 
 .aside-navigation {
-    z-index: 10;
-
     .item-icon {
         margin-top: 2px !important;
     }
