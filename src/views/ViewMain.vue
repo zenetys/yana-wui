@@ -218,23 +218,6 @@
     opacity: 0.38;
 }
 
-.list-item {
-    height: 20px;
-    min-height: 20px !important;
-    cursor: pointer;
-
-    .list-item-remove-icon {
-        visibility: hidden;
-    }
-
-    &:hover {
-        background-color: #f7f7f7;
-        .list-item-remove-icon {
-            visibility: visible;
-        }
-    }
-}
-
 header {
     border-bottom: solid 1px rgba(0, 0, 0, 0.12) !important;
 }
@@ -250,8 +233,25 @@ header {
 }
 
 .aside-navigation {
-    .item-icon {
-        margin-top: 2px !important;
+    .list-item {
+        height: 20px;
+        min-height: 20px !important;
+        cursor: pointer;
+
+        .list-item-remove-icon {
+            visibility: hidden;
+        }
+
+        &:hover {
+            background-color: #f7f7f7;
+            .list-item-remove-icon {
+                visibility: visible;
+            }
+        }
+
+        .item-icon {
+            margin-top: 2px !important;
+        }
     }
 }
 </style>
