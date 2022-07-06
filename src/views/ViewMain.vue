@@ -235,7 +235,7 @@ header {
 .aside-navigation {
     .list-item {
         height: 20px;
-        min-height: 20px !important;
+        min-height: 20px;
         cursor: pointer;
 
         .list-item-remove-icon {
@@ -250,7 +250,7 @@ header {
         }
 
         .item-icon {
-            margin-top: 2px !important;
+            margin-top: 2px;
         }
     }
 }
