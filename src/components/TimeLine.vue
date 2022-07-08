@@ -37,7 +37,8 @@ export default {
                     yPadding: 4,
                     caretPadding: 6,
                     callbacks: {
-                        label: (tooltipItems, data) => data.labels[tooltipItems.index],
+                        /* disable series value in tooltips */
+                        label: () => undefined,
                     },
                     xAlign: 'center',
                     yAlign: 'bottom',
