@@ -172,15 +172,17 @@ export default {
             return colors;
         },
         /**
-         * Update store database value
-         * @param {Object} point - PointerEvent
-         * @param {Array} event - ChartElement
+         * Graph click event handler used to trigger selection of a database.
+         * @param {PointerEvent} event - DOM event object.
+         * @param {ChartElement[]} points - Array of active elements.
+         * @param {number} points[]._datasetIndex - Chart's dataset index.
+         * @param {number} points[]._index - Point index in the chart's dataset.
          */
-        handleClick(point, event) {
+        handleClick(event, points) {
             let clickedItem = null;
 
-            if (Array.isArray(event)) {
-                clickedItem = event[0];
+            if (Array.isArray(points)) {
+                clickedItem = points[0];
             }
 
             if (!clickedItem) {
