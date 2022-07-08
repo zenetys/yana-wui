@@ -28,7 +28,7 @@ export default {
             options: {
                 maintainAspectRatio: false,
                 responsive: true,
-                onClick: this.handleClick,
+                onClick: this.onTimeLineClick,
                 title: { display: false },
                 tooltips: {
                     titleMarginBottom: -2,
@@ -178,7 +178,7 @@ export default {
          * @param {number} points[]._datasetIndex - Chart's dataset index.
          * @param {number} points[]._index - Point index in the chart's dataset.
          */
-        handleClick(event, points) {
+        onTimeLineClick(event, points) {
             let clickedItem = null;
 
             if (Array.isArray(points)) {
