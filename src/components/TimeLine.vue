@@ -35,7 +35,7 @@ export default {
                     titleFontSize: 10,
                     xPadding: 4,
                     yPadding: 4,
-                    caretPadding: 5,
+                    caretPadding: 6,
                     callbacks: {
                         label: (tooltipItems, data) => data.labels[tooltipItems.index],
                     },
