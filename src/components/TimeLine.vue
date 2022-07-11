@@ -22,6 +22,8 @@ export default {
                         pointHoverBackgroundColor: '#D100E4',
                         pointHoverBorderColor: '#D100E4',
                         pointHoverRadius: 13,
+                        pointBackgroundColor: this.pointColorSetter,
+                        pointBorderColor: this.pointColorSetter,
                     },
                 ],
             },
@@ -144,8 +146,6 @@ export default {
                 return formattedDb;
             });
 
-            this.chartdata.datasets[0].pointBackgroundColor = this.colorOnClick;
-            this.chartdata.datasets[0].pointBorderColor = this.colorOnClick;
             /* Calculate the new bounds */
             this.setTimelineBounds();
             /* Re-render the chart to apply the new bounds */
@@ -163,11 +163,13 @@ export default {
             }
         },
         /**
-         * Return colors array
-         * The array returned is used to match the selected timeline point to be different
+         * Scriptable option function to define point colors. It returns
+         * an array indexed like the chart's dataset. Only the color
+         * of the selected point gets customized, others use the default
+         * color, so the array returned has maximum one element.
          * @returns {Array}
          */
-        colorOnClick() {
+        pointColorSetter() {
             const colors = [];
             colors[this.selectedIndex] = '#D100E4';
             return colors;
