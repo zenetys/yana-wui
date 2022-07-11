@@ -54,16 +54,17 @@ export default {
                             type: 'time',
                             time: {
                                 displayFormats: {
-                                    millisecond: 'hh:mm:ss.SSS',
-                                    second: 'hh:mm:ss',
-                                    minute: 'hh:mm',
-                                    hour: 'MMM D hh:mm',
-                                    day: 'MMM D hh:mm',
+                                    millisecond: 'HH:mm:ss.SSS',
+                                    second: 'HH:mm:ss',
+                                    minute: 'HH:mm',
+                                    hour: 'D MMM, HH:mm',
+                                    day: 'D MMM, HH:mm',
                                     week: 'MMM D',
                                     month: 'MMM YYYY',
-                                    quarter: 'MMM - YYYY',
+                                    quarter: 'MMM YYYY',
                                     year: 'MMM YYYY',
                                 },
+                                tooltipFormat: 'ddd, D MMM YYYY, HH:mm:ss Z',
                             },
                             ticks: {
                                 min: 0,
