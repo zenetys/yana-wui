@@ -181,7 +181,12 @@
         >
             <v-col cols="12">
                 <v-card>
-                    <TimeLine class="bottom-timeline" />
+                    <TimeLine
+                        :databases="$store.getEntityDatabases()"
+                        :value="$route.query.db"
+                        @click="onTimeLineClick"
+                        class="bottom-timeline"
+                    />
                 </v-card>
             </v-col>
         </v-bottom-navigation>
@@ -431,6 +436,13 @@ export default {
                 /* If search was simply reset, replace the current route without redirecting */
                 this.$router.replace(redirection).catch(() => {});
             }
+        },
+        onTimeLineClick(databaseId) {
+            /* Let the children handle if there is no change between current
+             * and previous values, ignore NavigationDuplicated errors. */
+            this.$route.query.db = undefined;
+            /* Trigger database change */
+            this.$router.push({ query: { ...this.$route.query, db: databaseId } });
         },
         /**
          * Update the url with a new inventory mode

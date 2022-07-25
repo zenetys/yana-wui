@@ -8,6 +8,16 @@ import { Line } from 'vue-chartjs';
 
 export default {
     extends: Line,
+    props: {
+        databases: {
+            type: Array,
+            required: false,
+        },
+        value: {
+            type: String,
+            required: false,
+        },
+    },
     data() {
         return {
             chartdata: {
@@ -28,6 +38,7 @@ export default {
                 ],
             },
             options: {
+                animation: false,
                 maintainAspectRatio: false,
                 responsive: true,
                 onClick: this.onTimeLineClick,
@@ -109,60 +120,13 @@ export default {
                     },
                 },
             },
-            selectedIndex: -1,
-            selectedDatabase: null,
+            selectedDatabaseId: undefined,
+            pointIndexFromDatabaseId: {},
             windowInDays: 15,
             timeMarginInDays: 1,
         };
     },
-    computed: {
-        routeDatabase() {
-            return this.$route.query.db;
-        },
-        storeEntityDatabases() {
-            return this.$store.getEntityDatabases();
-        },
-    },
     methods: {
-        /**
-         * Update the timeline databases with new data, calculate new bounds, and update the chart.
-         * @param {object[]} newDatabases - Databases fetched from API upon entity change/selection.
-         */
-        updateTimeLineDbs(newDatabases) {
-            /* Format databases for chartjs and select one */
-            this.chartdata.datasets[0].data = newDatabases.map((db, dbIndex) => {
-                const formattedDb = {
-                    x: db.ts * 1000,
-                    y: 9,
-                    databaseId: db.id,
-                };
-
-                /* If a db is provided in the URL and it matches any of the new dbs, 
-                select it in the Timeline */
-                if (db.id === this.routeDatabase) {
-                    this.selectedIndex = dbIndex;
-                    this.selectedDatabase = formattedDb;
-                }
-
-                return formattedDb;
-            });
-
-            /* Calculate the new bounds */
-            this.setTimelineBounds();
-            /* Re-render the chart to apply the new bounds */
-            this.updateChartData(true);
-        },
-        /**
-         * Update the chart with new data or new options.
-         * @param {boolean} shouldRender - Whether the chart should be re-rendered with new options or just updated.
-         */
-        updateChartData(shouldRender = false) {
-            if (shouldRender) {
-                this.renderChart(this.chartdata, this.options);
-            } else if (this.$data._chart) {
-                this.$data._chart.update();
-            }
-        },
         /**
          * Scriptable option function to define point colors. It returns
          * an array indexed like the chart's dataset. Only the color
@@ -172,117 +136,101 @@ export default {
          */
         pointColorSetter() {
             const colors = [];
-            colors[this.selectedIndex] = '#D100E4';
+            if (this.selectedDatabaseId &&
+                this.pointIndexFromDatabaseId[this.selectedDatabaseId]) {
+                colors[this.pointIndexFromDatabaseId[this.selectedDatabaseId]] = '#D100E4';
+            }
             return colors;
         },
         /**
          * Graph click event handler used to trigger selection of a database.
+         * The parent component gets notified of the selected database id.
+         * It is up to the parent component to update our value props in
+         * order to make the change visible.
          * @param {PointerEvent} event - DOM event object.
          * @param {ChartElement[]} points - Array of active elements.
          * @param {number} points[]._datasetIndex - Chart's dataset index.
          * @param {number} points[]._index - Point index in the chart's dataset.
          */
         onTimeLineClick(event, points) {
-            let clickedItem = null;
-
-            if (Array.isArray(points)) {
-                clickedItem = points[0];
-            }
-
-            if (!clickedItem) {
-                return;
-            } else {
-                const clickedDb = this.chartdata.datasets[0].data[clickedItem._index].databaseId;
-
-                /* New DB is clicked > update the URL */
-                if (clickedDb !== this.routeDatabase) {
-                    this.redirectToUpdateDb(clickedDb);
-                }
-            }
+            console.log('TimeLine: onPointClick: points =', points);
+            if (points.length < 1)
+                return; /* not a click on a point */
+            if (this.chartdata.datasets[points[0]._datasetIndex] === undefined ||
+                this.chartdata.datasets[points[0]._datasetIndex].data[points[0]._index] === undefined)
+                return; /* better be safe */
+            const databaseId = this.chartdata.datasets[points[0]._datasetIndex].data[points[0]._index].databaseId;
+            console.log('TimeLine: onPointClick: emit click,', databaseId);
+            this.$emit('click', databaseId);
         },
         /**
-         * Update the Timeline selected point
-         * @param {string} newDb - The ID of the new DB to select
+         * Set new bounds for the timeline. If the last available DB is in the
+         * last n days (time window set in data), use this as a time window.
+         * Otherwise, use a n-days time window leading up to the last available
+         * DB + a margin.
+         *
+         * This function is a no-op when there is no database, at least one
+         * is required to compute X-axis boundaries.
+         *
+         * @param {object[]} databases - See onWatchDatabases() documentation,
+         *      except it is assumed here the parameter won't be undefined.
          */
-        selectTimelineDb(newDb) {
-            let foundDb = null;
-            let foundIndex = -1;
+        updateTimeLineBounds(databases) {
+            if (databases.length == 0)
+                return; /* need at least one database for computations */
 
-            this.chartdata.datasets[0].data.forEach((db, dbIndex) => {
-                if (db.databaseId === newDb) {
-                    foundIndex = dbIndex;
-                    foundDb = db;
-                }
-            });
-
-            if (foundDb) {
-                [this.selectedDatabase, this.selectedIndex] = [foundDb, foundIndex];
-            }
-
-            this.updateChartData();
-        },
-        /**
-         * Redirect to an updated URL with a database ID
-         * @param {string} dbToUpdate - The ID of the new DB to update in the URL
-         */
-        redirectToUpdateDb(dbToUpdate) {
-            const redirection = { ...this.$route };
-            const newQuery = { ...this.$route.query };
-            newQuery.db = dbToUpdate;
-            redirection.query = newQuery;
-
-            this.$router.push(redirection).catch(() => {});
-        },
-        /**
-         * Calculate a duration in milliseconds from a number of days
-         * @param {number} days - The number of days to convert to milliseconds
-         * @returns {number} - The duration in milliseconds
-         */
-        getTimeFromDays(days) {
-            return days * 86400 * 1000;
-        },
-        /**
-         * Set new bounds for the timeline
-         */
-        setTimelineBounds() {
-            if (!this.storeEntityDatabases?.length > 0) {
-                return;
-            }
             const now = new Date().getTime();
-            const timeWindow = this.getTimeFromDays(this.windowInDays);
-            const lastDbTime = this.storeEntityDatabases[this.storeEntityDatabases.length - 1].ts * 1000;
+            const timeWindow = this.windowInDays * 86400 * 1000;
+            const lastDbTime = databases[databases.length - 1].ts * 1000;
 
-            /** If the last available DB is in the last X days (time window set in data), use this as a time window;
-             * otherwise, use an X-day time window leading up to the last available DB + a margin */
             if (now - timeWindow < lastDbTime && lastDbTime < now) {
-                this.options.scales.xAxes[0].ticks.min = now - timeWindow;
-                this.options.scales.xAxes[0].ticks.max = now;
-            } else {
-                const timeMargin = this.getTimeFromDays(this.timeMarginInDays);
-                this.options.scales.xAxes[0].ticks.min = lastDbTime + timeMargin - timeWindow;
-                this.options.scales.xAxes[0].ticks.max = lastDbTime + timeMargin;
+                this.$data._chart.config.options.scales.xAxes[0].ticks.min = now - timeWindow;
+                this.$data._chart.config.options.scales.xAxes[0].ticks.max = now;
+            }
+            else {
+                const timeMargin = this.timeMarginInDays * 86400 * 1000;
+                this.$data._chart.config.options.scales.xAxes[0].ticks.min = lastDbTime + timeMargin - timeWindow;
+                this.$data._chart.config.options.scales.xAxes[0].ticks.max = lastDbTime + timeMargin;
             }
         },
-    },
-    watch: {
-        storeEntityDatabases: {
-            immediate: false,
-            handler(newEntityDatabases) {
-                if (newEntityDatabases?.length > 0) {
-                    this.updateTimeLineDbs(newEntityDatabases);
-                }
-            },
+        /**
+         * Watch handler for the databases props. It updates the data points
+         * on the graph and adjusts the X-axis boundaries.
+         *
+         * @param {object[]|undefined} databases - Array of database entries,
+         *      as fetched from API. This parameter may be undefined.
+         * @param {number} databases[].ts - Entry date in epoch seconds
+         * @param {string} databases[].id - Entry identifier
+         */
+        onWatchDatabases(databases) {
+            console.log('TimeLine: onWatchDatabases: current =', databases);
+            databases ??= [];
+            this.pointIndexFromDatabaseId = {};
+            this.chartdata.datasets[0].data = databases.map((db, index) => {
+                this.pointIndexFromDatabaseId[db.id] = index;
+                return { x: db.ts * 1000, y: 9, databaseId: db.id };
+            });
+            this.updateTimeLineBounds(databases);
+            this.$data._chart.update();
         },
-        routeDatabase: {
-            immediate: true,
-            handler(newDb) {
-                /* If the DB in the URL changes, select it in the Timeline */
-                this.selectTimelineDb(newDb);
-            },
+        /**
+         * Watch handler for the value props. It updates the selected data
+         * point on the graph.
+         */
+        onWatchValue(value) {
+            console.log('TimeLine: onWatchValue: current =', value);
+            /* <value> may be undefined or invalid (no match on the points).
+             * If so, none of the points will be selected on the timeline */
+            this.selectedDatabaseId = value;
+            this.$data._chart.update();
         },
     },
     mounted() {
+        console.log('TimeLine: mounted: $props.databases =', this.databases);
+        console.log('TimeLine: mounted: $props.value =', this.value);
         this.renderChart(this.chartdata, this.options);
+        this.$watch('databases',  this.onWatchDatabases, { immediate: true });
+        this.$watch('value',  this.onWatchValue, { immediate: true });
     },
 };
 </script>
