@@ -1,3 +1,18 @@
+<style scoped>
+::v-deep .timeline-no-data {
+    position: absolute;
+    top: 0; bottom: 0; left: 0; right: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #fefefebb;
+    padding-bottom: 25px;
+}
+::v-deep .timeline-no-data::before {
+    content: "There is no database available!"
+}
+</style>
+
 <script>
 import 'chartjs-plugin-colorschemes';
 import 'chartjs-plugin-zoom';
@@ -204,6 +219,12 @@ export default {
          */
         onWatchDatabases(databases) {
             console.log('TimeLine: onWatchDatabases: current =', databases);
+            /* The no-data message get displayed if there is no database
+             * in the array. It is not displayed when the databases props is
+             * undefined because we assume it is initialization time. */
+            const ndHideClassFn = (databases && databases.length == 0) ? 'remove' : 'add';
+            this.noDataElement.classList[ndHideClassFn]('d-none');
+
             databases ??= [];
             this.pointIndexFromDatabaseId = {};
             this.chartdata.datasets[0].data = databases.map((db, index) => {
@@ -228,9 +249,19 @@ export default {
     mounted() {
         console.log('TimeLine: mounted: $props.databases =', this.databases);
         console.log('TimeLine: mounted: $props.value =', this.value);
+        this.noDataElement = document.createElement('div');
+        this.noDataElement.className = 'timeline-no-data red--text d-none';
+        console.log('TimeLine: mounted: this.noDataElement =', this.noDataElement);
+        this.$el.appendChild(this.noDataElement);
         this.renderChart(this.chartdata, this.options);
         this.$watch('databases',  this.onWatchDatabases, { immediate: true });
         this.$watch('value',  this.onWatchValue, { immediate: true });
+    },
+    destroyed() {
+        console.log('TimeLine: destroyed: this.noDataElement =', this.noDataElement);
+        if (this.noDataElement && this.noDataElement.parentElement)
+            this.noDataElement.parentElement.removeChild(this.noDataElement);
+        this.noDataElement = null;
     },
 };
 </script>
