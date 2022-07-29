@@ -195,10 +195,6 @@
 
 <!-- FIXME: check/remove, add scoped -->
 <style lang="scss" scoped>
-.v-navigation-drawer__border {
-    display: none;
-}
-
 ::v-deep {
     .v-navigation-drawer__content {
         margin-top: 47px;
