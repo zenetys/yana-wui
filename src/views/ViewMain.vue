@@ -5,7 +5,7 @@
             <v-app-bar-nav-icon
                 v-if="$vuetify.breakpoint.mdAndDown"
                 @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
-            <v-col cols="9" sm="5" md="4" lg="4" xl="5" class="pl-0 d-inline-flex">
+            <v-col cols="9" sm="4" md="4" lg="4" xl="5" class="pl-0 d-inline-flex">
                 <v-text-field
                     label="Search..."
                     placeholder="Search..."
@@ -27,7 +27,7 @@
                     </v-icon>
                 </v-btn>
             </v-col>
-            <v-col cols="12" sm="3" md="4" lg="3" xl="4" class="d-flex justify-end">
+            <v-col cols="12" sm="4" md="4" lg="3" xl="4" class="d-flex justify-end">
                 <div v-if="$route.name === 'ViewInventory'" class="pt-2 rounded select-inventory-mode">
                     <v-checkbox
                         v-for="(mode, modeIndex) in inventoryModes"
