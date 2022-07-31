@@ -33,19 +33,16 @@
                 </div>
             </v-col>
 
-            <v-col cols="12" sm="3" md="3" lg="4" xl="2" class="d-flex">
+            <v-col cols="12" sm="3" md="3" lg="4" xl="2" class="d-flex align-center">
                 <v-autocomplete
                     :items="storeEntities"
                     v-model="selectedEntity"
-                    label="Select Entity"
-                    placeholder="Select Entity"
-                    solo
-                    dense
-                    hide-details=""
-                    flat
                     @change="handleEntityPick()"
-                    background-color="#e8e8e8d6"
-                    prepend-inner-icon="mdi-server-network"></v-autocomplete>
+                    placeholder="Entity..."
+                    prepend-inner-icon="mdi-server-network"
+                    dense
+                    hide-details
+                />
                 <v-btn
                     :disabled="!$route.meta.buildBookmark"
                     @click="addBookmark()"
