@@ -37,6 +37,7 @@
                 <v-autocomplete
                     :items="storeEntities"
                     v-model="selectedEntity"
+                    :error="!isSelectedEntityValid"
                     :spellcheck="false"
                     @change="handleEntityPick()"
                     placeholder="Entity..."
@@ -309,6 +310,12 @@ export default {
                 this.$store.setEntityDatabases(newDatabases);
             },
         },
+        /* Validates if the current entity is among the list of available
+         * entities. Used to put the entity selector in error state. */
+        isSelectedEntityValid() {
+            return this.storeEntities.indexOf(this.selectedEntity) > -1;
+        },
+
         /**
          * Dynamic bottom bar style depending on the current breakpoint
          */
