@@ -5,23 +5,14 @@
             <v-app-bar-nav-icon
                 v-if="$vuetify.breakpoint.mdAndDown"
                 @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
-            <v-col cols="9" sm="4" md="4" lg="4" xl="5" class="pl-0 d-inline-flex">
-                <v-text-field
-                    label="Search..."
-                    placeholder="Search..."
-                    v-model="search"
-                    @keyup="handleSearchChange()"
-                    solo
-                    dense
-                    flat
-                    background-color="#e8e8e8d6"
-                    prepend-inner-icon="mdi-magnify"
-                    :hide-details="true"
-                    clearable
-                    @click:clear="clearSearch"
-                    @mouseup.middle="onClickMouseMiddle(search)"
-                    @keyup.enter="redirectToUpdateSearch()"></v-text-field>
-                <v-btn icon small @click="toggleKeepSearch" class="mt-1 ml-1" title="keep / disable your search">
+            <v-col cols="9" sm="4" md="4" lg="4" xl="5" class="pl-0 d-flex align-center">
+                <SearchMenu
+                    :entries="routerSearchMenu"
+                    :value="search"
+                    @submit="onSearchMenuSubmit"
+                    class="flex-grow-1"
+                />
+                <v-btn icon small @click="toggleKeepSearch" class="ml-1" title="keep / disable your search">
                     <v-icon class="pt-1">
                         {{ keepSearch ? 'mdi-pin' : 'mdi-pin-off' }}
                     </v-icon>
@@ -258,11 +249,13 @@ header {
 </style>
 
 <script>
+import SearchMenu from '@/components/SearchMenu.vue';
 import TimeLine from '@/components/TimeLine.vue';
 
 export default {
     name: 'Home',
     components: {
+        SearchMenu,
         TimeLine,
     },
     data() {
@@ -271,7 +264,6 @@ export default {
             defaultInventoryMode: 'devices',
             drawer: true,
             searchUpdateTimeOut: 500,
-            searchTimeOutId: null,
             keepSearch: true,
             entityDatabases: [],
             selectedEntity: null,
@@ -280,9 +272,12 @@ export default {
         };
     },
     computed: {
-        /* Cached menu, not meant to change during app life. */
+        /* Cached menus, they are not meant to change during app life. */
         routerMenu() {
             return this.$router.getMenu();
+        },
+        routerSearchMenu() {
+            return this.$router.getSearchMenu();
         },
 
         historyEntries() {
@@ -347,13 +342,6 @@ export default {
             }
         },
         /**
-         * Run a new search query on a middlemouse click (paste) in the search input
-         */
-        onClickMouseMiddle() {
-            clearTimeout(this.searchTimeOutId);
-            setTimeout(() => this.redirectToUpdateSearch(), 100);
-        },
-        /**
          * Set the drawer value depending on the current breakpoint
          */
         drawerValueByBreakpoint() {
@@ -364,12 +352,6 @@ export default {
          */
         toggleKeepSearch() {
             this.keepSearch = !this.keepSearch;
-        },
-        /**
-         * Empties the search query
-         */
-        clearSearch() {
-            this.search = '';
         },
         /**
          * @async
@@ -404,34 +386,26 @@ export default {
          * Update the search query param in the route, and redirect
          * @param {boolean} forceInventory - If true, always redirect to the inventory page with the new search
          */
-        redirectToUpdateSearch(forceInventory = false) {
-            const params = this.$route.params;
-            const query = { ...this.$route.query };
-            query.search = this.search;
-
-            const redirection = {
-                params,
-                query,
-                name: forceInventory ? 'ViewInventory' : this.routeName,
-            };
-
-            if (query.search !== '' || (this.apiStateParams.search && this.apiStateParams.search !== '')) {
-                this.$router.push(redirection)
-                    .then((to) => {
-                        /* Update search history */
-                        if (to.meta.buildHistory) {
-                            const savedQuery = to.meta.buildHistory(to);
-                            if (savedQuery) {
-                                this.$store.addLocalStorageSavedQuery('history', to.query.entity,
-                                    savedQuery.label, savedQuery.entry);
-                            }
-                        }
-                    })
-                    .catch(() => {});
-            } else {
-                /* If search was simply reset, replace the current route without redirecting */
-                this.$router.replace(redirection).catch(() => {});
-            }
+        onSearchMenuSubmit(searchValue, menuEntry) {
+            /* Avoid the same entry twice in a row in browser history. */
+            const routerFn = this.$route.query.search === searchValue ? 'replace' : 'push';
+            /* Let the children handle if there is no change between current
+             * and previous values, ignore NavigationDuplicated errors. */
+            this.$route.query.search = undefined;
+            this.$router[routerFn]({
+                name: menuEntry.route.name,
+                params: { _fromSearchMenu: true },
+                query: { ...this.$route.query, ...menuEntry.route.query, search: searchValue },
+            })
+            .then((to) => {
+                if (to.meta.buildHistory) {
+                    const savedQuery = to.meta.buildHistory(to);
+                    if (savedQuery) {
+                        this.$store.addLocalStorageSavedQuery('history', to.query.entity,
+                            savedQuery.label, savedQuery.entry);
+                    }
+                }
+            });
         },
         onTimeLineClick(databaseId) {
             /* Let the children handle if there is no change between current
@@ -504,16 +478,6 @@ export default {
                 redirection.query = newQueryParams;
                 this.$router.push(redirection).catch(() => {});
             }
-        },
-        /**
-         * Handle a new search being typed in the input
-         */
-        handleSearchChange() {
-            clearTimeout(this.searchTimeOutId);
-
-            this.searchTimeOutId = setTimeout(() => {
-                this.redirectToUpdateSearch(true);
-            }, this.searchUpdateTimeOut);
         },
     },
     watch: {
@@ -593,10 +557,6 @@ export default {
     },
     beforeMount() {
         this.selectedEntity = this.apiStateParams.entity;
-        clearTimeout(this.searchTimeOutId);
-    },
-    beforeUnmount() {
-        clearTimeout(this.searchTimeOutId);
     },
 };
 </script>
