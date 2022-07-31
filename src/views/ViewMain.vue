@@ -37,6 +37,7 @@
                 <v-autocomplete
                     :items="storeEntities"
                     v-model="selectedEntity"
+                    :spellcheck="false"
                     @change="handleEntityPick()"
                     placeholder="Entity..."
                     prepend-inner-icon="mdi-server-network"
