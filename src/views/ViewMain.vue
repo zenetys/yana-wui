@@ -32,14 +32,17 @@
                         class="px-3 font-weight-light"></v-checkbox>
                 </div>
             </v-col>
-
             <v-col cols="12" sm="3" md="3" lg="4" xl="2" class="d-flex align-center">
+                {{/* ref, :key and @blur: read comments in blur handler */}}
                 <v-autocomplete
+                    ref="refEntitySelector"
                     :items="storeEntities"
-                    v-model="selectedEntity"
+                    :value="selectedEntity"
                     :error="!isSelectedEntityValid"
                     :spellcheck="false"
-                    @change="handleEntityPick()"
+                    @change="handleEntityPick"
+                    :key="forceUpdateEntitySelector"
+                    @blur="onEntitySelectorBlur"
                     placeholder="Entity..."
                     prepend-inner-icon="mdi-server-network"
                     dense
@@ -268,6 +271,7 @@ export default {
             selectedEntity: null,
             search: '',
             inventoryMode: 'devices',
+            forceUpdateEntitySelector: 0,
         };
     },
     computed: {
@@ -465,11 +469,15 @@ export default {
          * Redirect to inventory if current view is a device view ;
          * Update URL params otherwise
          */
-        async handleEntityPick() {
-            const newEntityDatabases = await this.fetchDatabasesFromEntity(this.selectedEntity);
+        async handleEntityPick(entity) {
+            if (!entity) {
+                console.log('handleEntityPick change event with no data, ignore');
+                return;
+            }
+            const newEntityDatabases = await this.fetchDatabasesFromEntity(entity);
             const newLastDb = newEntityDatabases[newEntityDatabases.length - 1].id;
             const newQueryParams = { ...this.$route.query };
-            newQueryParams.entity = this.selectedEntity;
+            newQueryParams.entity = entity;
             newQueryParams.db = newLastDb;
 
             if (this.$route.name === 'ViewSwitch' || this.$route.name === 'ViewHost') {
@@ -482,6 +490,24 @@ export default {
                 const redirection = { ...this.$route };
                 redirection.query = newQueryParams;
                 this.$router.push(redirection).catch(() => {});
+            }
+        },
+        /**
+         * Handle on blur of the entity selector. Used to fix an annoying
+         * behavior, on blur, after the text input was made empty.
+         *
+         * When the autocomplete input value is made empty (eg: full manual
+         * clear), the component emits a @change event with a null value. If
+         * the user looses focus on the input, the current entity is not set
+         * back in the selector. It works fine on partial clear/blur, but not
+         * on full clear. To fix it, we just force a refresh of the entity
+         * selector by updating its :key.
+         */
+        onEntitySelectorBlur() {
+            if (!this.$refs.refEntitySelector.$refs.input.value &&
+                this.$refs.refEntitySelector.value) {
+                console.log('ViewMain: onEntitySelectorBlur: force update to restore input value');
+                this.forceUpdateEntitySelector = Date.now();
             }
         },
     },
