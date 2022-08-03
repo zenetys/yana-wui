@@ -276,31 +276,21 @@ export default {
     watch: {
         apiStateParams: {
             immediate: true,
-            handler(newParams, oldParams) {
-                /* Fetch new inventory data only upon reception of new data */
-                let shouldUpdateApiUrl = false;
+            handler(cur, prev) {
+                console.log('ViewInventory: watch/apiStateParams: cur =', cur, ', prev = ', prev);
 
-                if (oldParams) {                    
-                    if (oldParams.search !== newParams.search) {
-                        shouldUpdateApiUrl = true;
-                    }
-
-                    if (oldParams.database !== newParams.database) {
-                        shouldUpdateApiUrl = true;
-                    }
-
-                } else {
-                    shouldUpdateApiUrl = true;
+                if (this.$utils.eq(cur, prev)) {
+                    console.log('ViewInventory: watch/apiStateParams: no change');
+                    return;
+                }
+                if (!cur.entity || !cur.database) {
+                    console.log('ViewInventory: watch/apiStateParams: skip required data');
+                    return;
                 }
 
-                if (shouldUpdateApiUrl) {
-                    this.apiUrl = this.$utils.getUpdatedApiUrl(newParams, 'devices');
-                }
+                this.apiUrl = this.$utils.getUpdatedApiUrl(cur, 'devices');
             },
         },
-    },
-    beforeMount() {
-        this.apiUrl = this.$utils.getUpdatedApiUrl(this.apiStateParams, 'devices');
     },
 };
 </script>
