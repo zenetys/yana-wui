@@ -168,34 +168,25 @@ export default {
             return {
                 entity: this.$route.query.entity,
                 database: this.$route.query.db,
-                search: this.$route.query.search,
             };
-        },
-        storeEntityDatabases() {
-            return this.$store.getEntityDatabases();
         },
     },
     watch: {
         apiStateParams: {
             immediate: true,
-            handler(newParams, oldParams) {
-                if (oldParams) {
-                    if (oldParams.database !== newParams.database) {
-                        this.getVlans();
-                    }
+            handler(cur, prev) {
+                console.log('ViewVlanMatrix: watch/apiStateParams: cur =', cur, ', prev =', prev);
+
+                if (this.$utils.eq(cur, prev)) {
+                    console.log('ViewVlanMatrix, watch/apiStateParams: no change');
+                    return;
                 }
-            },
-        },
-        storeEntityDatabases: {
-            immediate: true,
-            async handler(newDatabases) {
-                if (
-                    this.apiStateParams.database &&
-                    newDatabases.length > 0 &&
-                    newDatabases.some((db) => db.id === this.apiStateParams.database)
-                ) {
-                    await this.getVlans();
+                if (!cur.entity || !cur.database) {
+                    console.log('ViewVlanMatrix, watch/apiStateParams: skip required data');
+                    return;
                 }
+
+                this.getVlans();
             },
         },
     },
@@ -238,26 +229,24 @@ export default {
             });
         },
         /**
-         * @async
          * Fetch all VLANs from the API
          */
-        async getVlans() {
+        getVlans() {
             const cmpDevice = (a, b) => {
                 const aName = a.name?.toLowerCase();
                 const bName = b.name?.toLowerCase();
                 return aName === bName ? 0 : (aName < bName ? -1 : 1);
             };
-            this.isLoading = true;
-
             const url = this.$utils.getUpdatedApiUrl(this.apiStateParams, 'vlans');
-            const errorContext = 'Could not fetch VLANs from the server.';
 
-            const vlansResponse = await this.$api.get(url, errorContext);
-
-            this.vlans = vlansResponse.sort(cmpDevice);
-
-            this.formatVlans();
-            this.isLoading = false;
+            this.isLoading = true;
+            this.$api.axiosData(url)
+                .then((vlansResponse) => {
+                    this.vlans = vlansResponse.sort(cmpDevice);
+                    this.formatVlans();
+                })
+                .catch(() => { /* use error handler from the api plugin */ })
+                .finally(() => { this.isLoading = false; });
         },
         /**
          * Get a class for a VLAN depending on its matching against another VLAN
