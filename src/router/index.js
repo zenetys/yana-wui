@@ -39,7 +39,7 @@ const routes = [
                     menu: [
                         {
                             label: 'Inventory',
-                            icon: 'mdi-grid',
+                            icon: 'mdi-book-open-page-variant-outline',
                         },
                     ],
                     search: [
