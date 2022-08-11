@@ -159,7 +159,7 @@ const routes = [
                     menu: [
                         {
                             label: 'VLAN matrix',
-                            icon: 'mdi-table',
+                            icon: 'mdi-table-pivot',
                         },
                     ],
                     hasTimeline: true,
