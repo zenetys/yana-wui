@@ -264,7 +264,6 @@ export default {
             return {
                 entity: this.$route.query.entity,
                 database: this.$route.query.db,
-                search: this.$route.query.search,
                 id: this.$route.params.id,
             };
         },
@@ -272,20 +271,24 @@ export default {
     watch: {
         apiStateParams: {
             immediate: true,
-            handler(newParams, oldParams) {
-                let shouldFetchDevice = false;
+            handler(cur, prev) {
+                console.log('ViewHost: watch/apiStateParams: cur =', cur, ', prev = ', prev);
 
-                if (!oldParams) {
-                    shouldFetchDevice = true;
-                } else {
-                    if (oldParams.id !== newParams.id || oldParams.database !== newParams.database) {
-                        shouldFetchDevice = true;
-                    }
+                if (this.$utils.eq(cur, prev)) {
+                    console.log('ViewHost: watch/apiStateParams: no change');
+                    return;
+                }
+                if (prev && (cur.entity !== prev.entity)) {
+                    console.log('ViewHost: watch/apiStateParams: entity change, redirect');
+                    this.$router.replace({ name: 'ViewMain', query: { ...this.$route.query } });
+                    return;
+                }
+                if (!cur.entity || !cur.database || !cur.id) {
+                    console.log('ViewHost: watch/apiStateParams: skip required data');
+                    return;
                 }
 
-                if (shouldFetchDevice) {
-                    this.getDeviceInfo();
-                }
+                this.getDeviceInfo();
             },
         },
     },
@@ -296,20 +299,18 @@ export default {
         getDeviceInfo() {
             const deviceUrl = this.$utils.getUpdatedApiUrl(this.apiStateParams, 'device');
             const ifaceUrl = this.$utils.getUpdatedApiUrl(this.apiStateParams, 'interface');
-            const errorContext = 'Could not fetch host information.';
 
-            Promise.all([deviceUrl, ifaceUrl].map((query) => this.$api.get(query, errorContext)))
-                .then((results) => {
-                    const [deviceResponse, interfaceResponse] = [...results];
-                        this.device = deviceResponse || {};
-                        if (this.device.vlan) {
-                            this.device.vlan = Object.values(this.device.vlan);
-                        }
-                        this.interfaces = interfaceResponse || [];
-                })
-                .catch((error) => {
-                    this.$ev.$emit('error', error, 'Cannot load host data');
-                });
+            Promise.all([
+                this.$api.axiosData(deviceUrl, 'Could not get device data'),
+                this.$api.axiosData(ifaceUrl, 'Could not get interfaces data'),
+            ])
+            .then(([deviceResponse, interfaceResponse]) => {
+                this.device = deviceResponse || {};
+                if (this.device.vlan)
+                    this.device.vlan = Object.values(this.device.vlan);
+                this.interfaces = interfaceResponse || [];
+            })
+            .catch(() => { /* notified by axios interceptor */ })
         },
         /**
          * Calculate the height of the host card
