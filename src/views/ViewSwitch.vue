@@ -183,7 +183,6 @@ export default {
             return {
                 entity: this.$route.query.entity,
                 database: this.$route.query.db,
-                search: this.$route.query.search,
                 id: this.$route.params.id,
             };
         },
@@ -201,22 +200,18 @@ export default {
         deviceIp() {
             return Array.isArray(this.device.ip) ? this.device.ip.join(', ') : this.device.ip;
         },
-        storeEntityDatabases() {
-            return this.$store.entityDatabases;
-        },
     },
     methods: {
         /**
-         * @async
          * Get all the information about the switch from the API
          */
-        async getDeviceInfo() {
+        getDeviceInfo() {
             this.apiUrl = this.$utils.getUpdatedApiUrl(this.apiStateParams, 'interface');
             const url = this.$utils.getUpdatedApiUrl(this.apiStateParams, 'device');
-            const errorContext = 'Could not fetch switch information.';
 
-            const deviceResponse = await this.$api.get(url, errorContext);
-            this.device = deviceResponse || {};
+            this.$api.axiosData(url)
+                .then((data) => { this.device = data; })
+                .catch(() => { this.device = {}; })
         },
         /**
          * Get the class for a table item depending on its status
@@ -260,20 +255,24 @@ export default {
     watch: {
         apiStateParams: {
             immediate: true,
-            handler(newParams, oldParams) {
-                let shouldFetchDevice = false;
+            handler(cur, prev) {
+                console.log('ViewSwitch: watch/apiStateParams: cur =', cur, ', prev =', prev);
 
-                if (!oldParams) {
-                    shouldFetchDevice = true;
-                } else {
-                    if (oldParams.id !== newParams.id || oldParams.database !== newParams.database) {
-                        shouldFetchDevice = true;
-                    }
+                if (this.$utils.eq(cur, prev)) {
+                    console.log('ViewSwitch: watch/apiStateParams: no change');
+                    return;
+                }
+                if (prev && (cur.entity !== prev.entity)) {
+                    console.log('ViewSwitch: watch/apiStateParams: entity change, redirect');
+                    this.$router.replace({ name: 'ViewMain', query: { ...this.$route.query } });
+                    return;
+                }
+                if (!cur.entity || !cur.database || !cur.id) {
+                    console.log('ViewSwitch: watch/apiStateParams: skip required data');
+                    return;
                 }
 
-                if (shouldFetchDevice) {
-                    this.getDeviceInfo();
-                }
+                this.getDeviceInfo();
             },
         },
     },
