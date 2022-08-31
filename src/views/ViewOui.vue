@@ -42,7 +42,6 @@
 </style>
 
 <script>
-import { isEmptyObject } from '@/plugins/utils';
 export default {
     name: 'ViewOui',
     data() {
@@ -72,7 +71,7 @@ export default {
 
                 const result = await this.$api.get('/oui', errorContext, searchOptions);
 
-                if (isEmptyObject(result)) {
+                if (this.$utils.isEmptyObject(result)) {
                     this.ouiMessage = 'Nothing found';
                 } else {
                     this.ouiMessage = result;
