@@ -34,15 +34,12 @@
     </v-row>
 </template>
 
-<style scoped lang="scss">
-::v-deep .v-textarea * {
-    background: #e8e8e8d6 !important;
-
-    textarea {
-        line-height: 1.4em;
-        font-weight: 300;
-        height: 110px;
-    }
+<style scoped>
+::v-deep textarea {
+    line-height: 1.4em;
+    font-weight: 300;
+    height: 110px;
+    background: #fcfcfc;
 }
 </style>
 
