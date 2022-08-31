@@ -6,21 +6,21 @@
         <div class="pb-8 text-body-2 font-weight-light">08:00:20<br />98:FA-9B-63-0C-C4<br />00d9.d110.21f9<br /></div>
         <h4>OUI search:</h4>
         <v-textarea
-            solo
-            dense
-            DISABLEflat
-            spellcheck="false"
+            v-model="ouiSearch"
             placeholder="00:00:00:00:00:00
 11:11:11:11:11:11
 ..."
+            :spellcheck="false"
+            :hide-details="true"
+            solo
+            dense
+            DISABLEflat
             class="pb-4"
-            hide-details="true"
-            v-model="ouiSearch"
         />
         <v-btn
+            @click="handleOuiLookupClick"
             color="#17B8CE"
             class="white--text"
-            @click="handleOuiLookupClick"
         >Find</v-btn>
         <div class="pt-8">
             <table v-if="typeof ouiMessage === 'object'">
