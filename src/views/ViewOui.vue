@@ -14,7 +14,6 @@
             :hide-details="true"
             solo
             dense
-            DISABLEflat
             class="pb-4"
         />
         <v-btn
