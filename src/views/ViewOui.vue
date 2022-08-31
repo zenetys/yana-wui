@@ -3,22 +3,24 @@
         <v-col cols="12" sm="11" md="7" lg="6" xl="5">
             <h2 class="pb-6">OUI lookup tool</h2>
             <div>Enter MAC addresses or prefixes to lookup vendors:</div>
-            <v-textarea
-                v-model="ouiSearch"
-                placeholder="08:00:20
+            <v-form ref="ouiForm" lazy-validation>
+                <v-textarea
+                    v-model="ouiSearch"
+                    placeholder="08:00:20
 98-FA-9B-63-0C-C4
 00d9.d110.21f9
 ..."
-                :spellcheck="false"
-                :hide-details="true"
-                dense
-                class="pb-4"
-            />
-            <v-btn
-                @click="onOuiSubmit"
-                color="#17B8CE"
-                class="white--text"
-            >Find</v-btn>
+                    :rules="ouiRules"
+                    :spellcheck="false"
+                    dense
+                    class="pb-4"
+                />
+                <v-btn
+                    @click="onOuiSubmit"
+                    color="#17B8CE"
+                    class="white--text"
+                >Find</v-btn>
+            </v-form>
             <div class="pt-8">
                 <table v-if="typeof ouiMessage === 'object'">
                     <tr v-for="(subMessage, subMessageKey) in ouiMessage" :key="subMessageKey">
@@ -48,6 +50,10 @@ export default {
         return {
             ouiSearch: '',
             ouiMessage: '',
+            ouiRules: [
+                (x) => (x ?? '').length > 0 ||
+                    'MAC addresses or prefixes required',
+            ],
         };
     },
     methods: {
@@ -55,8 +61,7 @@ export default {
          * Initiate a OUI search query from the API.
          */
         async onOuiSubmit() {
-            if (!this.ouiSearch) {
-                this.ouiMessage = 'Please enter MAC addresses to search';
+            if (!this.$refs.ouiForm.validate())
                 return;
 
             const errorContext = 'Could not complete OUI lookup.';
