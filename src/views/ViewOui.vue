@@ -17,7 +17,7 @@
                 class="pb-4"
             />
             <v-btn
-                @click="handleOuiLookupClick"
+                @click="onOuiSubmit"
                 color="#17B8CE"
                 class="white--text"
             >Find</v-btn>
@@ -56,7 +56,7 @@ export default {
         /**
          * Initiate a OUI search query from the API.
          */
-        async handleOuiLookupClick() {
+        async onOuiSubmit() {
             if (!this.ouiSearch) {
                 this.ouiMessage = 'Please enter MAC addresses to search';
                 return;
