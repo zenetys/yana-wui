@@ -12,7 +12,6 @@
 ..."
             :spellcheck="false"
             :hide-details="true"
-            solo
             dense
             class="pb-4"
         />
