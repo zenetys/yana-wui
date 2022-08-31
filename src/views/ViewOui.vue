@@ -3,7 +3,7 @@
         <v-col cols="12" sm="11" md="7" lg="6" xl="5">
             <h2 class="pb-6">OUI lookup tool</h2>
             <div>Enter MAC addresses or prefixes to lookup vendors:</div>
-            <v-form ref="ouiForm" lazy-validation>
+            <v-form ref="ouiForm" :disabled="ouiDisabled" lazy-validation>
                 <v-textarea
                     v-model="ouiSearch"
                     @keyup.ctrl.enter.native="onOuiSubmit"
@@ -18,6 +18,7 @@
                 />
                 <v-btn
                     @click="onOuiSubmit"
+                    :disabled="ouiDisabled"
                     color="#17B8CE"
                     class="white--text"
                 >Find</v-btn>
@@ -51,6 +52,7 @@ export default {
         return {
             ouiSearch: '',
             ouiMessage: '',
+            ouiDisabled: false,
             ouiRules: [
                 (x) => (x ?? '').length > 0 ||
                     'MAC addresses or prefixes required',
@@ -75,6 +77,7 @@ export default {
                 timeout: 5000,
             };
 
+            this.ouiDisabled = true;
             this.ouiMessage = 'Searching, please wait...';
 
             const result = await this.$api.get('/oui', errorContext, searchOptions);
@@ -85,6 +88,7 @@ export default {
                 this.ouiMessage = result;
             }
 
+            this.ouiDisabled = false;
             this.$nextTick(() => this.$el.querySelector('textarea').focus());
         },
     },
