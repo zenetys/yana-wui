@@ -15,8 +15,13 @@
 ..."
             class="pb-4"
             hide-details="true"
-            v-model="ouiSearch"></v-textarea>
-        <v-btn color="#17B8CE" class="white--text" @click="handleOuiLookupClick()"> Find </v-btn>
+            v-model="ouiSearch"
+        />
+        <v-btn
+            color="#17B8CE"
+            class="white--text"
+            @click="handleOuiLookupClick"
+        >Find</v-btn>
         <div class="pt-8">
             <table v-if="typeof ouiMessage === 'object'">
                 <tr v-for="(subMessage, subMessageKey) in ouiMessage" :key="subMessageKey">
