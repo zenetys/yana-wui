@@ -83,5 +83,21 @@ export default {
             }
         },
     },
+    watch: {
+        /**
+         * If this component was triggered by the global search menu,
+         * set its value in the textarea and submit straight.
+         */
+        '$route.query.search': {
+            immediate: true,
+            handler() {
+                if (!this.$route.params._fromSearchMenu ||
+                    (this.$route.query.search ?? '') === '')
+                    return;
+                this.ouiSearch = this.$route.query.search;
+                this.$nextTick(() => { this.onOuiSubmit(); });
+            },
+        }
+    },
 };
 </script>
