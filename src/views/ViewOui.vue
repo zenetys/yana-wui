@@ -65,31 +65,29 @@ export default {
          * Triggered by a click on the find button or by a Ctrl+Enter key
          * combination from the textarea.
          */
-        async onOuiSubmit() {
+        onOuiSubmit() {
             if (!this.$refs.ouiForm.validate())
                 return;
-
-            const errorContext = 'Could not complete OUI lookup.';
-            const searchOptions = {
-                params: {
-                    q: this.ouiSearch,
-                },
-                timeout: 5000,
-            };
 
             this.ouiDisabled = true;
             this.ouiMessage = 'Searching, please wait...';
 
-            const result = await this.$api.get('/oui', errorContext, searchOptions);
-
-            if (this.$utils.isEmptyObject(result)) {
-                this.ouiMessage = 'Nothing found';
-            } else {
-                this.ouiMessage = result;
-            }
-
-            this.ouiDisabled = false;
-            this.$nextTick(() => this.$el.querySelector('textarea').focus());
+            this.$api.axiosData({
+                url: '/oui',
+                params: { q: this.ouiSearch },
+            })
+            .then((data) => {
+                this.ouiMessage = this.$utils.isEmptyObject(data)
+                    ? 'Nothing found' : data;
+            })
+            .catch(() => {
+                /* also notified by axios interceptor */
+                this.ouiMessage = 'OUI lookup query failed';
+            })
+            .finally(() => {
+                this.ouiDisabled = false;
+                this.$nextTick(() => this.$el.querySelector('textarea').focus());
+            });
         },
     },
     watch: {
