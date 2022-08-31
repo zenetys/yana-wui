@@ -1,15 +1,13 @@
 <template>
     <v-row no-gutters>
-        <v-col cols="12" sm="12" md="6" lg="6" xl="6" class="pt-0 pl-0">
+        <v-col cols="12" sm="11" md="7" lg="6" xl="5">
             <h2 class="pb-6">OUI lookup tool</h2>
-            <div class="pb-2">Enter MAC addresses or prefixes to lookup vendors.<br /></div>
-            <div class="pb-1 text-caption font-weight-bold">Examples:</div>
-            <div class="pb-8 text-body-2 font-weight-light">08:00:20<br />98:FA-9B-63-0C-C4<br />00d9.d110.21f9<br /></div>
-            <h4>OUI search:</h4>
+            <div>Enter MAC addresses or prefixes to lookup vendors:</div>
             <v-textarea
                 v-model="ouiSearch"
-                placeholder="00:00:00:00:00:00
-11:11:11:11:11:11
+                placeholder="08:00:20
+98-FA-9B-63-0C-C4
+00d9.d110.21f9
 ..."
                 :spellcheck="false"
                 :hide-details="true"
