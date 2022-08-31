@@ -58,24 +58,23 @@ export default {
             if (!this.ouiSearch) {
                 this.ouiMessage = 'Please enter MAC addresses to search';
                 return;
+
+            const errorContext = 'Could not complete OUI lookup.';
+            const searchOptions = {
+                params: {
+                    q: this.ouiSearch,
+                },
+                timeout: 5000,
+            };
+
+            this.ouiMessage = 'Searching, please wait...';
+
+            const result = await this.$api.get('/oui', errorContext, searchOptions);
+
+            if (this.$utils.isEmptyObject(result)) {
+                this.ouiMessage = 'Nothing found';
             } else {
-                const errorContext = 'Could not complete OUI lookup.';
-                const searchOptions = {
-                    params: {
-                        q: this.ouiSearch,
-                    },
-                    timeout: 5000,
-                };
-
-                this.ouiMessage = 'Searching, please wait...';
-
-                const result = await this.$api.get('/oui', errorContext, searchOptions);
-
-                if (this.$utils.isEmptyObject(result)) {
-                    this.ouiMessage = 'Nothing found';
-                } else {
-                    this.ouiMessage = result;
-                }
+                this.ouiMessage = result;
             }
         },
     },
