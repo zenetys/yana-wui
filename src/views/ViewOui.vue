@@ -6,6 +6,7 @@
             <v-form ref="ouiForm" lazy-validation>
                 <v-textarea
                     v-model="ouiSearch"
+                    @keyup.ctrl.enter.native="onOuiSubmit"
                     placeholder="08:00:20
 98-FA-9B-63-0C-C4
 00d9.d110.21f9
@@ -58,7 +59,9 @@ export default {
     },
     methods: {
         /**
-         * Initiate a OUI search query from the API.
+         * Submit event handler for the OUI lookup form.
+         * Triggered by a click on the find button or by a Ctrl+Enter key
+         * combination from the textarea.
          */
         async onOuiSubmit() {
             if (!this.$refs.ouiForm.validate())
@@ -81,6 +84,8 @@ export default {
             } else {
                 this.ouiMessage = result;
             }
+
+            this.$nextTick(() => this.$el.querySelector('textarea').focus());
         },
     },
     watch: {
