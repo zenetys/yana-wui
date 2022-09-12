@@ -315,7 +315,7 @@ export default {
         },
     },
     mounted() {
-        this.setTableHeight();
+        this.$nextTick(() => this.setTableHeight());
         window.addEventListener('resize', this.setTableHeight);
 
         /* remove if this is too annoying */
