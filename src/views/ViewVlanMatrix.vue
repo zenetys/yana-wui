@@ -1,6 +1,6 @@
 <template>
     <v-card class="elevation-2">
-        <table id="table-vlan" :height="tableDimensions.height">
+        <table id="table-vlan" :height="tableHeight">
             <tbody>
                 <tr>
                     <th rowspan="2"></th>
@@ -195,7 +195,7 @@ export default {
             vlans: [],
             formattedVlans: [],
             isLoading: false,
-            tableDimensions: {},
+            tableHeight: undefined,
         };
     },
     methods: {
@@ -305,25 +305,21 @@ export default {
             });
         },
         /**
-         * Calculate and set the dimensions of the data table
+         * Compute and update optimal table height.
          */
-        setTableDimensions() {
+        setTableHeight() {
             const tableVlan = document.getElementById('table-vlan');
-
-            this.tableDimensions = tableVlan
-                ? {
-                      height: window.innerHeight - tableVlan.getBoundingClientRect().top - 120,
-                  }
-                : { height: '100%' };
+            this.tableHeight = tableVlan
+                ? window.innerHeight - tableVlan.getBoundingClientRect().top - 120
+                : '100%';
         },
     },
     mounted() {
-        this.setTableDimensions();
-
-        window.addEventListener('resize', this.setTableDimensions);
+        this.setTableHeight();
+        window.addEventListener('resize', this.setTableHeight);
     },
     destroyed() {
-        window.removeEventListener('resize', this.setTableDimensions);
+        window.removeEventListener('resize', this.setTableHeight);
     },
 };
 </script>
