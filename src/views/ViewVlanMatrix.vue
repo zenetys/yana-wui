@@ -312,7 +312,7 @@ export default {
 
             this.tableDimensions = tableVlan
                 ? {
-                      height: window.innerHeight - tableVlan.getBoundingClientRect().top - 130,
+                      height: window.innerHeight - tableVlan.getBoundingClientRect().top - 120,
                   }
                 : { height: '100%' };
         },
