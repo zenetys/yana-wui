@@ -556,9 +556,7 @@ export default {
         },
     },
     mounted() {
-        this.$nextTick(function () {
-            this.drawerValueByBreakpoint();
-        });
+        this.$nextTick(() => this.drawerValueByBreakpoint());
     },
     beforeMount() {
         this.selectedEntity = this.apiStateParams.entity;
