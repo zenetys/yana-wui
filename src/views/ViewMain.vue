@@ -194,11 +194,9 @@
         position: relative;
         border-top: solid 1px rgba(0, 0, 0, 0.12);
     }
-
     .v-navigation-drawer__border {
         top: 47px;
     }
-
     .v-toolbar__title {
         margin-top: -44px;
         position: fixed;
@@ -235,14 +233,12 @@ header {
         .list-item-remove-icon {
             visibility: hidden;
         }
-
         &:hover {
             background-color: #f7f7f7;
             .list-item-remove-icon {
                 visibility: visible;
             }
         }
-
         .item-icon {
             margin-top: 2px;
         }
