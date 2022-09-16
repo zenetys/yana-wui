@@ -1,7 +1,7 @@
 <template>
     <div>
         <AutoTable
-            v-if="apiUrl && apiStateParams.search"
+            v-if="apiStateParams.search"
             id="table-inventory-fdb"
             :isPaginated="true"
             :api="apiUrl"
