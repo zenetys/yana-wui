@@ -35,5 +35,17 @@ export default {
         Message,
     },
     data: () => ({}),
+    methods: {
+        onWindowKeyDown(event) {
+            if (event.ctrlKey && event.shiftKey && event.key === 'F')
+                this.$ev.$emit('ctrl-shift-f', event);
+        }
+    },
+    mounted() {
+        window.addEventListener('keydown', this.onWindowKeyDown);
+    },
+    destroyed() {
+        window.removeEventListener('keydown', this.onWindowKeyDown);
+    },
 };
 </script>
