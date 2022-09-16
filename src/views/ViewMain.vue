@@ -7,8 +7,10 @@
                 @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
             <v-col cols="9" sm="4" md="4" lg="4" xl="5" class="pl-0 d-flex align-center">
                 <SearchMenu
+                    ref="refSearchMenu"
                     :entries="routerSearchMenu"
                     :value="$route.query.search"
+                    shortcutText="Ctrl+Shift+F"
                     @submit="onSearchMenuSubmit"
                     class="flex-grow-1"
                 />
@@ -342,6 +344,10 @@ export default {
         toggleKeepSearch() {
             this.keepSearch = !this.keepSearch;
         },
+        onCtrlShiftF() {
+            console.log('ViewMain: onCtrlShiftF: focusing search menu');
+            this.$refs.refSearchMenu.focus();
+        },
         onSearchMenuSubmit(searchValue, menuEntry) {
             /* Avoid the same entry twice in a row in browser history. */
             const routerFn = this.$route.query.search === searchValue ? 'replace' : 'push';
@@ -487,6 +493,7 @@ export default {
     },
     mounted() {
         this.$nextTick(() => this.drawerValueByBreakpoint());
+        this.$ev.$on('ctrl-shift-f', this.onCtrlShiftF);
     },
 };
 </script>
