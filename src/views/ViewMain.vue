@@ -252,7 +252,7 @@ import SearchMenu from '@/components/SearchMenu.vue';
 import TimeLine from '@/components/TimeLine.vue';
 
 export default {
-    name: 'Home',
+    name: 'ViewMain',
     components: {
         SearchMenu,
         TimeLine,
