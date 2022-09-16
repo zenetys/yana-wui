@@ -2,7 +2,7 @@
     <auto-table
         v-if="apiUrl !== ''"
         id="table-inventory-devices"
-        :pagination="true"
+        :isPaginated="true"
         :api="apiUrl"
         array-data=""
         height="auto"
