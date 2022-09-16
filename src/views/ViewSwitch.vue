@@ -277,6 +277,8 @@ export default {
         },
     },
     updated() {
+        /* trigger window.resize event so the table can adjust its
+         * height if the info panel is updated */
         window.dispatchEvent(new Event('resize'));
     },
 };
