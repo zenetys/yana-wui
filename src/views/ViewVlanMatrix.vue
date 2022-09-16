@@ -51,7 +51,7 @@
             </tbody>
         </table>
 
-        <v-overlay :absolute="true" :opacity="0.5" color="#ffffff" :value="isLoading" class="overlay" z-index="9">
+        <v-overlay :absolute="true" :opacity="0.5" color="#ffffff" :value="isLoading">
             <v-progress-circular indeterminate size="64" color="#a2a2a2"></v-progress-circular>
         </v-overlay>
     </v-card>
