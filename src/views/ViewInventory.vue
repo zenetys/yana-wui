@@ -1,6 +1,5 @@
 <template>
     <auto-table
-        v-if="apiUrl !== ''"
         id="table-inventory-devices"
         :isPaginated="true"
         :api="apiUrl"
