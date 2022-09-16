@@ -117,6 +117,7 @@ export default {
                     },
                     isHtml: true,
                     getClass: () => 'nocp',
+                    label: '',
                 },
                 id: {
                     format: this.$utils.unArray,
