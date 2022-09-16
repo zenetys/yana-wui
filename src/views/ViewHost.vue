@@ -382,7 +382,7 @@ export default {
         },
     },
     mounted() {
-        this.setCardHeight();
+        this.$nextTick(() => this.setCardHeight());
         window.addEventListener('resize', this.setCardHeight);
     },
     destroyed() {
