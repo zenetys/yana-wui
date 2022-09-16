@@ -1,6 +1,6 @@
 <template>
-    <v-row>
-        <v-col cols="6">
+    <v-row no-gutters>
+        <v-col cols="6" class="pr-2">
             <v-card :height="cardHeight" id="host-card">
                 <table class="device-info mb-3">
                     <tbody>
@@ -88,7 +88,7 @@
                 </table>
             </v-card>
         </v-col>
-        <v-col cols="6">
+        <v-col cols="6" class="pl-2">
             <v-card :height="cardHeight" id="host-ifaces-card">
                 <table v-if="interfaces.length > 0">
                     <tbody>
