@@ -19,23 +19,8 @@ function migrateLocalStorage(storage /* eslint-disable-line no-unused-vars */) {
 export default {
     entities: [],
     data: Vue.observable({
-        entityDatabases: [],
         localStorage: null,
     }),
-    /**
-     * Getter for entity databases.
-     * @returns {array} - Array of entity databases.
-     */
-    getEntityDatabases() {
-        return this.data.entityDatabases;
-    },
-    /**
-     * Set new values to the entity databases.
-     * @param {array} newDatabases - New entity databases to set.
-     */
-    setEntityDatabases(newDatabases) {
-        this.data.entityDatabases = newDatabases;
-    },
     /**
      * Getter for entities.
      * @returns {string[]} - Array of entities.
