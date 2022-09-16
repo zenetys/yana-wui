@@ -18,7 +18,7 @@ function migrateLocalStorage(storage /* eslint-disable-line no-unused-vars */) {
 
 export default {
     entities: [],
-    data: Vue.observable({
+    observable: Vue.observable({
         localStorage: null,
     }),
     /**
@@ -54,7 +54,7 @@ export default {
         if (!type || !entity)
             return; /* prevent empty object keys */
 
-        const storage = this.data.localStorage; /* shortcut ref */
+        const storage = this.observable.localStorage; /* shortcut ref */
 
         if (!storage.data[type])
             Vue.set(storage.data, type, {});
@@ -82,7 +82,7 @@ export default {
      */
     deleteLocalStorageSavedQuery(type, entity, index) {
         console.log(`store: deleteLocalStorageSavedQuery: ${type} | ${entity} | ${index}`);
-        this.data.localStorage.data?.[type]?.[entity].splice(index, 1);
+        this.observable.localStorage.data?.[type]?.[entity].splice(index, 1);
         this.saveLocalStorage();
     },
     /**
@@ -91,7 +91,7 @@ export default {
      * @param {string} entity - Name of the entity.
      */
     getLocalStorageSavedQuery(type, entity) {
-        return this.data.localStorage.data?.[type]?.[entity];
+        return this.observable.localStorage.data?.[type]?.[entity];
     },
     /**
      * Persist the in-memory local storage data to the browser.
@@ -102,7 +102,7 @@ export default {
     saveLocalStorage() {
         try {
             window.localStorage.setItem(LOCAL_STORAGE_KEY,
-                JSON.stringify(this.data.localStorage));
+                JSON.stringify(this.observable.localStorage));
         }
         catch (e) {
             console.log('store: saveLocalStorage: Failed save storage data');
@@ -183,7 +183,7 @@ export default {
             storage = resetValue;
         }
 
-        this.data.localStorage = storage;
+        this.observable.localStorage = storage;
         if (needReset || needCommit)
             this.saveLocalStorage();
     },
