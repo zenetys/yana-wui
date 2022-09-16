@@ -17,23 +17,24 @@ function migrateLocalStorage(storage /* eslint-disable-line no-unused-vars */) {
 }
 
 export default {
-    entities: [],
     observable: Vue.observable({
+        entities: [],
         localStorage: null,
     }),
+
     /**
      * Getter for entities.
      * @returns {string[]} - Array of entities.
      */
     getEntities() {
-        return this.entities;
+        return this.observable.entities;
     },
     /**
      * Setter for entities.
      * @param {string[]} newEntities - New values to set.
      */
     setEntities(newEntities) {
-        this.entities = newEntities;
+        this.observable.entities = newEntities;
     },
 
     /**
