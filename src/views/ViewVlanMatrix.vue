@@ -9,43 +9,43 @@
                     <th class="vlan-number">#vlans</th>
                     <th
                         scope="col"
-                        v-for="formattedVlan in formattedVlans"
-                        :key="formattedVlan.id"
-                        :class="'cell-' + formattedVlan.id">
-                        {{ formattedVlan.id }}
+                        v-for="vid in vlanIds"
+                        :key="vid"
+                        :class="'cell-' + vid">
+                        {{ vid }}
                     </th>
                 </tr>
-                <tr v-for="vlan in vlans" :key="vlan.id">
+                <tr v-for="device in devices" :key="device.id">
                     <th scope="row" class="font-weight-regular">
-                        <router-link :to="$utils.getDeviceRoute(vlan.id, 'switch', $route, false)">
-                            {{ vlan.name }}
+                        <router-link :to="$utils.getDeviceRoute(device.id, 'switch', $route, false)">
+                            {{ device.name }}
                         </router-link>
                     </th>
                     <td
                         class="vlan-number"
-                        :class="'cell-' + vlan.id"
-                        @mouseover="onOverCell(vlan.id)"
-                        @mouseout="onOutCell(vlan.id)">
-                        {{ vlan.vlan.length }}
+                        :class="'cell-' + device.id"
+                        @mouseover="onOverCell(device.id)"
+                        @mouseout="onOutCell(device.id)">
+                        {{ device.vlan.length }}
                     </td>
                     <td
-                        v-for="formattedVlan in formattedVlans"
-                        :key="formattedVlan.id"
-                        :class="getVlanClass(vlan, formattedVlan)"
-                        @mouseover="onOverCell(formattedVlan.id)"
-                        @mouseout="onOutCell(formattedVlan.id)">
+                        v-for="vid in vlanIds"
+                        :key="vid"
+                        :class="getDeviceVlanClass(device, vid)"
+                        @mouseover="onOverCell(vid)"
+                        @mouseout="onOutCell(vid)">
                         <span
-                            v-if="findMatchingVlan(vlan.vlan, formattedVlan)"
-                            :title="findMatchingVlan(vlan.vlan, formattedVlan).name">
-                            {{ findMatchingVlan(vlan.vlan, formattedVlan).name }}
+                            v-if="findDeviceVlanEntry(device, vid)"
+                            :title="findDeviceVlanEntry(device, vid).name">
+                            {{ findDeviceVlanEntry(device, vid).name }}
                         </span>
                     </td>
                 </tr>
                 <tr>
                     <th>#switches</th>
                     <td></td>
-                    <td v-for="formattedVlan in formattedVlans" :key="`el-${formattedVlan.id}`">
-                        {{ amountOfswitchesFromVlan(formattedVlan) }}
+                    <td v-for="vid in vlanIds" :key="`el-${vid}`">
+                        {{ countDevicesHavingVlanId(vid) }}
                     </td>
                 </tr>
             </tbody>
@@ -186,52 +186,49 @@ export default {
                     return;
                 }
 
-                this.getVlans();
+                this.getData();
             },
         },
     },
     data() {
         return {
-            vlans: [],
-            formattedVlans: [],
+            devices: [],
+            vlanIds: [],
             isLoading: false,
             tableHeight: undefined,
         };
     },
     methods: {
         /**
-         * Find a matching VLAN from an array of VLANs
-         * @param {object[]} vlanArray - The array to search
-         * @param {Object} vlanToMatch - The VLAN to match against
-         * @returns {object|undefined} - If found in the array, the VLAN object
+         * Lookup an entry by vlan id in the vlans array of a device.
+         * @param {object} device - Device object, element of $data.devices
+         * @param {number} vid - Vlan id to lookup in <device>
+         * @returns {object|undefined} - Element of <device>.vlan matching
+         *      the vlan id given in <vid>, undefined if not found
          */
-        findMatchingVlan(vlanArray, vlanToMatch) {
-            return vlanArray.find((vlan) => vlan.id === vlanToMatch.id);
+        findDeviceVlanEntry(device, vid) {
+            return device.vlan.find((vlanEntry) => vlanEntry.id === vid);
         },
         /**
-         * Format VLANs into a unique sorted array
+         * Build the list of unique vlan ids accross all devices.
+         * This function updates the $data.vlanIds array.
          */
-        formatVlans() {
-            let filteredVlans = [];
+        buildVlanIdsList() {
+            let uniqVlanIds = {};
 
-            /* Push all unique VLANs into a filtered array */
-            this.vlans.forEach((vlan) => {
-                vlan.vlan.filter((subVlan) => {
-                    if (!filteredVlans.some((fVlan) => fVlan.id === subVlan.id)) {
-                        filteredVlans.push(subVlan);
-                    }
-                });
+            this.devices.forEach((device) => {
+                device.vlan.forEach((vlan) => {
+                    uniqVlanIds[vlan.id] = vlan.id;
+                })
             });
 
-            /* Sort the array */
-            this.formattedVlans = filteredVlans.sort((a, b) => {
-                return a.id - b.id;
-            });
+            this.vlanIds = Object.values(uniqVlanIds).sort((a, b) => a - b);
         },
         /**
-         * Fetch all VLANs from the API
+         * Fetch data from the API, process it to make suitable for building
+         * the vlan matrix.
          */
-        getVlans() {
+        getData() {
             const cmpDevice = (a, b) => {
                 const aName = a.name?.toLowerCase();
                 const bName = b.name?.toLowerCase();
@@ -242,33 +239,33 @@ export default {
             this.isLoading = true;
             this.$api.axiosData(url)
                 .then((vlansResponse) => {
-                    this.vlans = vlansResponse.sort(cmpDevice);
-                    this.formatVlans();
+                    this.devices = vlansResponse.sort(cmpDevice);
+                    this.buildVlanIdsList();
                 })
                 .catch(() => { /* use error handler from the api plugin */ })
                 .finally(() => { this.isLoading = false; });
         },
         /**
-         * Get a class for a VLAN depending on its matching against another VLAN
-         * @param {object} vlan - The VLAN to match
-         * @param {object} formattedVlan - The VLAN to match against
-         * @returns {string} - The class to apply to the VLAN
+         * Get class names for a device + vlan id cell.
+         * @param {object} device - Device object, element of $data.devices (row)
+         * @param {number} vid - Vlan id, element of $data.vlanIds (column)
+         * @returns {string} - Class names to apply to the cell
          */
-        getVlanClass(vlan, formattedVlan) {
-            return vlan.vlan.find((subVlan) => subVlan.id === formattedVlan.id)
-                ? 'vlan-found cell-' + formattedVlan.id
-                : 'vlan-not-found cell-' + formattedVlan.id;
+        getDeviceVlanClass(device, vid) {
+            return device.vlan.find((vlanEntry) => vlanEntry.id === vid)
+                ? 'vlan-found cell-' + vid
+                : 'vlan-not-found cell-' + vid;
         },
         /**
-         * Calculate the number of switches for a given VLAN
-         * @param {object} vlan - The VLAN to count
-         * @returns {number} - The number of switches
+         * Count devices having a given vlan id.
+         * @param {number} vid - Vlan id to lookup on devices
+         * @returns {number} - Number of switches having the given vlan id
          */
-        amountOfswitchesFromVlan(vlan) {
+        countDevicesHavingVlanId(vid) {
             let amount = 0;
 
-            this.vlans.forEach((subVlan) => {
-                if (this.findMatchingVlan(subVlan.vlan, vlan)) {
+            this.devices.forEach((device) => {
+                if (this.findDeviceVlanEntry(device, vid)) {
                     amount++;
                 }
             });
