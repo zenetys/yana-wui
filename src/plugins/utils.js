@@ -52,6 +52,40 @@ export function deriveRoute(target, reference) {
 }
 
 /**
+ * Test recursively if two values are equivalent
+ *
+ * This simple implementation is enought for primitive data types,
+ * standard objects, arrays. Credits to Jean Vincent (uiteoi),
+ * https://stackoverflow.com/a/6713782
+ */
+export function eq(x, y) {
+    if (x === y)
+        return true;
+    if (!(x instanceof Object) || !(y instanceof Object))
+        return false;
+    if (x.constructor !== y.constructor)
+        return false;
+    for (let p in x) {
+        if (!Object.prototype.hasOwnProperty.call(x, p))
+            continue;
+        if (!Object.prototype.hasOwnProperty.call(y, p))
+            return false;
+        if (x[p] === y[p])
+            continue;
+        if (typeof x[p] !== 'object')
+            return false;
+        if (!eq(x[p], y[p]))
+            return false;
+    }
+    for (let p in y) {
+        if (Object.prototype.hasOwnProperty.call(y, p) &&
+            !Object.prototype.hasOwnProperty.call(x, p))
+            return false;
+    }
+    return true;
+}
+
+/**
  * Generate an anchor tag with the given text and href
  * @param {string} deviceId - The id of the device
  * @param {string} label - The text to display in the anchor
