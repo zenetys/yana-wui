@@ -13,7 +13,7 @@
                                     <!-- Array -->
                                     <template v-if="Array.isArray(propertyValue)">
                                         <!-- Array and not object -->
-                                        <template v-if="!isObject(propertyValue[0])">
+                                        <template v-if="!$utils.isPlainObject(propertyValue[0])">
                                             {{ propertyValue[0] }}
                                             <v-icon
                                                 v-if="propertyValue.length > 1"
@@ -31,7 +31,7 @@
                                             </div>
                                         </template>
                                         <!-- Array and object -- route -->
-                                        <template v-if="isObject(propertyValue[0]) && propertyKey === 'route'">
+                                        <template v-if="$utils.isPlainObject(propertyValue[0]) && propertyKey === 'route'">
                                             <div v-if="propertyValue[0].dest">
                                                 dest {{ propertyValue[0].dest }}
                                                 <span v-if="propertyValue[0].via">
@@ -59,7 +59,7 @@
                                             </div>
                                         </template>
                                         <!-- Array and object -- vlan -->
-                                        <template v-if="isObject(propertyValue[0]) && propertyKey === 'vlan'">
+                                        <template v-if="$utils.isPlainObject(propertyValue[0]) && propertyKey === 'vlan'">
                                             {{ propertyValue[0].id }} {{ propertyValue[0].name }}
                                             <v-icon
                                                 v-if="propertyValue.length > 1"
@@ -79,7 +79,7 @@
                                     </template>
                                     <!-- Not Array -->
                                     <template v-else>
-                                        <span v-if="!isObject(propertyValue)">{{ propertyValue }}</span>
+                                        <span v-if="!$utils.isPlainObject(propertyValue)">{{ propertyValue }}</span>
                                     </template>
                                 </td>
                             </template>
@@ -344,14 +344,6 @@ export default {
          */
         formatPropertyKey(propertyKey) {
             return propertyKey.charAt(0).toUpperCase() + propertyKey.slice(1);
-        },
-        /**
-         * Check if an input is an object
-         * @param {*} input - The input to check
-         * @return {boolean} True if the input is an object
-         */
-        isObject(input) {
-            return typeof input === 'object';
         },
         /**
          * Get a cell color class depending on the status of the interface
