@@ -23,7 +23,7 @@
 import AutoTable from '@/components/AutoTable.vue';
 
 export default {
-    name: 'ViewInventoryFdb',
+    name: 'ViewFdb',
     components: {
         AutoTable,
     },

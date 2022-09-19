@@ -2,12 +2,15 @@ import Vue from 'vue';
 import VueRouter from 'vue-router';
 
 import ViewEntityPicker from '@/views/ViewEntityPicker.vue';
+import ViewFdb from '@/views/ViewFdb.vue';
 import ViewHost from '@/views/ViewHost.vue';
 import ViewInventory from '@/views/ViewInventory.vue';
 import ViewMain from '@/views/ViewMain.vue';
 import ViewOui from '@/views/ViewOui.vue';
 import ViewSwitch from '@/views/ViewSwitch.vue';
 import ViewVlanMatrix from '@/views/ViewVlanMatrix.vue';
+
+const RouterView = { render: (h) => h('router-view') };
 
 Vue.use(VueRouter);
 
@@ -32,49 +35,53 @@ const routes = [
         },
         children: [
             {
+                /* No name, there is a default child route. */
                 path: '/main/inventory',
-                name: 'ViewInventory',
-                component: ViewInventory,
+                component: RouterView,
                 meta: {
-                    menu: [
-                        {
-                            label: 'Inventory',
-                            icon: 'mdi-book-open-page-variant-outline',
-                        },
-                    ],
-                    search: [
-                        {
-                            label: 'Inventory devices',
-                            icon: 'mdi-grid',
-                            route: {
-                                query: {
-                                    inventoryMode: 'devices',
-                                },
-                            },
-                        },
-                        {
-                            label: 'Inventory FDB',
-                            icon: 'mdi-grid',
-                            route: {
-                                query: {
-                                    inventoryMode: 'fdb',
-                                },
-                            },
-                        },
-                    ],
-                    hasTimeline: true,
-                    buildHistory: (r) => {
-                        const inventoryMode = r.query.inventoryMode;
-                        const search = r.query.search;
-                        if (!inventoryMode || !search)
-                            return false;
-                        return {
-                            label: `${inventoryMode} / ${search}`,
-                            entry: { path: r.path, query: { inventoryMode, search } },
-                        };
-                    },
+                    /* Used by SearchMenu when it finds the best search menu
+                     * entry to preselect. Instruct the SearchMenu to assume
+                     * route name ViewInventory when processing this unnamed
+                     * route from the $route.matched array. */
+                    assumeRouteName: 'ViewInventory',
                 },
                 children: [
+                    {
+                        /* Default child route. Path is either empty or has the
+                         * same value than the parent. Here the 2nd option is
+                         * used otherwise vue-router appends a forward slash to
+                         * the path visible in the browser. */
+                        path: '/main/inventory',
+                        name: 'ViewInventory',
+                        component: ViewInventory,
+                        meta: {
+                            menu: [
+                                {
+                                    label: 'Inventory',
+                                    icon: 'mdi-book-open-page-variant-outline',
+                                },
+                            ],
+                            search: [
+                                {
+                                    label: 'Inventory',
+                                    icon: 'mdi-book-open-page-variant-outline',
+                                },
+                            ],
+                            hasTimeline: true,
+                            buildHistory: (r) => {
+                                if (!r.query.search)
+                                    return false;
+                                return {
+                                    label: `devices / ${r.query.search}`,
+                                    entry: { path: r.path, query: { search: r.query.search } },
+                                };
+                            },
+                        },
+                    },
+
+                    /* As implemented at the moment, it is important to keep
+                     * host and switch routes under /main/inventory, otherwise
+                     * the inventory menu entry will not be active on these. */
                     {
                         path: '/main/inventory/host/:id',
                         name: 'ViewHost',
@@ -114,6 +121,35 @@ const routes = [
                         },
                     },
                 ],
+            },
+            {
+                path: '/main/fdb',
+                name: 'ViewFdb',
+                component: ViewFdb,
+                meta: {
+                    menu: [
+                        {
+                            label: 'FDB',
+                            icon: 'mdi-database-arrow-right-outline',
+                        },
+                    ],
+                    search: [
+                        {
+                            label: 'FDB',
+                            icon: 'mdi-database-arrow-right-outline',
+                            empty: false,
+                        },
+                    ],
+                    hasTimeline: true,
+                    buildHistory: (r) => {
+                        if (!r.query.search)
+                            return false;
+                        return {
+                            label: `fdb / ${r.query.search}`,
+                            entry: { path: r.path, query: { search: r.query.search } },
+                        };
+                    },
+                },
             },
             {
                 path: '/main/vlan-matrix',
