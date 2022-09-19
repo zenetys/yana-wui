@@ -18,19 +18,8 @@
                     </v-icon>
                 </v-btn>
             </v-col>
+
             <v-col cols="12" sm="4" md="4" lg="3" xl="4" class="d-flex justify-end">
-                <div v-if="$route.name === 'ViewInventory'" class="pt-2 rounded select-inventory-mode">
-                    <v-checkbox
-                        v-for="(mode, modeIndex) in inventoryModes"
-                        :key="modeIndex"
-                        v-model="inventoryMode"
-                        :label="mode"
-                        :value="mode"
-                        hide-details=""
-                        :ripple="false"
-                        tile
-                        class="px-3 font-weight-light"></v-checkbox>
-                </div>
             </v-col>
             <v-col cols="12" sm="3" md="3" lg="4" xl="2" class="d-flex align-center">
                 {{/* ref, :key and @blur: read comments in blur handler */}}
@@ -214,12 +203,6 @@ header {
     border-bottom: solid 1px rgba(0, 0, 0, 0.12) !important;
 }
 
-.select-inventory-mode {
-    display: flex;
-    background-color: #e8e8e8d6;
-    height: 38px;
-}
-
 .bottom-timeline {
     height: 80px;
 }
@@ -258,15 +241,12 @@ export default {
     },
     data() {
         return {
-            inventoryModes: ['devices', 'fdb'],
-            defaultInventoryMode: 'devices',
             drawer: true,
             searchUpdateTimeOut: 500,
             keepSearch: true,
             entityDatabases: [],
             selectedEntity: null,
             search: '',
-            inventoryMode: 'devices',
             forceUpdateEntitySelector: 0,
         };
     },
@@ -288,12 +268,6 @@ export default {
 
         storeEntities() {
             return this.$store.getEntities();
-        },
-        routeName() {
-            return this.$route.name;
-        },
-        routeInventoryMode() {
-            return this.$route.query.inventoryMode;
         },
         apiStateParams() {
             return {
@@ -420,26 +394,6 @@ export default {
             this.$router.push({ query: { ...this.$route.query, db: databaseId } });
         },
         /**
-         * Update the url with a new inventory mode
-         * @param {boolean} shouldReplace - Whether or not the redirect should be "silent" (url replace)
-         */
-        redirectToUpdateInventoryMode(shouldReplace = false) {
-            const params = this.$route.params;
-            const query = { ...this.$route.query };
-            query.inventoryMode = this.inventoryMode;
-            const redirection = {
-                params,
-                query,
-                name: this.routeName,
-            };
-
-            if (shouldReplace) {
-                this.$router.replace(redirection).catch(() => {});
-            } else {
-                this.$router.push(redirection).catch(() => {});
-            }
-        },
-        /**
          * Select the latest available DB from the current entity,
          * and replace the query param in the current route
          * @param {boolean} shouldReplace - If true, replace the current route, otherwise redirect
@@ -530,24 +484,6 @@ export default {
                 this.search = newParams.search ?? '';
             },
         },
-        routeName: {
-            immediate: true,
-            handler(newRouteName) {
-                if (newRouteName !== 'ViewInventory' && !this.keepSearch) {
-                    this.search = '';
-                }
-            },
-        },
-        routeInventoryMode: {
-            immediate: true,
-            handler(newMode) {
-                if (this.routeName === 'ViewInventory') {
-                    this.inventoryMode = this.inventoryModes.includes(newMode) ? newMode : this.defaultInventoryMode;
-                } else {
-                    this.inventoryMode = newMode;
-                }
-            },
-        },
         entityDatabases: {
             immediate: true,
             handler(newDatabases) {
@@ -561,18 +497,6 @@ export default {
                     ) {
                         this.selectLastAvailableDb(true);
                     }
-                }
-            },
-        },
-        inventoryMode: {
-            immediate: true,
-            handler(newMode, oldMode) {
-                if (oldMode && oldMode !== newMode) {
-                    /* If mode has changed, update the query param and redirect */
-                    this.redirectToUpdateInventoryMode();
-                } else {
-                    /* Otherwise, just update the query param (silent redirect) */
-                    this.redirectToUpdateInventoryMode(true);
                 }
             },
         },
