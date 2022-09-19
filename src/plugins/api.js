@@ -39,6 +39,9 @@ export default {
 
     /**
      * Initialise the API plugin and set Axios default values
+     * This function awaits and is thus declared async.
+     * @async
+     * @throws On axios error or if the response has unexpected data.
      */
     async init() {
         axios.defaults.timeout = 20000;
@@ -53,16 +56,17 @@ export default {
             }
         );
 
-        try {
-            const response = await this.get('config.json');
+        /* those may throw */
+        this.apiConfig = await this.axiosData('config.json', false);
+        if (typeof this.apiConfig !== 'object')
+            throw Error('Unexpected data type in config.json');
 
-            if (typeof response === 'object') {
-                if (response.API_BASE_URL) axios.defaults.baseURL = response.API_BASE_URL;
-                if (response.API_TIMEOUT) axios.defaults.timeout = response.API_TIMEOUT;
-            }
-            console.log('API plugin: Successfully initialised');
-        } catch (e) {
-            console.log('API plugin: Failed to retrieve app config', e);
-        }
+        /* update axios defaults */
+        if (this.apiConfig.API_BASE_URL)
+            axios.defaults.baseURL = this.apiConfig.API_BASE_URL;
+        if (this.apiConfig.API_TIMEOUT)
+            axios.defaults.timeout = this.apiConfig.API_TIMEOUT;
+
+        console.log('API plugin: Successfully initialised');
     },
 };
