@@ -82,14 +82,13 @@
                 </router-link>
             </v-toolbar-title>
             <v-list class="pt-0 mt-0">
-                <div v-for="(sectionLink, linkIndex) in menuSide" :key="linkIndex">
+                <div v-for="(sectionLink, linkIndex) in menuSide" :key="linkIndex" class="menu">
                     <v-list-item
                         v-if="!sectionLink.subMenus"
                         :to="getNavLinkFullRoute(sectionLink.route)"
-                        active-class="deep-cyan--text text--accent-4"
-                        class="v-list-item"
+                        :disabled="!sectionLink.route"
                         dense
-                        :style="sectionLink.route ? '' : 'opacity:0.5'">
+                    >
                         <v-list-item-action class="mr-4">
                             <v-icon size="20">{{ sectionLink.icon }}</v-icon>
                         </v-list-item-action>
@@ -192,6 +191,10 @@
         margin-top: -44px;
         position: fixed;
     }
+}
+
+.menu .v-list-item--disabled .v-list-item__action {
+    opacity: 0.5
 }
 
 .list-item {
