@@ -194,7 +194,7 @@
 }
 
 .menu .v-list-item--disabled .v-list-item__action {
-    opacity: 0.5
+    opacity: 0.38;
 }
 
 .list-item {
