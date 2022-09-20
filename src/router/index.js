@@ -42,17 +42,24 @@ const routes = [
                             icon: 'mdi-grid',
                         },
                     ],
+                    hasTimeline: true,
                 },
                 children: [
                     {
                         path: '/main/inventory/host/:id',
                         name: 'ViewHost',
                         component: ViewHost,
+                        meta: {
+                            hasTimeline: true,
+                        },
                     },
                     {
                         path: '/main/inventory/switch/:id',
                         name: 'ViewSwitch',
                         component: ViewSwitch,
+                        meta: {
+                            hasTimeline: true,
+                        },
                     },
                 ],
             },
@@ -67,6 +74,7 @@ const routes = [
                             icon: 'mdi-table',
                         },
                     ],
+                    hasTimeline: true,
                 },
             },
             {
