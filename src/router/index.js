@@ -42,6 +42,26 @@ const routes = [
                             icon: 'mdi-grid',
                         },
                     ],
+                    search: [
+                        {
+                            label: 'Inventory devices',
+                            icon: 'mdi-grid',
+                            route: {
+                                query: {
+                                    inventoryMode: 'devices',
+                                },
+                            },
+                        },
+                        {
+                            label: 'Inventory FDB',
+                            icon: 'mdi-grid',
+                            route: {
+                                query: {
+                                    inventoryMode: 'fdb',
+                                },
+                            },
+                        },
+                    ],
                     hasTimeline: true,
                     buildHistory: (r) => {
                         const inventoryMode = r.query.inventoryMode;
@@ -131,6 +151,13 @@ const routes = [
                             icon: 'mdi-help-network-outline',
                         },
                     ],
+                    search: [
+                        {
+                            label: 'OUI lookup',
+                            icon: 'mdi-help-network-outline',
+                            empty: false,
+                        },
+                    ],
                 },
             },
         ],
@@ -144,21 +171,22 @@ const routes = [
     },
 ];
 
-VueRouter.prototype.getMenu = function () {
+VueRouter.prototype.getMenu = function (metaKey = 'menu') {
     var menu = [];
     function walk(routes) {
         for (let r of routes) {
-            if (r.meta && r.meta.menu) {
-                for (let m of r.meta.menu) {
-                    const entry = { label: m.label, icon: m.icon };
-                    if (r.name) /* require a named route */ {
-                        entry.route = { name: r.name };
-                        if (m.query)
-                            entry.route.query = m.query;
-                        if (m.params)
-                            entry.route.params = m.params;
+            if (r.meta && r.meta[metaKey]) {
+                for (let m of r.meta[metaKey]) {
+                    /* Keep the route object only if there is a name property.
+                     * Be aware this edits the meta object inplace but it does
+                     * not matter, at least for now. */
+                    if (!m.route?.name && r.name) {
+                        m.route ??= {};
+                        m.route.name = r.name;
                     }
-                    menu.push(entry);
+                    if (!m.route?.name)
+                        delete m.route;
+                    menu.push(m);
                 }
             }
             if (r.children)
@@ -167,6 +195,10 @@ VueRouter.prototype.getMenu = function () {
     }
     walk(this.getRoutes());
     return menu;
+}
+
+VueRouter.prototype.getSearchMenu = function () {
+    return this.getMenu('search');
 }
 
 const router = new VueRouter({
