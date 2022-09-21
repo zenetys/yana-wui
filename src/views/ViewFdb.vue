@@ -112,18 +112,21 @@ export default {
     watch: {
         apiStateParams: {
             immediate: true,
-            handler(newParams, oldParams) {
-                /* On URL params changes, only fetch new data if the database or search params changed */
-                if (oldParams) {
-                    if (oldParams.database !== newParams.database || oldParams.search !== newParams.search) {
-                        this.apiUrl = this.$utils.getUpdatedApiUrl(newParams, 'fdb');
-                    }
+            handler(cur, prev) {
+                console.log('ViewFdb: watch/apiStateParams: cur =', cur, ', prev =', prev);
+
+                if (this.$utils.eq(cur, prev)) {
+                    console.log('ViewFdb: watch/apiStateParams: no change');
+                    return;
                 }
+                if (!cur.entity || !cur.database || (cur.search ?? '') === '') {
+                    console.log('ViewFdb: watch/apiStateParams: skip required data');
+                    return;
+                }
+
+                this.apiUrl = this.$utils.getUpdatedApiUrl(cur, 'fdb');
             },
         },
-    },
-    beforeMount() {
-        this.apiUrl = this.$utils.getUpdatedApiUrl(this.apiStateParams, 'fdb');
     },
 };
 </script>
