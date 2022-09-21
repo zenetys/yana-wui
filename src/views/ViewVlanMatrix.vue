@@ -242,6 +242,11 @@ export default {
          * Fetch all VLANs from the API
          */
         async getVlans() {
+            const cmpDevice = (a, b) => {
+                const aName = a.name?.toLowerCase();
+                const bName = b.name?.toLowerCase();
+                return aName === bName ? 0 : (aName < bName ? -1 : 1);
+            };
             this.isLoading = true;
 
             const url = this.$utils.getUpdatedApiUrl(this.apiStateParams, 'vlans');
@@ -249,15 +254,7 @@ export default {
 
             const vlansResponse = await this.$api.get(url, errorContext);
 
-            this.vlans = vlansResponse.sort((a, b) => {
-                if (a.name.toLowerCase() < b.name.toLowerCase()) {
-                    return -1;
-                } else if (a.name.toLowerCase() > b.name.toLowerCase()) {
-                    return 1;
-                }
-
-                return 0;
-            });
+            this.vlans = vlansResponse.sort(cmpDevice);
 
             this.formatVlans();
             this.isLoading = false;
