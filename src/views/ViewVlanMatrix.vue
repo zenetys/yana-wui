@@ -317,6 +317,12 @@ export default {
     mounted() {
         this.setTableHeight();
         window.addEventListener('resize', this.setTableHeight);
+
+        /* remove if this is too annoying */
+        if (this.$route.query.search) {
+            this.$ev.$emit('message', { type: 'info', title: 'VLAN matrix',
+                text: 'Module does not support search', duration: 2000 });
+        }
     },
     destroyed() {
         window.removeEventListener('resize', this.setTableHeight);
