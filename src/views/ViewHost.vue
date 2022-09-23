@@ -297,12 +297,13 @@ export default {
          * Fetch Host device and interface information from API
          */
         getDeviceInfo() {
-            const deviceUrl = this.$utils.getUpdatedApiUrl(this.apiStateParams, 'device');
-            const ifaceUrl = this.$utils.getUpdatedApiUrl(this.apiStateParams, 'interface');
-
             Promise.all([
-                this.$api.axiosData(deviceUrl, 'Could not get device data'),
-                this.$api.axiosData(ifaceUrl, 'Could not get interfaces data'),
+                this.$api.base.getDevice(this.apiStateParams.entity,
+                    this.apiStateParams.database, this.apiStateParams.id,
+                    'Could not get device data'),
+                this.$api.base.getInterfaces(this.apiStateParams.entity,
+                    this.apiStateParams.database, this.apiStateParams.id,
+                    'Could not get interfaces data'),
             ])
             .then(([deviceResponse, interfaceResponse]) => {
                 this.device = deviceResponse || {};
