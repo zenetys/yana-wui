@@ -234,10 +234,9 @@ export default {
                 const bName = b.name?.toLowerCase();
                 return aName === bName ? 0 : (aName < bName ? -1 : 1);
             };
-            const url = this.$utils.getUpdatedApiUrl(this.apiStateParams, 'vlans');
 
             this.isLoading = true;
-            this.$api.axiosData(url)
+            this.$api.base.getVlans(this.apiStateParams.entity, this.apiStateParams.database)
                 .then((vlansResponse) => {
                     this.devices = vlansResponse.sort(cmpDevice);
                     this.buildVlanIdsList();
