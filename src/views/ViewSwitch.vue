@@ -28,7 +28,7 @@
         <AutoTable
             id="table-switch"
             :pagination="false"
-            :api="apiUrl"
+            :api="api"
             array-data=""
             height="auto"
             :height-offsets="[-120]"
@@ -175,7 +175,7 @@ export default {
             },
             tableHeight: 0,
             device: {},
-            apiUrl: '',
+            api: '',
         };
     },
     computed: {
@@ -206,10 +206,11 @@ export default {
          * Get all the information about the switch from the API
          */
         getDeviceInfo() {
-            this.apiUrl = this.$utils.getUpdatedApiUrl(this.apiStateParams, 'interface');
-            const url = this.$utils.getUpdatedApiUrl(this.apiStateParams, 'device');
+            this.api = this.$api.base.getInterfaces(this.apiStateParams.entity,
+                this.apiStateParams.database, this.apiStateParams.id);
 
-            this.$api.axiosData(url)
+            this.$api.base.getDevice(this.apiStateParams.entity,
+                this.apiStateParams.database, this.apiStateParams.id)
                 .then((data) => { this.device = data; })
                 .catch(() => { this.device = {}; })
         },

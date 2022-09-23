@@ -45,6 +45,14 @@ const apiBaseDefinition = {
             url: '/entity/' + encodeURIComponent(entity) + '/devices?short',
             params: { database, q: search },
         }),
+        getInterfaces: (entity, database, deviceId) => ({
+            url: '/entity/' + encodeURIComponent(entity) + '/interfaces',
+            params: { database, id: deviceId },
+        }),
+        getDevice: (entity, database, deviceId) => ({
+            url: '/entity/' + encodeURIComponent(entity) + '/devices',
+            params: { database, id: deviceId },
+        }),
     },
 }
 
