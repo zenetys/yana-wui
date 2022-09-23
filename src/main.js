@@ -35,7 +35,7 @@ async function init() {
 
     /* Fetch entities */
     try {
-        const entities = await Api.axiosData('/entities', false);
+        const entities = await Api.base.getEntities(false);
         Store.setEntities(entities);
     }
     catch (e) {
