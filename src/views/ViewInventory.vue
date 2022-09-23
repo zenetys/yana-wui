@@ -2,7 +2,7 @@
     <auto-table
         id="table-inventory-devices"
         :isPaginated="true"
-        :api="apiUrl"
+        :api="api"
         array-data=""
         height="auto"
         :height-offsets="[-120]"
@@ -82,7 +82,7 @@ export default {
     },
     data() {
         return {
-            apiUrl: '',
+            api: '',
             columnDefinition: {
                 flag: {
                     /**
@@ -288,7 +288,7 @@ export default {
                     return;
                 }
 
-                this.apiUrl = this.$utils.getUpdatedApiUrl(cur, 'devices');
+                this.api = this.$api.base.getInventory(cur.entity, cur.database, cur.search);
             },
         },
     },

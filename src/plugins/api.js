@@ -38,6 +38,10 @@ import Ev from '@/plugins/evbus';
 const apiBaseDefinition = {
     id: 'base',
     methods: {
+        getInventory: (entity, database, search) => ({
+            url: '/entity/' + encodeURIComponent(entity) + '/devices?short',
+            params: { database, q: search },
+        }),
     },
 }
 
