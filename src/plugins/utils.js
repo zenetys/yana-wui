@@ -127,43 +127,6 @@ export function getDeviceRoute(deviceId, type, routeObject, raw, routerInstance 
 }
 
 /**
- * Generate an updated API URL for fetching ata
- * @param {object} stateParams - The state params to use to generate the URL
- * @param {string} type - The type of the data to fetch
- * @return {string} - The generated API URL
- */
-export function getUpdatedApiUrl(stateParams, type) {
-    let url = '';
-    const search = stateParams.search || '';
-
-    if (stateParams.entity && stateParams.database) {
-        url += '/entity/' + encodeURIComponent(stateParams.entity);
-
-        switch (type) {
-            case 'fdb':
-                url += '/fdb?q=' + encodeURIComponent(search);
-                break;
-            case 'devices':
-                url += '/devices?q=' + encodeURIComponent(search) + '&short';
-                break;
-            case 'device':
-                url += '/devices?id=' + encodeURIComponent(stateParams.id);
-                break;
-            case 'interface':
-                url += '/interfaces?id=' + encodeURIComponent(stateParams.id);
-                break;
-            case 'vlans':
-                url += '/vlans?';
-                break;
-        }
-
-        url += '&database=' + encodeURIComponent(stateParams.database);
-    }
-
-    return url;
-}
-
-/**
  * Check if an object is empty or not
  * @param {object} object - The object to check
  * @return {boolean} - True if the object is empty, false otherwise
