@@ -4,7 +4,7 @@
             v-if="apiStateParams.search"
             id="table-inventory-fdb"
             :isPaginated="true"
-            :api="apiUrl"
+            :api="api"
             array-data=""
             height="auto"
             :height-offsets="[-120]"
@@ -29,7 +29,7 @@ export default {
     },
     data() {
         return {
-            apiUrl: '',
+            api: '',
             columnDefinition: {
                 swId: {
                     hidden: true,
@@ -124,7 +124,7 @@ export default {
                     return;
                 }
 
-                this.apiUrl = this.$utils.getUpdatedApiUrl(cur, 'fdb');
+                this.api = this.$api.base.getFdb(cur.entity, cur.database, cur.search);
             },
         },
     },
