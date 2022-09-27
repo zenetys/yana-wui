@@ -1,7 +1,7 @@
 <template>
     <v-row no-gutters>
         <v-col cols="6" class="pr-2">
-            <v-card :height="cardHeight" id="host-card">
+            <v-card :height="cardHeight" id="host-card" class="elevation-1">
                 <table class="device-info mb-3">
                     <tbody>
                         <tr v-for="(propertyValue, propertyKey) in device" :key="propertyKey">
@@ -89,7 +89,7 @@
             </v-card>
         </v-col>
         <v-col cols="6" class="pl-2">
-            <v-card :height="cardHeight" id="host-ifaces-card">
+            <v-card :height="cardHeight" id="host-ifaces-card" class="elevation-1">
                 <table v-if="interfaces.length > 0">
                     <tbody>
                         <tr>
