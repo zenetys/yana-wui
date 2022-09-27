@@ -8,6 +8,7 @@
         :height-offsets="[-120]"
         :column-definition="columnDefinition"
         :custom-headers-computation="computeHeaders"
+        :on-data-ready-sync="dataReadyCallbacks"
     />
 </template>
 
@@ -258,6 +259,8 @@ export default {
                     format: this.$utils.unArray,
                 },
             },
+            /* allow hooking from mixins */
+            dataReadyCallbacks: [],
         };
     },
     methods: {
