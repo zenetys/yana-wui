@@ -1,5 +1,5 @@
 <template>
-    <v-card class="elevation-2">
+    <v-card class="elevation-0">
         <table id="table-vlan" :height="tableHeight">
             <tbody>
                 <tr>
