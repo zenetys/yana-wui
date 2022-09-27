@@ -160,8 +160,9 @@
 
         <v-bottom-navigation
             v-if="this.$route.meta.hasTimeline"
-            fixed hide-on-scroll grow height=""
             :style="this.bottomBarStyle"
+            fixed hide-on-scroll grow
+            height=""
         >
             <v-col cols="12">
                 <v-card>
