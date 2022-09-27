@@ -131,6 +131,9 @@ export default {
                             flagType = '<span class="z-flag mdi mdi-monitor-small"></span>';
                         flags.push(flagType);
 
+                        for (let cb of this.flagFormatCallbacks)
+                            cb(tableItem, flags);
+
                         return flags.join('');
                     },
                     isHtml: true,
@@ -259,7 +262,9 @@ export default {
                     format: this.$utils.unArray,
                 },
             },
+
             /* allow hooking from mixins */
+            flagFormatCallbacks: [],
             dataReadyCallbacks: [],
         };
     },
