@@ -37,8 +37,16 @@ export default {
     data: () => ({}),
     methods: {
         onWindowKeyDown(event) {
-            if (event.ctrlKey && event.shiftKey && event.key === 'F')
+            if (event.ctrlKey && event.shiftKey && event.key === 'F') {
+                console.log('App: onWindowKeyDown: ctrl-shift-f:', event)
                 this.$ev.$emit('ctrl-shift-f', event);
+                return;
+            }
+            if (event.ctrlKey && event.key.toUpperCase() === 'A') {
+                console.log('App: onWindowKeyDown: ctrl-a:', event)
+                this.$ev.$emit('ctrl-a', event);
+                return;
+            }
         }
     },
     mounted() {
