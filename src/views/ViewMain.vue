@@ -163,9 +163,10 @@
             :style="this.bottomBarStyle"
             fixed hide-on-scroll grow
             height=""
+            class="elevation-0"
         >
             <v-col cols="12">
-                <v-card>
+                <v-card class="elevation-0">
                     <TimeLine
                         :databases="entityDatabases"
                         :value="$route.query.db"
@@ -210,6 +211,10 @@
 
 header {
     border-bottom: solid 1px rgba(0, 0, 0, 0.12) !important;
+}
+
+.v-bottom-navigation {
+    border-top: 1px solid #00000008;
 }
 
 .bottom-timeline {
