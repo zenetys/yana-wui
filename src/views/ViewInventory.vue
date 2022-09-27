@@ -195,10 +195,8 @@ export default {
                     format: this.$utils.unArray,
                 },
                 description: {
-                    format: this.$utils.unArray,
-                    getTooltip: (input) => {
-                        return Array.isArray(input) ? input.join('\n') : '';
-                    },
+                    format: (input) => this.$utils.arrayLongest(input),
+                    getTooltip: (input) => this.$utils.arrayLongest(input),
                 },
                 type: {
                     format: this.$utils.unArray,
