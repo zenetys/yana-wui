@@ -69,6 +69,10 @@
         font-style: italic;
         color: #666;
     }
+
+    .z-flag + .z-flag {
+        margin-left: 2px;
+    }
 }
 </style>
 
@@ -99,21 +103,34 @@ export default {
                             ? this.$utils.unArray(tableItem.description).toLowerCase()
                             : '';
 
+                        const flags = [];
+                        let flagType;
+
                         if (type) {
-                            if (type.includes('switch')) return '<span class="mdi mdi-swap-horizontal-bold"></span>';
-                            if (type.includes('router')) return '<span class="mdi mdi-router"></span>';
-                            if (type.includes('wlan')) return '<span class="mdi mdi-wifi"></span>';
-                            if (type.includes('phone')) return '<span class="mdi mdi-phone"></span>';
-                            if (type.includes('print')) return '<span class="mdi mdi-printer"></span>';
+                            if (type.includes('switch'))
+                                flagType = '<span class="z-flag mdi mdi-swap-horizontal-bold"></span>';
+                            else if (type.includes('router'))
+                                flagType = '<span class="z-flag mdi mdi-router"></span>';
+                            else if (type.includes('wlan'))
+                                flagType = '<span class="z-flag mdi mdi-wifi"></span>';
+                            else if (type.includes('phone'))
+                                flagType = '<span class="z-flag mdi mdi-phone"></span>';
+                            else if (type.includes('print'))
+                                flagType = '<span class="z-flag mdi mdi-printer"></span>';
                         }
-
-                        if (descr) {
-                            if (descr.includes('linux')) return '<span class="mdi mdi-linux"></span>';
-                            if (descr.includes('windows')) return '<span class="mdi mdi-microsoft-windows"></span>';
-                            if (descr.includes('print')) return '<span class="mdi mdi-printer"></span>';
+                        if (!flagType && descr) {
+                            if (descr.includes('linux'))
+                                flagType = '<span class="z-flag mdi mdi-linux"></span>';
+                            else if (descr.includes('windows'))
+                                flagType = '<span class="z-flag mdi mdi-microsoft-windows"></span>';
+                            else if (descr.includes('print'))
+                                flagType = '<span class="z-flag mdi mdi-printer"></span>';
                         }
+                        if (!flagType)
+                            flagType = '<span class="z-flag mdi mdi-monitor-small"></span>';
+                        flags.push(flagType);
 
-                        return '<span class="mdi mdi-monitor-small"></span>';
+                        return flags.join('');
                     },
                     isHtml: true,
                     getClass: () => 'nocp',
