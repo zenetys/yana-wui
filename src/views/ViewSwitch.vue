@@ -195,7 +195,7 @@ export default {
             return '';
         },
         deviceDescription() {
-            return this.$utils.unArray(this.device.description);
+            return this.$utils.arrayLongest(this.device.description);
         },
         deviceIp() {
             return Array.isArray(this.device.ip) ? this.device.ip.join(', ') : this.device.ip;
