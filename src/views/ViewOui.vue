@@ -40,7 +40,7 @@
 ::v-deep textarea {
     line-height: 1.4em;
     font-weight: 300;
-    height: 110px;
+    height: 180px;
     background: #fcfcfc;
 }
 </style>
