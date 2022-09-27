@@ -1,4 +1,22 @@
 /**
+ * Get the longest string value of an array.
+ *
+ * For convenience, if the input is not an array, the given value is
+ * returned straight.
+ *
+ * @returns {string} - Longest string value in the array.
+ */
+export function arrayLongest(input) {
+    if (!Array.isArray(input))
+        return input;
+    /* sort by string length descending, return the first */
+    const cmp = (a, b) => a.length == b.length
+        ? 0 : (a.length < b.length ? 1 : -1);
+    return input.map((e) => String(e).replace(/\r/g, ''))
+                .sort(cmp)[0];
+}
+
+/**
  * Wrapper to navigator.clipboard.writeText() with fallback tentative
  * for non-secure contexts.
  * Source: https://stackoverflow.com/a/65996386
