@@ -160,7 +160,6 @@
 
         <v-bottom-navigation
             v-if="this.$route.meta.hasTimeline"
-            id="bottombar"
             fixed hide-on-scroll grow height=""
             :style="this.bottomBarStyle"
         >
