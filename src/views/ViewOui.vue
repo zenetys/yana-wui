@@ -73,18 +73,18 @@ export default {
             this.ouiMessage = 'Searching, please wait...';
 
             this.$api.base.getOui(this.ouiSearch)
-            .then((data) => {
-                this.ouiMessage = this.$utils.isEmptyObject(data)
-                    ? 'Nothing found' : data;
-            })
-            .catch(() => {
-                /* also notified by axios interceptor */
-                this.ouiMessage = 'OUI lookup query failed';
-            })
-            .finally(() => {
-                this.ouiDisabled = false;
-                this.$nextTick(() => this.$el.querySelector('textarea').focus());
-            });
+                .then((data) => {
+                    this.ouiMessage = this.$utils.isEmptyObject(data)
+                        ? 'Nothing found' : data;
+                })
+                .catch(() => {
+                    /* also notified by axios interceptor */
+                    this.ouiMessage = 'OUI lookup query failed';
+                })
+                .finally(() => {
+                    this.ouiDisabled = false;
+                    this.$nextTick(() => this.$el.querySelector('textarea').focus());
+                });
         },
     },
     watch: {
