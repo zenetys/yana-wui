@@ -479,13 +479,13 @@ export default {
 
                     this.entityTransitionInProgress = true;
                     this.$api.base.getDatabases(cur.entity, 'Failed to fetch entity databases')
-                    .then((availableDbs) => {
-                        this.entityDatabases = availableDbs;
-                        if (!cur.db)
-                            redirectToLastDbIfPossible('redirect to last database following entity change');
-                    })
-                    .catch(() => { /* notified by axios interceptor */ })
-                    .finally(() => { this.entityTransitionInProgress = false; });
+                        .then((availableDbs) => {
+                            this.entityDatabases = availableDbs;
+                            if (!cur.db)
+                                redirectToLastDbIfPossible('redirect to last database following entity change');
+                        })
+                        .catch(() => { /* notified by axios interceptor */ })
+                        .finally(() => { this.entityTransitionInProgress = false; });
                 }
                 /* default database redirect */
                 else if (!cur.db && !this.entityTransitionInProgress)
