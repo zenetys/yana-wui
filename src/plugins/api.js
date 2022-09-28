@@ -64,6 +64,10 @@ const apiBaseDefinition = {
             url: '/entity/' + encodeURIComponent(entity) + '/vlans',
             params: { database },
         }),
+        getOui: (search) => ({
+            url: '/oui',
+            params: { q: search },
+        }),
     },
 }
 

@@ -72,10 +72,7 @@ export default {
             this.ouiDisabled = true;
             this.ouiMessage = 'Searching, please wait...';
 
-            this.$api.axiosData({
-                url: '/oui',
-                params: { q: this.ouiSearch },
-            })
+            this.$api.base.getOui(this.ouiSearch)
             .then((data) => {
                 this.ouiMessage = this.$utils.isEmptyObject(data)
                     ? 'Nothing found' : data;
