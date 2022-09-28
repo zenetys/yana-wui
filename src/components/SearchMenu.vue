@@ -18,7 +18,7 @@
             @input="onSearchInput"
             @click="onSearchFocus();"
             @focus="onSearchFocus();"
-            @blur="onSearchBlur();"
+            @blur="onSearchBlur(); blur();"
         />
 
         <span v-show="searchValue.length == 0" class="shortcut">
@@ -205,10 +205,7 @@ export default {
             if (entry) {
                 console.log('SearchMenu: onSearchSubmit: emit submit');
                 this.$emit('submit', this.searchValue, entry);
-                /* this.showMenu = false is enough but (re)triggers focus
-                 * (ie. menu opens) on successive alt-tab, when back to the
-                 * browser window. */
-                this.blur();
+                this.showMenu = false; /* could do this.blur() to loose focus */
             }
         },
         onSearchFocus() {
