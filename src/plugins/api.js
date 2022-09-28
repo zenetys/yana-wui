@@ -41,6 +41,9 @@ const apiBaseDefinition = {
         getEntities: () => ({
             url: '/entities',
         }),
+        getDatabases: (entity) => ({
+            url: '/entity/' + encodeURIComponent(entity) + '/databases',
+        }),
         getInventory: (entity, database, search) => ({
             url: '/entity/' + encodeURIComponent(entity) + '/devices?short',
             params: { database, q: search },

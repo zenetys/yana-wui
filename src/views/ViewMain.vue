@@ -478,10 +478,7 @@ export default {
                         text: 'Entering entity ' + cur.entity, duration: 2000 });
 
                     this.entityTransitionInProgress = true;
-                    this.$api.axiosData(
-                        '/entity/' + encodeURIComponent(cur.entity) + '/databases',
-                        'Failed to fetch entity databases'
-                    )
+                    this.$api.base.getDatabases(cur.entity, 'Failed to fetch entity databases')
                     .then((availableDbs) => {
                         this.entityDatabases = availableDbs;
                         if (!cur.db)
