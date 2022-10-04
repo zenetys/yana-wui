@@ -124,7 +124,7 @@ export default {
                     return;
                 }
 
-                this.api = this.$api.base.getFdb(cur.entity, cur.database, cur.search);
+                this.api = this.$api.base._getFdb(cur.entity, cur.database, cur.search);
             },
         },
     },

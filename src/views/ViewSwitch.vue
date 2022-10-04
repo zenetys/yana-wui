@@ -206,7 +206,7 @@ export default {
          * Get all the information about the switch from the API
          */
         getDeviceInfo() {
-            this.api = this.$api.base.getInterfaces(this.apiStateParams.entity,
+            this.api = this.$api.base._getInterfaces(this.apiStateParams.entity,
                 this.apiStateParams.database, this.apiStateParams.id);
 
             this.$api.base.getDevice(this.apiStateParams.entity,

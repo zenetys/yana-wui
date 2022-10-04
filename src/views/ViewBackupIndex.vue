@@ -119,7 +119,7 @@ export default {
                     return;
                 }
 
-                this.api = this.$api.backup.getStats(this.$route.query.entity);
+                this.api = this.$api.backup._getStats(this.$route.query.entity);
             },
         },
     },

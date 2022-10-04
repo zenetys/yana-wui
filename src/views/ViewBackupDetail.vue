@@ -308,7 +308,7 @@ export default {
             immediate: true,
             handler(cur) {
                 console.log('ViewBackupDetail: watch/$route.params.name: cur =', cur);
-                this.apiLog = this.$api.backup.getLog(cur);
+                this.apiLog = this.$api.backup._getLog(cur);
             }
         },
         commitStateParams: {

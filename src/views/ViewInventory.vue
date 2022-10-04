@@ -311,7 +311,7 @@ export default {
                     return;
                 }
 
-                this.api = this.$api.base.getInventory(cur.entity, cur.database, cur.search);
+                this.api = this.$api.base._getInventory(cur.entity, cur.database, cur.search);
             },
         },
     },
