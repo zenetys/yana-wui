@@ -157,21 +157,33 @@ function cfgJson2Axios(jsonConfig, jsonConfigPrefix = '') {
  */
 const ApiProto = {
     /**
-     * Wrapper to axios that returns the response data.
+     * Wrapper to axios
      *
      * @param {string|AxiosRequestConfig} - Request URL as string, or axios
      *      request configuration as object. This is similar to what would be
      *      passed to axios().
      * @param {errorMessage} - Message to emit when the axios interceptor
      *      sees an error, used to indicate the context of th error.
-     * @returns {Promise} - Axios promise chained with a then() that returns
-     *      the response data.
+     *
+     * @returns {Promise<AxiosResponse|Error>} - The axios promise, that
+     *      resolves with an AxiosResponse object on success, or rejects with
+     *      an Error object on failure.
      */
-    axiosData(urlOrConfig, errorMessage) {
+    axios(urlOrConfig, errorMessage) {
         const config = typeof urlOrConfig === 'string' ? { url: urlOrConfig } : urlOrConfig;
         console.log(`api: ${this.id}/axiosData: config =`, config);
         Object.assign(config, { interceptorErrorMessage: errorMessage });
-        return this.axios(config).then((response) => response.data);
+        return this.axiosRaw(config);
+    },
+
+    /**
+     * Wrapper to axios that returns the response data
+     *
+     * Same as ApiProto.axios() but the promise resolves with the
+     * AxiosResponse data.
+     */
+    axiosData(...args) {
+        return this.axios(...args).then((response) => response.data);
     },
 }
 
@@ -188,16 +200,18 @@ export default {
         api.id = definition.id;
         api.methods = definition.methods;
         for (let m in api.methods) {
-            api[m] = function (...args) {
+            const factory = (targetFname) => function (...args) {
                 const argc = api.methods[m].length;
                 const axConfig = api.methods[m](...args.slice(0, argc));
-                return this.axiosData(axConfig, ...args.slice(argc));
+                return this[targetFname](axConfig, ...args.slice(argc));
             };
+            api[m] = factory('axiosData');
+            api['_' + m] = factory('axios');
         }
         /* axios instance with specific options for the api */
         const config = Object.assign({}, definition.config,
             cfgJson2Axios(this.jsonConfig, definition.jsonConfigPrefix));
-        api.axios = axiosInstance(config);
+        api.axiosRaw = axiosInstance(config);
         this[definition.id] = api;
     },
 
