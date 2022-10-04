@@ -164,7 +164,7 @@ export default {
                         }
                         return '';
                     },
-                    onHover: (input) => {
+                    getTooltip: (input) => {
                         if (Array.isArray(input)) {
                             return input.map((val) => val + '\n').join('');
                         }
