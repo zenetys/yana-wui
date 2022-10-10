@@ -3,5 +3,7 @@
     "API_TIMEOUT": 60000,
     "BACKUP_ENABLED": false,
     "BACKUP_API_BASE_URL": "/backup",
-    "BACKUP_API_TIMEOUT": 30000
+    "BACKUP_API_TIMEOUT": 30000,
+    "TTYD_ENABLED": false,
+    "TTYD_URL": "/ttyd"
 }

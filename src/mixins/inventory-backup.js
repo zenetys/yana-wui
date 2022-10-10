@@ -34,6 +34,12 @@ export default {
                 };
                 flags.push(`<a href="${this.$router.resolve(linkRoute).href}">` +
                     '<span class="z-flag mdi mdi-history"/></a>');
+
+                if (this.$api.jsonConfig.TTYD_ENABLED) {
+                    // FIXME: ugly escape...
+                    flags.push(`<a href="javascript:openTerminal('${escape(tableItem.backup)}');">` +
+                        '<span class="z-flag mdi mdi-console-line"/></a>');
+                }
             }
         },
 
@@ -66,5 +72,15 @@ export default {
         console.log('inventory-backup: register callbacks');
         this.dataReadyCallbacks.push(this.onTableDataReadyForBackup);
         this.flagFormatCallbacks.push(this.attachBackupFlag);
+        if (!window.openTerminal) {
+            const url = this.$api.jsonConfig.TTYD_URL || './ttyd';
+            window.openTerminal = function (escapedTarget) {
+                window.open(
+                    url + '?arg=' + escapedTarget,
+                    'ttyd: ' + unescape(escapedTarget),
+                    'location=no,toolbar=no,directories=no,menubar=no,resizable=yes,' +
+                        'scrollbars=yes,status=no,width=800,height=600');
+            }
+        }
     },
 }
