@@ -152,7 +152,7 @@ export default {
         pointColorSetter() {
             const colors = [];
             if (this.selectedDatabaseId &&
-                this.pointIndexFromDatabaseId[this.selectedDatabaseId]) {
+                this.pointIndexFromDatabaseId[this.selectedDatabaseId] !== undefined) {
                 colors[this.pointIndexFromDatabaseId[this.selectedDatabaseId]] = '#D100E4';
             }
             return colors;
