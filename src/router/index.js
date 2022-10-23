@@ -6,6 +6,7 @@ import ViewFdb from '@/views/ViewFdb.vue';
 import ViewHost from '@/views/ViewHost.vue';
 import ViewInventory from '@/views/ViewInventory.vue';
 import ViewMain from '@/views/ViewMain.vue';
+import ViewNetwork from '@/views/ViewNetwork.vue';
 import ViewOui from '@/views/ViewOui.vue';
 import ViewSwitch from '@/views/ViewSwitch.vue';
 import ViewVlanMatrix from '@/views/ViewVlanMatrix.vue';
@@ -174,6 +175,34 @@ const routes = [
                             icon: 'mdi-graph',
                         },
                     ],
+                },
+            },
+            {
+                path: '/main/network',
+                name: 'ViewNetwork',
+                component: ViewNetwork,
+                meta: {
+                    menu: [
+                        {
+                            label: 'Networks',
+                            icon: 'mdi-ip-outline',
+                        },
+                    ],
+                    search: [
+                        {
+                            label: 'Networks',
+                            icon: 'mdi-ip-outline',
+                        },
+                    ],
+                    buildHistory: (r) => {
+                        if (!r.query.search)
+                            return false;
+                        return {
+                            label: `networks / ${r.query.search}`,
+                            entry: { path: r.path, query: { search: r.query.search } },
+                        };
+                    },
+                    hasTimeline: true,
                 },
             },
             {

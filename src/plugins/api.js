@@ -56,6 +56,10 @@ const apiBaseDefinition = {
             url: '/entity/' + encodeURIComponent(entity) + '/interfaces',
             params: { database, id: deviceId },
         }),
+        getDevices: (entity, database, search) => ({
+            url: '/entity/' + encodeURIComponent(entity) + '/devices',
+            params: { database, q: search },
+        }),
         getDevice: (entity, database, deviceId) => ({
             url: '/entity/' + encodeURIComponent(entity) + '/devices',
             params: { database, id: deviceId },
@@ -67,6 +71,10 @@ const apiBaseDefinition = {
         getOui: (search) => ({
             url: '/oui',
             params: { q: search },
+        }),
+        getDump: (entity, database, table) => ({
+            url: '/entity/' + encodeURIComponent(entity) + '/dump',
+            params: { database, table },
         }),
     },
 }
