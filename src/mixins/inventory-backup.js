@@ -1,9 +1,11 @@
 export default {
     data: () => ({
         tableIndexForBackup: {},
-        columnDefinition: {
-            /* hide added property from the table */
-            backup: { hidden: true },
+        config: {
+            columns: {
+                /* hide added property from the table */
+                backup: { enabled: false },
+            },
         },
     }),
 
@@ -70,7 +72,7 @@ export default {
     },
     created() {
         console.log('inventory-backup: register callbacks');
-        this.dataReadyCallbacks.push(this.onTableDataReadyForBackup);
+        this.config.dataReady.push(this.onTableDataReadyForBackup);
         this.flagFormatCallbacks.push(this.attachBackupFlag);
         if (!window.openTerminal) {
             const url = this.$api.jsonConfig.TTYD_URL || './ttyd';

@@ -2,13 +2,8 @@
     <div>
         <AutoTable
             v-if="apiStateParams.search"
-            id="table-inventory-fdb"
-            :isPaginated="true"
-            :api="api"
-            array-data=""
-            height="auto"
-            :height-offsets="[-120]"
-            :column-definition="columnDefinition" />
+            :config="config"
+        />
         <span v-if="!apiStateParams.search">Please enter something to search</span>
     </div>
 </template>
@@ -21,6 +16,7 @@
 
 <script>
 import AutoTable from '@/components/AutoTable.vue';
+import { Config } from '@/components/AutoTable.vue';
 
 export default {
     name: 'ViewFdb',
@@ -29,75 +25,87 @@ export default {
     },
     data() {
         return {
-            api: '',
-            columnDefinition: {
-                swId: {
-                    hidden: true,
-                },
-                fdbMacDid: {
-                    hidden: true,
-                },
-                fdbMacDip: {
-                    format: this.$utils.unArray,
-                    getTooltip: (input) => {
-                        return input ? (Array.isArray(input) ? input.join('\n') : input) : '';
+            config: new Config({
+                id: 'table-inventory-fdb',
+                api: '',
+                height: 'auto',
+                paginated: true,
+                heightOffsets: [-120],
+                path: '',
+                columns: {
+                    swId: {
+                        enabled: false,
                     },
-                    getStyle: () => 'color: #666;',
-                },
-                swName: {
-                    /**
-                     * Format the switch name to generate an anchor tag linking to the device
-                     * @param {string} input - The switch name
-                     * @param {object} tableItem - The corresponding table item
-                     * @return {string} - The anchor tag for the switch name
-                     */
-                    format: (input, tableItem) => {
-                        input = this.$utils.unArray(input);
-                        return this.$utils.generateDeviceAnchorTag(
-                            tableItem.swId,
-                            input,
-                            'switch',
-                            this.$route,
-                            this.$router
-                        );
+                    fdbMacDid: {
+                        enabled: false,
                     },
-                    isHtml: true,
-                },
-                swIfUplink: {
-                    /**
-                     * Format the swIfUplink value to generate an anchor tag linking to the device
-                     * @param {string} input - The device name
-                     * @return {string} - The anchor tag generated
-                     */
-                    format: (input) => {
-                        input = this.$utils.unArray(input);
-
-                        let output = '';
-
-                        if (input) {
-                            output =
-                                this.$utils.generateDeviceAnchorTag(
-                                    input.id,
-                                    input.name,
-                                    'switch',
-                                    this.$route,
-                                    this.$router
-                                ) + input.iface;
-                        }
-                        return output;
+                    fdbMacDip: {
+                        formatText: this.$utils.unArray,
+                        tooltip: (input) => {
+                            return input ? (Array.isArray(input) ? input.join('\n') : input) : '';
+                        },
+                        cssStyle: () => 'color: #666;',
                     },
-                    getTooltip: (inputs) => {
-                        let tooltip = [];
-
-                        if (inputs) {
-                            tooltip = inputs.map((input) => input.name + ' ' + input.iface);
-                        }
-
-                        return tooltip.join('\n');
+                    swName: {
+                        formatText: this.$utils.unArray,
+                        /**
+                         * Format the switch name to generate an anchor tag linking to the device
+                         * @param {string} input - The switch name
+                         * @param {object} tableItem - The corresponding table item
+                         * @return {string} - The anchor tag for the switch name
+                         */
+                        formatHtml: (input, tableItem) => {
+                            input = this.$utils.unArray(input);
+                            return this.$utils.generateDeviceAnchorTag(
+                                tableItem.swId,
+                                input,
+                                'switch',
+                                this.$route,
+                                this.$router
+                            );
+                        },
+                        isHtml: true,
                     },
-                    isHtml: true,
+                    swIfUplink: {
+                        formatText: (input) => {
+                            const item = this.$utils.unArray(input)
+                            return item ? item.name + ' ' + item.iface : '';
+                        },
+                        /**
+                         * Format the swIfUplink value to generate an anchor tag linking to the device
+                         * @param {string} input - The device name
+                         * @return {string} - The anchor tag generated
+                         */
+                        formatHtml: (input) => {
+                            input = this.$utils.unArray(input);
+
+                            let output = '';
+
+                            if (input) {
+                                output =
+                                    this.$utils.generateDeviceAnchorTag(
+                                        input.id,
+                                        input.name,
+                                        'switch',
+                                        this.$route,
+                                        this.$router
+                                    ) + input.iface;
+                            }
+                            return output;
+                        },
+                        tooltip: (inputs) => {
+                            let tooltip = [];
+
+                            if (inputs) {
+                                tooltip = inputs.map((input) => input.name + ' ' + input.iface);
+                            }
+
+                            return tooltip.join('\n');
+                        },
+                        isHtml: true,
+                    },
                 },
-            },
+            })
         };
     },
     computed: {
@@ -124,7 +132,7 @@ export default {
                     return;
                 }
 
-                this.api = this.$api.base._getFdb(cur.entity, cur.database, cur.search);
+                this.config.api = this.$api.base._getFdb(cur.entity, cur.database, cur.search);
             },
         },
     },

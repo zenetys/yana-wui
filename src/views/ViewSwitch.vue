@@ -25,15 +25,7 @@
             </tbody>
         </table>
 
-        <AutoTable
-            id="table-switch"
-            :pagination="false"
-            :api="api"
-            array-data=""
-            height="auto"
-            :height-offsets="[-120]"
-            :column-definition="columnDefinition"
-            :item-class="itemClass" />
+        <AutoTable :config="config" />
     </div>
 </template>
 
@@ -81,7 +73,51 @@
 </style>
 
 <script>
+/**
+ * Get a custom class for table items that have a meta field
+ * @param {string} itemKey - the key of the table item
+ * @param {object} tableItem - the table item
+ * @return {string} class to apply
+ */
+function getClass(itemKey, tableItem) {
+    if (tableItem && tableItem._meta && tableItem._meta[itemKey])
+        return tableItem._meta[itemKey].level !== undefined ? 'level-' + tableItem._meta[itemKey].level : '';
+    return '';
+}
+
+/**
+ * Get a custom title for table items that have a meta field
+ * @param {string} itemKey - the key of the table item
+ * @param {object} tableItem - the table item
+ * @return {string} title to apply
+ */
+function getTitle(itemKey, tableItem) {
+    if (tableItem?._meta[itemKey]?.text) {
+        return Array.isArray(tableItem._meta[itemKey].text)
+            ? tableItem._meta[itemKey].text.join('\n')
+            : tableItem._meta[itemKey].text;
+    }
+
+    return '';
+}
+
+/**
+ * Get the class for a table item depending on its status
+ * @param {string} item - the item to get the class for
+ * @return {string} - classes to apply to the table item
+ */
+function itemClass(item) {
+    let classes = '';
+
+    if (item.status) {
+        classes += 'status-' + item.status.toLowerCase().replace(/[^a-z0-9]/g, '-');
+    }
+
+    return classes;
+}
+
 import AutoTable from '@/components/AutoTable.vue';
+import { Config } from '@/components/AutoTable.vue';
 
 export default {
     name: 'SwitchView',
@@ -90,93 +126,96 @@ export default {
     },
     data() {
         return {
-            columnDefinition: {
-                did: {
-                    hidden: true,
-                },
-                dname: {
-                    hidden: true,
-                },
-                hwAddr: {},
-                name: {},
-                description: {
-                    getClass: (tableItem) => this.getClass('description', tableItem),
-                    getTitle: (tableItem) => this.getTitle('description', tableItem),
-                },
-                status: {
-                    getClass: (tableItem) => this.getClass('status', tableItem),
-                    getTitle: (tableItem) => this.getTitle('status', tableItem),
-                },
-                speed: {
-                    getClass: (tableItem) => this.getClass('speed', tableItem),
-                    getTitle: (tableItem) => this.getTitle('speed', tableItem),
-                },
-                group: {},
-                mode: {
-                    getClass: (tableItem) => this.getClass('mode', tableItem),
-                    getTitle: (tableItem) => this.getTitle('mode', tableItem),
-                },
-                pvlan: {
-                    getClass: (tableItem) => this.getClass('pvlan', tableItem),
-                    getTitle: (tableItem) => this.getTitle('pvlan', tableItem),
-                },
-                untagged: {
-                    getClass: (tableItem) => this.getClass('untagged', tableItem),
-                    getTitle: (tableItem) => this.getTitle('untagged', tableItem),
-                },
-                tagged: {
-                    getClass: (tableItem) => this.getClass('tagged', tableItem),
-                    getTitle: (tableItem) => this.getTitle('tagged', tableItem),
-                    getStyle: () => 'white-space: normal;',
-                },
-                peers: {
-                    getStyle: () => 'white-space: normal;',
-                    /**
-                     * Format peers to generate a links to devices
-                     * @param {array} peers - array of peers
-                     * @return {string} - joined HTML links of formatted peers
-                     */
-                    format: (peers) => {
-                        peers ||= []; /* may be null */
-                        const peerRouteBase = { name: 'ViewSwitch' };
-                        peerRouteBase.query = this.$route.query;
-                        peerRouteBase.params = { ...this.$route.params };
+            device: {},
+            config: new Config({
+                id: 'table-switch',
+                api: '',
+                height: 'auto',
+                paginated: false,
+                heightOffsets: [-120],
+                itemClass: itemClass,
+                columns: {
+                    did: {
+                        enabled: false,
+                    },
+                    dname: {
+                        enabled: false,
+                    },
+                    description: {
+                        cssClass: (tableItem) => getClass('description', tableItem),
+                        getTitle: (tableItem) => getTitle('description', tableItem),
+                    },
+                    status: {
+                        cssClass: (tableItem) => getClass('status', tableItem),
+                        getTitle: (tableItem) => getTitle('status', tableItem),
+                    },
+                    speed: {
+                        cssClass: (tableItem) => getClass('speed', tableItem),
+                        getTitle: (tableItem) => getTitle('speed', tableItem),
+                    },
+                    mode: {
+                        cssClass: (tableItem) => getClass('mode', tableItem),
+                        getTitle: (tableItem) => getTitle('mode', tableItem),
+                    },
+                    pvlan: {
+                        cssClass: (tableItem) => getClass('pvlan', tableItem),
+                        getTitle: (tableItem) => getTitle('pvlan', tableItem),
+                    },
+                    untagged: {
+                        cssClass: (tableItem) => getClass('untagged', tableItem),
+                        getTitle: (tableItem) => getTitle('untagged', tableItem),
+                    },
+                    tagged: {
+                        cssClass: (tableItem) => getClass('tagged', tableItem),
+                        getTitle: (tableItem) => getTitle('tagged', tableItem),
+                        cssStyle: () => 'white-space: normal;',
+                    },
+                    peers: {
+                        cssStyle: () => 'white-space: normal;',
+                        /**
+                         * Format peers to generate a links to devices
+                         * @param {array} peers - array of peers
+                         * @return {string} - joined HTML links of formatted peers
+                         */
+                        formatHtml: (peers) => {
+                            peers ||= []; /* may be null */
+                            const peerRouteBase = { name: 'ViewSwitch' };
+                            peerRouteBase.query = this.$route.query;
+                            peerRouteBase.params = { ...this.$route.params };
 
-                        const formattedPeers = peers.map((peer) => {
-                            let label = peer.label;
+                            const formattedPeers = peers.map((peer) => {
+                                let label = peer.label;
 
-                            if (peer.type?.includes('switch')) {
-                                if (peer.id) {
-                                    const peerRoute = peerRouteBase;
-                                    peerRoute.params.id = peer.id;
-                                    /** Working URL fully generated with params & query params */
-                                    const peerLink = this.$router.resolve(peerRoute).href;
-                                    label = `<a href="${peerLink}">${label}</a>`;
+                                if (peer.type?.includes('switch')) {
+                                    if (peer.id) {
+                                        const peerRoute = peerRouteBase;
+                                        peerRoute.params.id = peer.id;
+                                        /** Working URL fully generated with params & query params */
+                                        const peerLink = this.$router.resolve(peerRoute).href;
+                                        label = `<a href="${peerLink}">${label}</a>`;
+                                    }
+                                    label = '<span class="mdi mdi-swap-horizontal-bold"></span> ' + label;
                                 }
-                                label = '<span class="mdi mdi-swap-horizontal-bold"></span> ' + label;
-                            }
 
-                            const tab = [];
-                            Object.keys(peer).forEach((key) => {
-                                if (key !== 'label' && key !== 'id') {
-                                    tab.push(key + ': ' + peer[key]);
-                                }
+                                const tab = [];
+                                Object.keys(peer).forEach((key) => {
+                                    if (key !== 'label' && key !== 'id') {
+                                        tab.push(key + ': ' + peer[key]);
+                                    }
+                                });
+
+                                return '<span class="nowrap" title="' + tab.join('\n') + '">' + label + '</span>';
                             });
 
-                            return '<span class="nowrap" title="' + tab.join('\n') + '">' + label + '</span>';
-                        });
-
-                        return formattedPeers.join(', ');
+                            return formattedPeers.join(', ');
+                        },
+                        isHtml: true,
                     },
-                    isHtml: true,
-                },
-                _meta: {
-                    hidden: true,
-                },
-            },
-            tableHeight: 0,
-            device: {},
-            api: '',
+                    _meta: {
+                        enabled: false,
+                    },
+                }
+            }),
         };
     },
     computed: {
@@ -207,51 +246,13 @@ export default {
          * Get all the information about the switch from the API
          */
         getDeviceInfo() {
-            this.api = this.$api.base._getInterfaces(this.apiStateParams.entity,
+            this.config.api = this.$api.base._getInterfaces(this.apiStateParams.entity,
                 this.apiStateParams.database, this.apiStateParams.id);
 
             this.$api.base.getDevice(this.apiStateParams.entity,
                 this.apiStateParams.database, this.apiStateParams.id)
                 .then((data) => { this.device = data; })
                 .catch(() => { this.device = {}; })
-        },
-        /**
-         * Get the class for a table item depending on its status
-         * @param {string} item - the item to get the class for
-         * @return {string} - classes to apply to the table item
-         */
-        itemClass(item) {
-            let classes = '';
-
-            if (item.status) classes += 'status-' + item.status.toLowerCase().replace(/[^a-z0-9]/g, '-');
-
-            return classes;
-        },
-        /**
-         * Get a custom class for table items that have a meta field
-         * @param {string} itemKey - the key of the table item
-         * @param {object} tableItem - the table item
-         * @return {string} class to apply
-         */
-        getClass(itemKey, tableItem) {
-            if (tableItem && tableItem._meta && tableItem._meta[itemKey])
-                return tableItem._meta[itemKey].level !== undefined ? 'level-' + tableItem._meta[itemKey].level : '';
-            return '';
-        },
-        /**
-         * Get a custom title for table items that have a meta field
-         * @param {string} itemKey - the key of the table item
-         * @param {object} tableItem - the table item
-         * @return {string} title to apply
-         */
-        getTitle(itemKey, tableItem) {
-            if (tableItem?._meta[itemKey]?.text) {
-                return Array.isArray(tableItem._meta[itemKey].text)
-                    ? tableItem._meta[itemKey].text.join('\n')
-                    : tableItem._meta[itemKey].text;
-            }
-
-            return '';
         },
     },
     watch: {

@@ -1,13 +1,6 @@
 <template>
     <AutoTable
-        id="table-backup-index"
-        :isPaginated="true"
-        :api="api"
-        height="auto"
-        :height-offsets="[-13]"
-        :column-definition="columnDefinition"
-        :search="$route.query.search"
-        :on-data-ready-sync="[ onTableDataReady ]"
+        :config="config"
     />
 </template>
 
@@ -26,6 +19,7 @@
 
 <script>
 import AutoTable from '@/components/AutoTable.vue';
+import { Config } from '@/components/AutoTable.vue';
 
 export default {
     name: 'ViewBackupIndex',
@@ -34,58 +28,66 @@ export default {
     },
     data() {
         return {
-            api: undefined,
-            columnDefinition: {
-                device: {
-                    order: 200,
-                    isHtml: true,
-                    format: (input) => {
-                        const linkRoute = {
-                            name: 'ViewBackupDetail',
-                            params: { name: input },
-                            query: this.$route.query,
-                        };
-                        const linkText = this.$utils.simplifyDeviceName(input);
-                        return `<a href="${this.$router.resolve(linkRoute).href}">${linkText}</a>`;
+            config: new Config({
+                id: 'table-backup-index',
+                api: '',
+                height: 'auto',
+                paginated: true,
+                heightOffsets: [-13],
+                search: '',
+                dataReady: [ this.onTableDataReady ],
+                columns: {
+                    device: {
+                        order: 200,
+                        isHtml: true,
+                        formatHtml: (input) => {
+                            const linkRoute = {
+                                name: 'ViewBackupDetail',
+                                params: { name: input },
+                                query: this.$route.query,
+                            };
+                            const linkText = this.$utils.simplifyDeviceName(input);
+                            return `<a href="${this.$router.resolve(linkRoute).href}">${linkText}</a>`;
+                        },
+                    },
+                    mtime: {
+                        order: 300,
+                        label: 'Last run',
+                        formatText: (input) => this.$utils.formatDate(input * 1000, {
+                            tzOffset: false,
+                            timeSeparator: ' ',
+                            milliseconds: false,
+                        }),
+                    },
+                    age: {
+                        order: 400,
+                        formatText: (input, tableItem) => this.$utils.formatDuration(tableItem.age),
+                        cssClass: (tableItem) => {
+                            if (tableItem.age > 86400*3)
+                                return 'z-critical';
+                            if (tableItem.age > 86400*2)
+                                return 'z-warning';
+                            return '';
+                        },
+                    },
+                    size: {
+                        order: 500,
+                        formatText: (input) => this.$utils.formatNumber(input, 1024, ' ') + 'iB',
+                        cssClass: (tableItem) => (tableItem.size == 0) ? 'z-critical' : '',
+                    },
+                    type: {
+                        order: 600,
+                        label: 'Mode',
+                    },
+                    state: {
+                        order: 700,
+                        cssClass: (tableItem) => (tableItem.state == 'active') ? '' : 'z-critical',
+                    },
+                    comment: {
+                        order: 800,
                     },
                 },
-                mtime: {
-                    order: 300,
-                    label: 'Last run',
-                    format: (input) => this.$utils.formatDate(input * 1000, {
-                        tzOffset: false,
-                        timeSeparator: ' ',
-                        milliseconds: false,
-                    }),
-                },
-                age: {
-                    order: 400,
-                    format: (input, tableItem) => this.$utils.formatDuration(tableItem.age),
-                    getClass: (tableItem) => {
-                        if (tableItem.age > 86400*3)
-                            return 'z-critical';
-                        if (tableItem.age > 86400*2)
-                            return 'z-warning';
-                        return '';
-                    },
-                },
-                size: {
-                    order: 500,
-                    format: (input) => this.$utils.formatNumber(input, 1024, ' ') + 'iB',
-                    getClass: (tableItem) => (tableItem.size == 0) ? 'z-critical' : '',
-                },
-                type: {
-                    order: 600,
-                    label: 'Mode',
-                },
-                state: {
-                    order: 700,
-                    getClass: (tableItem) => (tableItem.state == 'active') ? '' : 'z-critical',
-                },
-                comment: {
-                    order: 800,
-                },
-            },
+            }),
         };
     },
     methods: {
@@ -123,8 +125,14 @@ export default {
                     return;
                 }
 
-                this.api = this.$api.backup._getStats(this.$route.query.entity);
+                this.config.api = this.$api.backup._getStats(this.$route.query.entity);
             },
+        },
+        '$route.query.search': {
+            immediate: true,
+            handler(cur) {
+                this.config.search = cur;
+            }
         },
     },
 };

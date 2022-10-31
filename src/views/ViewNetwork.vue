@@ -50,15 +50,7 @@
             </v-chip>
 
         </div>
-        <auto-table
-            id="table-network"
-            :isPaginated="false"
-            :api="dataPromise"
-            height="auto"
-            :height-offsets="[-120]"
-            :column-definition="columnDefinition"
-            :search="$route.query.search"
-        >
+        <auto-table :config="config" >
             <template v-slot:render-cell-vlans="{ value }">
                 <span v-for="(vlan, i) in value" :key="i" :title="vlan.name && vlan.name.join('\n')">
                     <span v-if="i > 0" class="z-vlan-sep">, </span>
@@ -118,6 +110,7 @@
 
 <script>
 import AutoTable from '@/components/AutoTable.vue';
+import { Config } from '@/components/AutoTable.vue';
 
 /* ip lib */
 
@@ -519,37 +512,46 @@ export default {
                 mbitsBound: 30,
                 pub: true,
             },
-            dataPromise: undefined,
-            columnDefinition: {
-                flag: {
-                    label: '',
-                    format: (v, o) => o.cidr == 'other' ? '' : '<span class="mdi mdi-ip" />',
-                    isHtml: true,
-                    getClass: () => 'nocp',
-                },
-                mbits: { hidden: true },
-                ipUsage: {
-                    format: (v) => v && Math.round(v) + '%',
-                    getClass: (o) => {
-                        if (o.ipUsage) {
-                            if (o.ipUsage >= 80)
-                                return 'z-critical';
-                            if (o.ipUsage >= 65)
-                                return 'z-warning';
-                        }
-                        return '';
+            config: new Config({
+                id: 'table-network',
+                api: '',
+                height: 'auto',
+                paginated: false,
+                heightOffsets: [-120],
+                search: '',
+                columns: {
+                    flag: {
+                        label: '',
+                        formatHtml: (v, o) => o.cidr == 'other' ? '' : '<span class="mdi mdi-ip" />',
+                        isHtml: true,
+                        cssClass: () => 'nocp',
+                    },
+                    mbits: {
+                        enabled: false,
+                    },
+                    ipUsage: {
+                        formatText: (v) => v && Math.round(v) + '%',
+                        cssClass: (o) => {
+                            if (o.ipUsage) {
+                                if (o.ipUsage >= 80)
+                                    return 'z-critical';
+                                if (o.ipUsage >= 65)
+                                    return 'z-warning';
+                            }
+                            return '';
+                        },
+                    },
+                    routers: {
+                        formatText: (v) => v && v.join(', '),
+                        order: 2000,
+                    },
+                    vlans: {
+                        slotName: 'render-cell-vlans',
+                        cssClass: (o) => o.vlans && o.vlans.length > 1 ? 'z-warning' : '',
+                        order: 3000,
                     },
                 },
-                routers: {
-                    format: (v) => v && v.join(', '),
-                    order: 2000,
-                },
-                vlans: {
-                    slotName: 'render-cell-vlans',
-                    getClass: (o) => o.vlans && o.vlans.length > 1 ? 'z-warning' : '',
-                    order: 3000,
-                },
-            },
+            }),
         };
     },
     methods: {
@@ -611,8 +613,14 @@ export default {
                     return;
                 }
 
-                this.dataPromise = this.getData(cur.entity, cur.database);
+                this.config.api = this.getData(cur.entity, cur.database);
             },
+        },
+        '$route.query.search': {
+            immediate: true,
+            handler(cur) {
+                this.config.search = cur;
+            }
         },
     },
 };

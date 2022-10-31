@@ -8,16 +8,8 @@
                     </div>
 
                     <AutoTable
-                        :api="apiLog"
-                        height=""
-                        width=""
-                        :column-definition="columnsLog"
-                        :custom-headers-computation="computeLogHeaders"
-                        :on-data-ready-sync="[ onLogDataReady ]"
-                        :activeCopyCellContent="false"
+                        :config="config"
                         class="commit-log"
-                        :item-class="getLogRowClass"
-                        :item-click="onLogRowClick"
                     >
                         <template v-slot:render-cell-lines="{ value, item }">
                             <span class="removed">{{ item.deletion }}</span>
@@ -168,6 +160,7 @@
 
 <script>
 import AutoTable from '@/components/AutoTable.vue';
+import { Config } from '@/components/AutoTable.vue';
 
 const htmlize = (raw) => raw.replace(/&/g, '&amp;')
                             .replace(/>/g, '&gt;')
@@ -181,37 +174,45 @@ export default {
     },
     data() {
         return {
-            apiLog: undefined,
-            columnsLog: {
-                id: { hidden: true },
-                deletion: { hidden: true },
-                insertion: { hidden: true },
-                date: {
-                    label: 'Age',
-                    order: 100,
-                    format: (value) => {
-                        value = value.replace(' ', 'T').replace(' ', '');
-                        const now = new Date().getTime();
-                        const commitDate = new Date(value).getTime();
-                        return this.$utils.formatDuration((now - commitDate) / 1000);
+            config: new Config({
+                id: 'table-backup-log',
+                api: '',
+                customHeadersComputation: this.computeLogHeaders,
+                dataReady: [ this.onLogDataReady ],
+                itemClass: this.getLogRowClass,
+                clickable: this.onLogRowClick,
+                copyable: false,
+                columns: {
+                    id: { enabled: false },
+                    deletion: { enabled: false },
+                    insertion: { enabled: false },
+                    date: {
+                        label: 'Age',
+                        order: 100,
+                        formatText: (value) => {
+                            value = value.replace(' ', 'T').replace(' ', '');
+                            const now = new Date().getTime();
+                            const commitDate = new Date(value).getTime();
+                            return this.$utils.formatDuration((now - commitDate) / 1000);
+                        },
+                        tooltip: (value) => this.$utils.formatDate(value, {
+                            tzOffset: false,
+                            timeSeparator: ' ',
+                            milliseconds: false,
+                        }),
                     },
-                    getTooltip: (value) => this.$utils.formatDate(value, {
-                        tzOffset: false,
-                        timeSeparator: ' ',
-                        milliseconds: false,
-                    }),
+                    subject: {
+                        order: 200,
+                    },
+                    author: {
+                        order: 300,
+                    },
+                    lines: {
+                        order: 400,
+                        slotName: 'render-cell-lines',
+                    },
                 },
-                subject: {
-                    order: 200,
-                },
-                author: {
-                    order: 300,
-                },
-                lines: {
-                    order: 400,
-                    slotName: 'render-cell-lines',
-                },
-            },
+            }),
             dataDiff: undefined,
             dataShow: undefined,
             isLoading: false,
@@ -307,7 +308,7 @@ export default {
             immediate: true,
             handler(cur) {
                 console.log('ViewBackupDetail: watch/$route.params.name: cur =', cur);
-                this.apiLog = this.$api.backup._getLog(cur);
+                this.config.api = this.$api.backup._getLog(cur);
             }
         },
         commitStateParams: {

@@ -1,14 +1,6 @@
 <template>
-    <auto-table
-        id="table-inventory-devices"
-        :isPaginated="true"
-        :api="api"
-        array-data=""
-        height="auto"
-        :height-offsets="[-120]"
-        :column-definition="columnDefinition"
-        :custom-headers-computation="computeHeaders"
-        :on-data-ready-sync="dataReadyCallbacks"
+    <AutoTable
+        :config="config"
     />
 </template>
 
@@ -79,6 +71,15 @@
 
 <script>
 import AutoTable from '@/components/AutoTable.vue';
+import { Config } from '@/components/AutoTable.vue';
+
+/**
+ * Compute the headers
+ * @param {array<object>} headers
+ */
+function computeHeaders(headers) {
+    headers.unshift({ value: 'flag' });
+}
 
 export default {
     name: 'ViewInventory',
@@ -87,195 +88,201 @@ export default {
     },
     data() {
         return {
-            api: '',
-            columnDefinition: {
-                flag: {
-                    /**
-                     * Format the flag column and apply different icons depending on device type
-                     * @param {*} input -
-                     * @param {object} tableItem - The table item to format the flag for
-                     * @return {string} - An HTML element with the corresponding icon
-                     */
-                    format: (input, tableItem) => {
-                        const type = this.$utils.unArray(tableItem.type)
-                            ? this.$utils.unArray(tableItem.type).toLowerCase()
-                            : '';
-                        const descr = this.$utils.unArray(tableItem.description)
-                            ? this.$utils.unArray(tableItem.description).toLowerCase()
-                            : '';
+            config: new Config({
+                id: 'table-inventory-devices',
+                api: '',
+                height: 'auto',
+                paginated: true,
+                heightOffsets: [-120],
+                customHeadersComputation: computeHeaders,
+                dataReady: [],
+                path: '',
+                columns: {
+                    flag: {
+                        /**
+                         * Format the flag column and apply different icons depending on device type
+                         * @param {*} input -
+                         * @param {object} tableItem - The table item to format the flag for
+                         * @return {string} - An HTML element with the corresponding icon
+                         */
+                        formatHtml: (input, tableItem) => {
+                            const type = this.$utils.unArray(tableItem.type)
+                                ? this.$utils.unArray(tableItem.type).toLowerCase()
+                                : '';
+                            const descr = this.$utils.unArray(tableItem.description)
+                                ? this.$utils.unArray(tableItem.description).toLowerCase()
+                                : '';
 
-                        const flags = [];
-                        let flagType;
+                            const flags = [];
+                            let flagType;
 
-                        if (type) {
-                            if (type.includes('switch'))
-                                flagType = '<span class="z-flag mdi mdi-swap-horizontal-bold"></span>';
-                            else if (type.includes('router'))
-                                flagType = '<span class="z-flag mdi mdi-router"></span>';
-                            else if (type.includes('wlan'))
-                                flagType = '<span class="z-flag mdi mdi-wifi"></span>';
-                            else if (type.includes('phone'))
-                                flagType = '<span class="z-flag mdi mdi-phone"></span>';
-                            else if (type.includes('print'))
-                                flagType = '<span class="z-flag mdi mdi-printer"></span>';
-                        }
-                        if (!flagType && descr) {
-                            if (descr.includes('linux'))
-                                flagType = '<span class="z-flag mdi mdi-linux"></span>';
-                            else if (descr.includes('windows'))
-                                flagType = '<span class="z-flag mdi mdi-microsoft-windows"></span>';
-                            else if (descr.includes('print'))
-                                flagType = '<span class="z-flag mdi mdi-printer"></span>';
-                        }
-                        if (!flagType)
-                            flagType = '<span class="z-flag mdi mdi-monitor-small"></span>';
-                        flags.push(flagType);
-
-                        for (let cb of this.flagFormatCallbacks)
-                            cb(tableItem, flags);
-
-                        return flags.join('');
-                    },
-                    isHtml: true,
-                    getClass: () => 'nocp',
-                    label: '',
-                },
-                id: {
-                    format: this.$utils.unArray,
-                    hidden: true,
-                },
-                ip: {
-                    /**
-                     * Format the IP and create a link to the corresponding device
-                     * @param {string} input
-                     * @param {object} tableItem - the corresponding table item
-                     * @return {string} - The formatted IP as an anchor tag linking to a device
-                     */
-                    format: (input, tableItem) => {
-                        const inputValue = this.$utils.unArray(input);
-
-                        if (inputValue) {
-                            const type = this.$utils.unArray(tableItem.type);
-
-                            if (type && type.toLowerCase().includes('switch')) {
-                                return this.fetchDeviceAnchorTag(tableItem.id, inputValue, 'switch');
+                            if (type) {
+                                if (type.includes('switch'))
+                                    flagType = '<span class="z-flag mdi mdi-swap-horizontal-bold"></span>';
+                                else if (type.includes('router'))
+                                    flagType = '<span class="z-flag mdi mdi-router"></span>';
+                                else if (type.includes('wlan'))
+                                    flagType = '<span class="z-flag mdi mdi-wifi"></span>';
+                                else if (type.includes('phone'))
+                                    flagType = '<span class="z-flag mdi mdi-phone"></span>';
+                                else if (type.includes('print'))
+                                    flagType = '<span class="z-flag mdi mdi-printer"></span>';
                             }
-                            return this.fetchDeviceAnchorTag(tableItem.id, inputValue, 'host');
-                        }
-                        return '';
-                    },
-                    getTooltip: (input) => {
-                        if (Array.isArray(input)) {
-                            return input.map((val) => val + '\n').join('');
-                        }
-                        return String(input);
-                    },
-                    label: 'IP',
-                    isHtml: true,
-                },
-                name: {
-                    /**
-                     * Format the name and create a link to the corresponding device
-                     * @param {string} input
-                     * @param {object} tableItem - the corresponding table item
-                     * @return {string} - The formatted name as an anchor tag linking to a device
-                     */
-                    format: (input, tableItem) => {
-                        input = this.$utils.unArray(input);
-
-                        if (input) {
-                            const type = this.$utils.unArray(tableItem.type);
-
-                            if (type && type.toLowerCase().includes('switch')) {
-                                return this.fetchDeviceAnchorTag(tableItem.id, input, 'switch');
+                            if (!flagType && descr) {
+                                if (descr.includes('linux'))
+                                    flagType = '<span class="z-flag mdi mdi-linux"></span>';
+                                else if (descr.includes('windows'))
+                                    flagType = '<span class="z-flag mdi mdi-microsoft-windows"></span>';
+                                else if (descr.includes('print'))
+                                    flagType = '<span class="z-flag mdi mdi-printer"></span>';
                             }
-                            return this.fetchDeviceAnchorTag(tableItem.id, input, 'host');
-                        }
-                        return '';
+                            if (!flagType)
+                                flagType = '<span class="z-flag mdi mdi-monitor-small"></span>';
+                            flags.push(flagType);
+
+                            for (let cb of this.flagFormatCallbacks)
+                                cb(tableItem, flags);
+
+                            return flags.join('');
+                        },
+                        formatText: this.$utils.unArray,
+                        isHtml: true,
+                        cssClass: () => 'nocp',
+                        label: '',
                     },
-                    isHtml: true,
-                },
-                location: {
-                    format: this.$utils.unArray,
-                },
-                description: {
-                    format: (input) => this.$utils.arrayLongest(input),
-                    getTooltip: (input) => this.$utils.arrayLongest(input),
-                },
-                type: {
-                    format: this.$utils.unArray,
-                },
-                mac: {
-                    format: this.$utils.unArray,
-                },
-                capabilities: {
-                    format: this.$utils.unArray,
-                },
-                swPort: {
-                    /**
-                     * Format the switch port value, create a link to the corresponding device,
-                     * display the interface and the amount of additional ports
-                     * @param {string} input
-                     * @return {string} - The formatted switch port as an anchor tag linking to a device
-                     */
-                    format: (input) => {
-                        const total = Array.isArray(input) ? input.length : input ? 1 : 0;
-                        const firstValue = this.$utils.unArray(input);
-                        let formatted = '<span class="nowrap">';
-
-                        if (firstValue) {
-                            formatted +=
-                                '<span class="mdi mdi-swap-horizontal-bold"></span>' +
-                                this.fetchDeviceAnchorTag(firstValue.id, firstValue.name, 'switch') +
-                                firstValue.iface;
-                            if (total > 1)
-                                formatted += ` <span class="additional-ports-counter">(+${total - 1})</span>`;
-                        }
-                        formatted += '</span>';
-
-                        return formatted;
+                    id: {
+                        formatText: this.$utils.unArray,
+                        enabled: false,
                     },
-                    /**
-                     * Generate a tooltip for the switch port
-                     * @param {any[]} inputs -
-                     * @return {string} - The generated tooltip
-                     */
-                    getTooltip: (inputs) => {
-                        let tooltip = [];
+                    ip: {
+                        /**
+                         * Format the IP and create a link to the corresponding device
+                         * @param {string} input
+                         * @param {object} tableItem - the corresponding table item
+                         * @return {string} - The formatted IP as an anchor tag linking to a device
+                         */
+                        formatHtml: (input, tableItem) => {
+                            const inputValue = this.$utils.unArray(input);
 
-                        if (inputs) {
-                            tooltip = inputs.map((value) => {
-                                let current = value.name + ' ' + value.iface;
+                            if (inputValue) {
+                                const type = this.$utils.unArray(tableItem.type);
 
-                                if (value.count) {
-                                    current += ' (' + value.count + ' mac' + (value.count > 1 ? 's' : '') + ')';
+                                if (type && type.toLowerCase().includes('switch')) {
+                                    return this.fetchDeviceAnchorTag(tableItem.id, inputValue, 'switch');
                                 }
-
-                                return current;
-                            });
-                        }
-                        return tooltip.join('\n');
+                                return this.fetchDeviceAnchorTag(tableItem.id, inputValue, 'host');
+                            }
+                            return '';
+                        },
+                        formatText: this.$utils.unArray,
+                        tooltip: (input) => {
+                            if (Array.isArray(input)) {
+                                return input.map((val) => val + '\n').join('');
+                            }
+                            return String(input);
+                        },
+                        label: 'IP',
+                        isHtml: true,
                     },
-                    isHtml: true,
-                },
-                macVendor: {
-                    format: this.$utils.unArray,
-                },
-            },
+                    name: {
+                        /**
+                         * Format the name and create a link to the corresponding device
+                         * @param {string} input
+                         * @param {object} tableItem - the corresponding table item
+                         * @return {string} - The formatted name as an anchor tag linking to a device
+                         */
+                        formatHtml: (input, tableItem) => {
+                            input = this.$utils.unArray(input);
 
+                            if (input) {
+                                const type = this.$utils.unArray(tableItem.type);
+
+                                if (type && type.toLowerCase().includes('switch')) {
+                                    return this.fetchDeviceAnchorTag(tableItem.id, input, 'switch');
+                                }
+                                return this.fetchDeviceAnchorTag(tableItem.id, input, 'host');
+                            }
+                            return '';
+                        },
+                        isHtml: true,
+                    },
+                    location: {
+                        formatText: this.$utils.unArray,
+                    },
+                    description: {
+                        formatText: (input) => this.$utils.arrayLongest(input),
+                        tooltip: (input) => this.$utils.arrayLongest(input),
+                    },
+                    type: {
+                        formatText: this.$utils.unArray,
+                    },
+                    mac: {
+                        formatText: this.$utils.unArray,
+                    },
+                    capabilities: {
+                        formatText: this.$utils.unArray,
+                    },
+                    swPort: {
+                        formatText: (input) => {
+                            const item = this.$utils.unArray(input);
+                            return item ? item['name'] + " " + item['iface'] : "";
+                        },
+                        /**
+                         * Format the switch port value, create a link to the corresponding device,
+                         * display the interface and the amount of additional ports
+                         * @param {string} input
+                         * @return {string} - The formatted switch port as an anchor tag linking to a device
+                         */
+                        formatHtml: (input) => {
+                            const total = Array.isArray(input) ? input.length : input ? 1 : 0;
+                            const firstValue = this.$utils.unArray(input);
+                            let formatted = '<span class="nowrap">';
+
+                            if (firstValue) {
+                                formatted +=
+                                    '<span class="mdi mdi-swap-horizontal-bold"></span>' +
+                                    this.fetchDeviceAnchorTag(firstValue.id, firstValue.name, 'switch') +
+                                    firstValue.iface;
+                                if (total > 1)
+                                    formatted += ` <span class="additional-ports-counter">(+${total - 1})</span>`;
+                            }
+                            formatted += '</span>';
+
+                            return formatted;
+                        },
+                        /**
+                         * Generate a tooltip for the switch port
+                         * @param {any[]} inputs -
+                         * @return {string} - The generated tooltip
+                         */
+                        tooltip: (inputs) => {
+                            let tooltip = [];
+
+                            if (inputs) {
+                                tooltip = inputs.map((value) => {
+                                    let current = value.name + ' ' + value.iface;
+
+                                    if (value.count) {
+                                        current += ' (' + value.count + ' mac' + (value.count > 1 ? 's' : '') + ')';
+                                    }
+
+                                    return current;
+                                });
+                            }
+                            return tooltip.join('\n');
+                        },
+                        isHtml: true,
+                    },
+                    macVendor: {
+                        formatText: this.$utils.unArray,
+                    },
+                }
+            }),
             /* allow hooking from mixins */
             flagFormatCallbacks: [],
-            dataReadyCallbacks: [],
         };
     },
     methods: {
-        /**
-         * Compute the headers
-         * @param {array<object>} headers
-         */
-        computeHeaders(headers) {
-            headers.unshift({ value: 'flag' });
-        },
         /**
          * Fetch an anchor tag for a given device
          * @param {string} deviceId - The device id
@@ -311,7 +318,7 @@ export default {
                     return;
                 }
 
-                this.api = this.$api.base._getInventory(cur.entity, cur.database, cur.search);
+                this.config.api = this.$api.base._getInventory(cur.entity, cur.database, cur.search);
             },
         },
     },
