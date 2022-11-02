@@ -19,44 +19,49 @@
     /* column default max width */
     .v-data-table__divider {
         max-width: 100px;
-
-        &.col_flag {
-            width: 1px;
-        }
-
-        &.col_ip,
-        &.col_mac {
-            max-width: 130px;
-            width: 130px;
-        }
-
-        &.col_swPort {
-            max-width: inherit;
-        }
-
         > span:not(.cp-span) {
             overflow: hidden;
             text-overflow: ellipsis;
         }
+    }
+
+    /* personnalizable column width */
+    .sizable {
+        max-width: 100px;
+
+        &.header_flag {
+            width: 1px;
+        }
+
+        &.header_ip,
+        &.header_mac {
+            max-width: 130px;
+            width: 130px;
+        }
+
+        &.header_swPort {
+            max-width: inherit;
+        }
 
         @media (min-width: 1200px) {
-            &.col_name,
-            &.col_description {
+            &.header_name,
+            &.header_description {
                 max-width: 200px;
             }
 
-            &.col_macVendor,
-            &.col_type {
+            &.header_macVendor,
+            &.header_type {
                 max-width: 100px;
             }
         }
 
         @media (min-width: 1500px) {
-            &.col_description {
+            &.header_description {
                 max-width: 500px;
             }
         }
     }
+
     .additional-ports-counter {
         font-size: 10px;
         font-style: italic;
