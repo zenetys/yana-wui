@@ -525,6 +525,7 @@ export default {
                         formatHtml: (v, o) => o.cidr == 'other' ? '' : '<span class="mdi mdi-ip" />',
                         isHtml: true,
                         cssClass: () => 'nocp',
+                        sortable: false,
                     },
                     mbits: {
                         enabled: false,

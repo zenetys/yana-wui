@@ -135,40 +135,58 @@ export default {
                 heightOffsets: [-120],
                 itemClass: itemClass,
                 columns: {
+                    hwAddr: {
+                        sortable: false,
+                    },
+                    name: {
+                        sortable: false,
+                    },
                     did: {
                         enabled: false,
+                        sortable: false,
                     },
                     dname: {
                         enabled: false,
+                        sortable: false,
                     },
                     description: {
                         cssClass: (tableItem) => getClass('description', tableItem),
                         getTitle: (tableItem) => getTitle('description', tableItem),
+                        sortable: false,
                     },
                     status: {
                         cssClass: (tableItem) => getClass('status', tableItem),
                         getTitle: (tableItem) => getTitle('status', tableItem),
+                        sortable: false,
                     },
                     speed: {
                         cssClass: (tableItem) => getClass('speed', tableItem),
                         getTitle: (tableItem) => getTitle('speed', tableItem),
+                        sortable: false,
+                    },
+                    group: {
+                        sortable: false,
                     },
                     mode: {
                         cssClass: (tableItem) => getClass('mode', tableItem),
                         getTitle: (tableItem) => getTitle('mode', tableItem),
+                        sortable: false,
                     },
                     pvlan: {
                         cssClass: (tableItem) => getClass('pvlan', tableItem),
                         getTitle: (tableItem) => getTitle('pvlan', tableItem),
+                        sortable: false,
                     },
                     untagged: {
                         cssClass: (tableItem) => getClass('untagged', tableItem),
                         getTitle: (tableItem) => getTitle('untagged', tableItem),
+                        sortable: false,
                     },
                     tagged: {
                         cssClass: (tableItem) => getClass('tagged', tableItem),
                         getTitle: (tableItem) => getTitle('tagged', tableItem),
                         cssStyle: () => 'white-space: normal;',
+                        sortable: false,
                     },
                     peers: {
                         cssStyle: () => 'white-space: normal;',
@@ -210,9 +228,11 @@ export default {
                             return formattedPeers.join(', ');
                         },
                         isHtml: true,
+                        sortable: false,
                     },
                     _meta: {
                         enabled: false,
+                        sortable: false,
                     },
                 }
             }),

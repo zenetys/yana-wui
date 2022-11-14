@@ -154,6 +154,7 @@ export default {
                         isHtml: true,
                         cssClass: () => 'nocp',
                         label: '',
+                        sortable: false,
                     },
                     id: {
                         formatText: this.$utils.unArray,
@@ -185,6 +186,13 @@ export default {
                                 return input.map((val) => val + '\n').join('');
                             }
                             return String(input);
+                        },
+                        sortable: (a, b, sortBy) => {
+                            const ipA = a[sortBy]? a[sortBy][0] : "";
+                            const ipB = b[sortBy] ? b[sortBy][0] : "";
+                            const num1 = Number(ipA.split(".").map((num) => (`000${num}`).slice(-3) ).join(""));
+                            const num2 = Number(ipB.split(".").map((num) => (`000${num}`).slice(-3) ).join(""));
+                            return num1 < num2 ? 1 : -1;
                         },
                         label: 'IP',
                         isHtml: true,

@@ -200,16 +200,20 @@ export default {
                             timeSeparator: ' ',
                             milliseconds: false,
                         }),
+                        sortable: false,
                     },
                     subject: {
                         order: 200,
+                        sortable: false,
                     },
                     author: {
                         order: 300,
+                        sortable: false,
                     },
                     lines: {
                         order: 400,
                         slotName: 'render-cell-lines',
+                        sortable: false,
                     },
                 },
             }),
