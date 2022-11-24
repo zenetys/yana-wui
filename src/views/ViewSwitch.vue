@@ -137,6 +137,7 @@ export default {
                      * @return {string} - joined HTML links of formatted peers
                      */
                     format: (peers) => {
+                        peers ||= []; /* may be null */
                         const peerRouteBase = { name: 'ViewSwitch' };
                         peerRouteBase.query = this.$route.query;
                         peerRouteBase.params = { ...this.$route.params };
