@@ -190,6 +190,10 @@ export default {
                     },
                     peers: {
                         cssStyle: () => 'white-space: normal;',
+                        formatText: (peers) => {
+                            peers ||= []; /* may be null */
+                            return peers.map((peer) => peer.label).join(', ');
+                        },
                         /**
                          * Format peers to generate a links to devices
                          * @param {array} peers - array of peers

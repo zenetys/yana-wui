@@ -217,6 +217,7 @@ export default {
                             }
                             return '';
                         },
+                        formatText: this.$utils.unArray,
                         isHtml: true,
                     },
                     location: {

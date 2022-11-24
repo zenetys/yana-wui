@@ -548,6 +548,17 @@ export default {
                     },
                     vlans: {
                         slotName: 'render-cell-vlans',
+                        formatText: (input) => {
+                            let out = '';
+                            input?.forEach((vlan) => {
+                                if (out.length > 0)
+                                    out += ', ';
+                                out += vlan.id;
+                                if (vlan.name && vlan.name.length > 0)
+                                    out += ' (' + vlan.name.join(', ') + ')'
+                            });
+                            return out;
+                        },
                         cssClass: (o) => o.vlans && o.vlans.length > 1 ? 'z-warning' : '',
                         order: 3000,
                     },
