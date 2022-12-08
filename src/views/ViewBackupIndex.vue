@@ -19,7 +19,6 @@
 
 <script>
 import AutoTable from '@/components/AutoTable.vue';
-import { Config } from '@/components/AutoTable.vue';
 
 export default {
     name: 'ViewBackupIndex',
@@ -28,7 +27,7 @@ export default {
     },
     data() {
         return {
-            config: new Config({
+            config: {
                 id: 'table-backup-index',
                 api: '',
                 height: 'auto',
@@ -87,7 +86,7 @@ export default {
                         order: 800,
                     },
                 },
-            }),
+            },
         };
     },
     methods: {

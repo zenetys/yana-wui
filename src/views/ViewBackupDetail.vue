@@ -160,7 +160,6 @@
 
 <script>
 import AutoTable from '@/components/AutoTable.vue';
-import { Config } from '@/components/AutoTable.vue';
 
 const htmlize = (raw) => raw.replace(/&/g, '&amp;')
                             .replace(/>/g, '&gt;')
@@ -174,7 +173,7 @@ export default {
     },
     data() {
         return {
-            config: new Config({
+            config: {
                 id: 'table-backup-log',
                 api: '',
                 customHeadersComputation: this.computeLogHeaders,
@@ -216,7 +215,7 @@ export default {
                         sortable: false,
                     },
                 },
-            }),
+            },
             dataDiff: undefined,
             dataShow: undefined,
             isLoading: false,

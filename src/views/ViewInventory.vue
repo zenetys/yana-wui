@@ -76,7 +76,6 @@
 
 <script>
 import AutoTable from '@/components/AutoTable.vue';
-import { Config } from '@/components/AutoTable.vue';
 
 /**
  * Compute the headers
@@ -93,7 +92,7 @@ export default {
     },
     data() {
         return {
-            config: new Config({
+            config: {
                 id: 'table-inventory-devices',
                 api: '',
                 height: 'auto',
@@ -291,7 +290,7 @@ export default {
                         formatText: this.$utils.unArray,
                     },
                 }
-            }),
+            },
             /* allow hooking from mixins */
             flagFormatCallbacks: [],
         };

@@ -117,7 +117,6 @@ function itemClass(item) {
 }
 
 import AutoTable from '@/components/AutoTable.vue';
-import { Config } from '@/components/AutoTable.vue';
 
 export default {
     name: 'SwitchView',
@@ -127,7 +126,7 @@ export default {
     data() {
         return {
             device: {},
-            config: new Config({
+            config: {
                 id: 'table-switch',
                 api: '',
                 height: 'auto',
@@ -239,7 +238,7 @@ export default {
                         sortable: false,
                     },
                 }
-            }),
+            },
         };
     },
     computed: {

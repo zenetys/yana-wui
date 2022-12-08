@@ -110,7 +110,6 @@
 
 <script>
 import AutoTable from '@/components/AutoTable.vue';
-import { Config } from '@/components/AutoTable.vue';
 
 /* ip lib */
 
@@ -512,7 +511,7 @@ export default {
                 mbitsBound: 30,
                 pub: true,
             },
-            config: new Config({
+            config: {
                 id: 'table-network',
                 api: '',
                 height: 'auto',
@@ -563,7 +562,7 @@ export default {
                         order: 3000,
                     },
                 },
-            }),
+            },
         };
     },
     methods: {
