@@ -1,20 +1,34 @@
 <template>
     <v-card class="elevation-0">
         <table id="table-vlan" :height="tableHeight">
-            <tbody>
+            <thead>
                 <tr>
-                    <th rowspan="2"></th>
+                    <th rowspan="1"></th>
+                    <th rowspan="1"></th>
+                    <th
+                        scope="col"
+                        v-for="(vlan, key) in getAllVlans"
+                        :key="key"
+                        :class="'cell-' + vlan.id"
+                    >
+                        <span class="rotate"><span v-text="vlan.name" :class="vlan.key % 2 === 0 ? 'color_black': 'color_gray'"></span></span>
+                    </th>
                 </tr>
                 <tr>
+                    <th></th>
                     <th class="vlan-number">#vlans</th>
                     <th
                         scope="col"
-                        v-for="vid in vlanIds"
-                        :key="vid"
-                        :class="'cell-' + vid">
-                        {{ vid }}
+                        v-for="(vlan, key) in vlans"
+                        :key="key"
+                        :class="`cell-${vlan.id} ${key % 2 === 0 ? 'color_black' : 'color_gray'}`"
+                        :colspan="vlan.colspan"
+                    >
+                        {{ vlan.id }}
                     </th>
                 </tr>
+            </thead>
+            <tbody>
                 <tr v-for="device in devices" :key="device.id">
                     <th scope="row" class="font-weight-regular">
                         <router-link :to="$utils.getDeviceRoute(device.id, 'switch', $route, false)">
@@ -29,23 +43,19 @@
                         {{ device.vlan.length }}
                     </td>
                     <td
-                        v-for="vid in vlanIds"
-                        :key="vid"
-                        :class="getDeviceVlanClass(device, vid)"
-                        @mouseover="onOverCell(vid)"
-                        @mouseout="onOutCell(vid)">
-                        <span
-                            v-if="findDeviceVlanEntry(device, vid)"
-                            :title="findDeviceVlanEntry(device, vid).name">
-                            {{ findDeviceVlanEntry(device, vid).name }}
-                        </span>
+                        v-for="(vlan, key) in getAllVlans"
+                        :key="key"
+                        :class="getDeviceVlanClass(device, vlan.id, vlan.name)"
+                        @mouseover="onOverCell(vlan.id)"
+                        @mouseout="onOutCell(vlan.id)"
+                    >
                     </td>
                 </tr>
                 <tr>
                     <th>#switches</th>
                     <td></td>
-                    <td v-for="vid in vlanIds" :key="`el-${vid}`">
-                        {{ countDevicesHavingVlanId(vid) }}
+                    <td v-for="(vlan, key) in getAllVlans" :key="`el-${key}`">
+                        {{ countDevicesHavingVlanId(vlan.id, vlan.name) }}
                     </td>
                 </tr>
             </tbody>
@@ -71,7 +81,7 @@ table {
     }
 
     .vlan-found {
-        background-color: #d9e8fc;
+        background-color: #d9ead3;
     }
 
     .vlan-number {
@@ -92,35 +102,61 @@ table {
         box-shadow: inset 1px -1px 0 rgb(0 0 0 / 12%);
     }
 
-    > tbody {
-        // first row and first column headers
-        > tr > th:nth-child(1),
-        > tr:nth-child(2) > th {
-            position: sticky;
-            position: -webkit-sticky;
-            z-index: 1;
-            box-shadow: inset -1px -1px rgb(0 0 0 / 12%);
-            color: rgba(0, 0, 0, 0.6);
-            background: #fcfcfc;
-        }
+    > thead {
+        height: 130px;
+        text-align: center;
+        position: sticky;
+        position: -webkit-sticky;
+        top: 0;
+        background: white;
+        z-index: 8;
 
+        tr {
+            th {
+                max-width: 45px;
+            }
+
+            &:nth-child(2) {
+                background: #fcfcfc;
+                height: 30px;
+                color: rgba(0, 0, 0, 0.6);
+
+                th {
+                    text-align: center;
+                    padding: 5px;
+                    box-shadow: inset 1px -1px 0 rgb(0 0 0 / 12%);
+                    box-sizing: border-box;
+                    max-width: 45px !important;
+
+                    // top left cell
+                    &:first-child {
+                        text-align: center;
+                        box-shadow: inset 0 -1px 0 rgb(0 0 0 / 12%);
+                        position: sticky;
+                        position: -webkit-sticky;
+                        left: 0;
+                        background: white;
+                    }
+
+                    &:nth-child(2) {
+                        background-color: #ebebeb;
+                        max-width: 50px !important;
+                    }
+                }
+            }
+        }
+    }
+
+    > tbody {
         > tr > th:nth-child(1) {
             left: 0;
             text-align: left;
             padding-left: 5px;
             padding-right: 15px;
-        }
-
-        > tr:nth-child(2) > th {
-            top: 0;
-            text-align: center;
-            padding: 5px;
-            box-shadow: inset 1px -1px 0 rgb(0 0 0 / 12%);
-            box-sizing: border-box;
-
-            &:first-child {
-                text-align: center;
-            }
+            position: sticky;
+            position: -webkit-sticky;
+            background: white;
+            box-shadow: inset 0px -1px rgb(0 0 0 / 12%);
         }
 
         > tr:hover {
@@ -138,25 +174,35 @@ table {
         // last row
         > tr:last-child,
         > tr:last-child > th:first-child {
+            position: sticky;
+            position: -webkit-sticky;
+            bottom: 0;
             background-color: #ebebeb;
         }
 
         // first column
         > tr > td:nth-child(2),
-        > tr:nth-child(2) > th:nth-child(1) {
+        > tr:nth-child(1) > th:nth-child(2) {
             background-color: #ebebeb;
             box-shadow: inset 0px -1px 0 rgb(0 0 0 / 12%);
         }
-
-        // top left cell
-        > tr:nth-child(1) > th {
-            position: sticky;
-            position: -webkit-sticky;
-            top: 0;
-            left: 0;
-            z-index: 2;
-        }
     }
+    .rotate {
+        float: left;
+        -webkit-transform: rotate(-45deg);
+        -moz-transform: rotate(-45deg);
+        transform: rotate(-45deg);
+        max-width: 60%;
+        margin-top: 100%;
+        margin-left: 30%;
+    }
+}
+
+.color_black {
+    color: rgba(0, 0, 0, 0.85);
+}
+.color_gray {
+    color: rgb(0, 0, 0, 0.6);
 }
 </style>
 
@@ -170,6 +216,15 @@ export default {
                 database: this.$route.query.db,
             };
         },
+        getAllVlans() {
+            const res = []
+            this.vlans.forEach((vlan, i) => {
+                vlan.name.forEach((name) => {
+                    res.push({id: vlan.id, name, colspan: vlan.colspan, key: i})
+                });
+            });
+            return res
+        }
     },
     watch: {
         apiStateParams: {
@@ -193,7 +248,7 @@ export default {
     data() {
         return {
             devices: [],
-            vlanIds: [],
+            vlans: [],
             isLoading: false,
             tableHeight: undefined,
         };
@@ -206,8 +261,8 @@ export default {
          * @returns {object|undefined} - Element of <device>.vlan matching
          *      the vlan id given in <vid>, undefined if not found
          */
-        findDeviceVlanEntry(device, vid) {
-            return device.vlan.find((vlanEntry) => vlanEntry.id === vid);
+        findDeviceVlanEntry(device, vid, name) {
+            return device.vlan.find((vlanEntry) => vlanEntry.id === vid && vlanEntry.name === name);
         },
         /**
          * Build the list of unique vlan ids accross all devices.
@@ -216,13 +271,28 @@ export default {
         buildVlanIdsList() {
             let uniqVlanIds = {};
 
-            this.devices.forEach((device) => {
+            this.devices.forEach((device, i) => {
                 device.vlan.forEach((vlan) => {
-                    uniqVlanIds[vlan.id] = vlan.id;
+                    const exists = uniqVlanIds[vlan.id];
+                    vlan.name ||= '<empty>';
+                    if (exists) {
+                        if (exists.name.includes(vlan.name) === false) {
+                            exists.colspan++;
+                            exists.name.push(vlan.name);
+                        }
+                    }
+                    else {
+                        uniqVlanIds[vlan.id] = {
+                            id: vlan.id,
+                            name: [ vlan.name ],
+                            colspan: 1,
+                            key: i,
+                        };
+                    }
                 })
             });
 
-            this.vlanIds = Object.values(uniqVlanIds).sort((a, b) => a - b);
+            this.vlans = Object.values(uniqVlanIds).sort((a, b) => a.id - b.id);
         },
         /**
          * Fetch data from the API, process it to make suitable for building
@@ -250,8 +320,8 @@ export default {
          * @param {number} vid - Vlan id, element of $data.vlanIds (column)
          * @returns {string} - Class names to apply to the cell
          */
-        getDeviceVlanClass(device, vid) {
-            return device.vlan.find((vlanEntry) => vlanEntry.id === vid)
+        getDeviceVlanClass(device, vid, name) {
+            return device.vlan.find((vlanEntry) => vlanEntry.id === vid && vlanEntry.name === name)
                 ? 'vlan-found cell-' + vid
                 : 'vlan-not-found cell-' + vid;
         },
@@ -260,11 +330,11 @@ export default {
          * @param {number} vid - Vlan id to lookup on devices
          * @returns {number} - Number of switches having the given vlan id
          */
-        countDevicesHavingVlanId(vid) {
+        countDevicesHavingVlanId(vid, name) {
             let amount = 0;
 
             this.devices.forEach((device) => {
-                if (this.findDeviceVlanEntry(device, vid)) {
+                if (this.findDeviceVlanEntry(device, vid, name)) {
                     amount++;
                 }
             });
