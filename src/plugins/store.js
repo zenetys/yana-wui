@@ -75,6 +75,24 @@ export default {
         this.saveLocalStorage();
     },
     /**
+     * Move a search history or a bookmark entry from one position to another.
+     * The <from> and <to> position are indexes in the array holding the
+     * entries for the given <type> and <entity>.
+     * @param {string} type - Saved query type, either history or bookmark.
+     * @param {string} entity - Name of the entity to attach the entry to.
+     * @param {number} from - Initial index
+     * @param {number} to - Target index
+     * @pre - Given indexes <from> and <to> must be valid, ie. between 0 and
+     *      array length-1.
+     */
+    moveLocalStorageSavedQuery(type, entity, from, to) {
+        const array = this.observable.localStorage.data?.[type]?.[entity];
+        if (array) {
+            array.splice(to, 0, ...array.splice(from, 1));
+            this.saveLocalStorage();
+        }
+    },
+    /**
      * Delete a search history or a bookmark entry, then persist it to the
      * browser local storage.
      * @param {string} type - Saved query type, either history or bookmark.

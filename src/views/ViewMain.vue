@@ -122,10 +122,17 @@
             <v-list dense>
                 <p class="ml-5 mb-1 font-weight-light">Bookmarks</p>
                 <v-divider></v-divider>
-                <v-list color="" class="mt-0" v-if="bookmarkEntries && bookmarkEntries.length > 0">
+                <v-list
+                    class="mt-0"
+                    v-if="bookmarkEntries && bookmarkEntries.length > 0"
+                    @dragstart.native="onBookmarkDragStart"
+                    @dragover.native="onBookmarkDragOver"
+                    @dragend.native="onBookmarkDragEnd"
+                >
                     <v-list-item
                         v-for="(bookmark, bookmarkIndex) in bookmarkEntries"
                         :key="bookmarkIndex"
+                        :draggable="true"
                         @click.native="$router.push($utils.deriveRoute(bookmark.entry, $route)).catch(()=>{})"
                         class="list-item"
                     >
@@ -273,6 +280,13 @@ export default {
              * avoid confusion we stick to always use it instead of
              * $route.query.entity. */
             observableRouteEntity: undefined,
+
+            /* State variables related to bookmarks drag and drop, used
+             * to reorder entries. */
+            bookmarkDragEl: undefined,
+            bookmarkNextEl: undefined,
+            bookmarkOldIndex: -1,
+            bookmarkNewIndex: -1,
         };
     },
     computed: {
@@ -413,6 +427,55 @@ export default {
                 console.log('ViewMain: onEntitySelectorBlur: force update to restore input value');
                 this.forceUpdateEntitySelector = Date.now();
             }
+        },
+        /**
+         * Event handler triggered when starting to drap a bookmark entry.
+         * assignes the bookmarkDragEl from the event.target.
+         * @param {DragEvent} evt - DOM event triggered by dragstart.
+         */
+        onBookmarkDragStart(evt) {
+            this.bookmarkDragEl = evt.target;
+            this.bookmarkOldIndex = this.bookmarkEntries.findIndex((e) => {
+                return e.label === this.bookmarkDragEl.textContent;
+            });
+            /* limit the movement type */
+            evt.dataTransfer.effectAllowed = 'move';
+
+        },
+        /**
+         * Event handler triggered when a bookmark entry is dragged over another
+         * draggable element. Only assignes the bookmarkNextEl if event target is
+         * different from the element being dragged.
+         * @param {DragEvent} evt - DOM event triggered by dragover.
+         */
+        onBookmarkDragOver(evt) {
+            /* prevent animation seen on firefox on dragend */
+            evt.preventDefault();
+
+            if (evt.target && evt.target !== this.bookmarkDragEl) {
+                this.bookmarkNextEl = evt.target;
+            }
+        },
+        /**
+         * Event handler triggered when a dragged bookmark entry gets released.
+         * Dragged entry gets moved to its new position.
+         */
+        onBookmarkDragEnd() {
+            if (!this.bookmarkNextEl) {
+                return;
+            }
+            this.bookmarkNewIndex = this.bookmarkEntries.findIndex((e) => {
+                return e.label === this.bookmarkNextEl.textContent;
+            });
+            if (this.bookmarkNewIndex !== -1 && this.bookmarkOldIndex !== -1 &&
+                this.bookmarkNewIndex !== this.bookmarkOldIndex) {
+                /* call move helper from the store */
+                this.$store.moveLocalStorageSavedQuery('bookmark',
+                    this.observableRouteEntity, this.bookmarkOldIndex, this.bookmarkNewIndex);
+            }
+            /* cleanup for next run */
+            this.bookmarkDragEl = this.bookmarkNextEl = undefined;
+            this.bookmarkOldIndex = this.bookmarkNewIndex = -1;
         },
     },
     watch: {
