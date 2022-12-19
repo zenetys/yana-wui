@@ -143,8 +143,7 @@
                             @click.stop="$store.deleteLocalStorageSavedQuery('bookmark', observableRouteEntity, bookmarkIndex)"
                             size="14"
                             class="list-item-remove-icon"
-                            >mdi-close</v-icon
-                        >
+                        >mdi-close</v-icon>
                     </v-list-item>
                 </v-list>
                 <span v-else class="ml-5 caption"> Empty list </span>
