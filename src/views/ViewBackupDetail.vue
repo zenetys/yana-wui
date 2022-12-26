@@ -184,7 +184,6 @@ export default {
                 dataReady: [ this.onLogDataReady ],
                 itemClass: this.getLogRowClass,
                 clickable: this.onLogRowClick,
-                copyable: false,
                 columns: {
                     id: { enabled: false },
                     deletion: { enabled: false },
@@ -203,19 +202,23 @@ export default {
                             timeSeparator: ' ',
                             milliseconds: false,
                         }),
+                        copyable: false,
                         sortable: false,
                     },
                     subject: {
                         order: 200,
+                        copyable: false,
                         sortable: false,
                     },
                     author: {
                         order: 300,
+                        copyable: false,
                         sortable: false,
                     },
                     lines: {
                         order: 400,
                         slotName: 'render-cell-lines',
+                        copyable: false,
                         sortable: false,
                     },
                 },

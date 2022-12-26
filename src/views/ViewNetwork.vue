@@ -544,9 +544,9 @@ export default {
                     flag: {
                         label: '',
                         formatHtml: (v, o) => o.cidr == 'other' ? '' : '<span class="mdi mdi-ip" />',
-                        cssClass: () => 'nocp',
                         sortable: false,
                         truncable: false,
+                        copyable: false,
                     },
                     mbits: {
                         enabled: false,

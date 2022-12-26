@@ -114,6 +114,9 @@ export default {
                             return tooltip.join('\n');
                         },
                     },
+                    swIfTotalMac: {
+                        copyable: false,
+                    }
                 },
             },
         };

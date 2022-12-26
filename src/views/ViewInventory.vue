@@ -146,10 +146,12 @@ export default {
                             return flags.join('');
                         },
                         formatText: this.$utils.unArray,
-                        cssClass: () => 'nocp',
                         label: '',
                         sortable: false,
                         truncable: false,
+                        /* Explicitly disable copy icon. Anyway it would not
+                         * show-up, since there is no text content here. */
+                        copyable: false,
                     },
                     id: {
                         formatText: this.$utils.unArray,
