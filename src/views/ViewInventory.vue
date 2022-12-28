@@ -146,7 +146,6 @@ export default {
                             return flags.join('');
                         },
                         formatText: this.$utils.unArray,
-                        isHtml: true,
                         cssClass: () => 'nocp',
                         label: '',
                         sortable: false,
@@ -191,7 +190,6 @@ export default {
                             return num1 < num2 ? 1 : -1;
                         },
                         label: 'IP',
-                        isHtml: true,
                     },
                     name: {
                         /**
@@ -214,7 +212,6 @@ export default {
                             return '';
                         },
                         formatText: this.$utils.unArray,
-                        isHtml: true,
                     },
                     location: {
                         formatText: this.$utils.unArray,
@@ -281,7 +278,6 @@ export default {
                             }
                             return tooltip.join('\n');
                         },
-                        isHtml: true,
                     },
                     macVendor: {
                         formatText: this.$utils.unArray,

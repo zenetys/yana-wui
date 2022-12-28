@@ -38,7 +38,6 @@ export default {
                 columns: {
                     device: {
                         order: 200,
-                        isHtml: true,
                         formatHtml: (input) => {
                             const linkRoute = {
                                 name: 'ViewBackupDetail',

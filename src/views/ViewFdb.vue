@@ -76,7 +76,6 @@ export default {
                                 this.$router
                             );
                         },
-                        isHtml: true,
                     },
                     swIfUplink: {
                         formatText: (input) => {
@@ -114,7 +113,6 @@ export default {
 
                             return tooltip.join('\n');
                         },
-                        isHtml: true,
                     },
                 },
             },

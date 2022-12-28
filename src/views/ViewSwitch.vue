@@ -254,7 +254,6 @@ export default {
 
                             return formattedPeers.join(', ');
                         },
-                        isHtml: true,
                         sortable: false,
                         truncable: false,
                     },
