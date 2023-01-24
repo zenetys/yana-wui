@@ -136,9 +136,11 @@ export default {
                 columns: {
                     hwAddr: {
                         sortable: false,
+                        truncable: false,
                     },
                     name: {
                         sortable: false,
+                        truncable: false,
                     },
                     did: {
                         enabled: false,
@@ -152,40 +154,48 @@ export default {
                         cssClass: (tableItem) => getClass('description', tableItem),
                         getTitle: (tableItem) => getTitle('description', tableItem),
                         sortable: false,
+                        truncable: true,
                     },
                     status: {
                         cssClass: (tableItem) => getClass('status', tableItem),
                         getTitle: (tableItem) => getTitle('status', tableItem),
                         sortable: false,
+                        truncable: false,
                     },
                     speed: {
                         cssClass: (tableItem) => getClass('speed', tableItem),
                         getTitle: (tableItem) => getTitle('speed', tableItem),
                         sortable: false,
+                        truncable: false,
                     },
                     group: {
                         sortable: false,
+                        truncable: false,
                     },
                     mode: {
                         cssClass: (tableItem) => getClass('mode', tableItem),
                         getTitle: (tableItem) => getTitle('mode', tableItem),
                         sortable: false,
+                        truncable: false,
                     },
                     pvlan: {
                         cssClass: (tableItem) => getClass('pvlan', tableItem),
                         getTitle: (tableItem) => getTitle('pvlan', tableItem),
                         sortable: false,
+                        truncable: false,
                     },
                     untagged: {
                         cssClass: (tableItem) => getClass('untagged', tableItem),
                         getTitle: (tableItem) => getTitle('untagged', tableItem),
                         sortable: false,
+                        truncable: false,
                     },
                     tagged: {
                         cssClass: (tableItem) => getClass('tagged', tableItem),
                         getTitle: (tableItem) => getTitle('tagged', tableItem),
                         cssStyle: () => 'white-space: normal;',
                         sortable: false,
+                        truncable: false,
                     },
                     peers: {
                         cssStyle: () => 'white-space: normal;',
@@ -232,6 +242,7 @@ export default {
                         },
                         isHtml: true,
                         sortable: false,
+                        truncable: false,
                     },
                     _meta: {
                         enabled: false,

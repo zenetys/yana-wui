@@ -154,6 +154,7 @@ export default {
                         cssClass: () => 'nocp',
                         label: '',
                         sortable: false,
+                        truncable: false,
                     },
                     id: {
                         formatText: this.$utils.unArray,

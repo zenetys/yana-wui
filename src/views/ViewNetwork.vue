@@ -525,6 +525,7 @@ export default {
                         isHtml: true,
                         cssClass: () => 'nocp',
                         sortable: false,
+                        truncable: false,
                     },
                     mbits: {
                         enabled: false,
