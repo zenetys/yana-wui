@@ -93,7 +93,11 @@ export default {
             const now = new Date().getTime() / 1000;
             data.forEach((e) => {
                 e.age = now - e.mtime;
-                e.state = (e.state === 'up') ? 'active' : 'disabled';
+                switch (e.state) {
+                    case 'active': break;
+                    case 'up': e.state = 'active'; break;
+                    default: e.state = 'disabled'; break;
+                }
             });
         },
     },
