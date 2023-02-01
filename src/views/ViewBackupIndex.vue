@@ -56,6 +56,7 @@ export default {
                             timeSeparator: ' ',
                             milliseconds: false,
                         }),
+                        sortable: AutoTable.utils.cmpInt,
                     },
                     age: {
                         order: 400,
@@ -67,11 +68,13 @@ export default {
                                 return 'z-warning';
                             return '';
                         },
+                        sortable: AutoTable.utils.cmpInt,
                     },
                     size: {
                         order: 500,
                         formatText: (input) => this.$utils.formatNumber(input, 1024, ' ') + 'iB',
                         cssClass: (tableItem) => (tableItem.size == 0) ? 'z-critical' : '',
+                        sortable: AutoTable.utils.cmpInt,
                     },
                     type: {
                         order: 600,

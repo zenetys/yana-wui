@@ -184,13 +184,7 @@ export default {
                             }
                             return String(input);
                         },
-                        sortable: (a, b, sortBy) => {
-                            const ipA = a[sortBy]? a[sortBy][0] : "";
-                            const ipB = b[sortBy] ? b[sortBy][0] : "";
-                            const num1 = Number(ipA.split(".").map((num) => (`000${num}`).slice(-3) ).join(""));
-                            const num2 = Number(ipB.split(".").map((num) => (`000${num}`).slice(-3) ).join(""));
-                            return num1 < num2 ? 1 : -1;
-                        },
+                        sortable: AutoTable.utils.cmpInt,
                         label: 'IP',
                     },
                     name: {
@@ -219,8 +213,8 @@ export default {
                         formatText: this.$utils.unArray,
                     },
                     description: {
-                        formatText: (input) => this.$utils.arrayLongest(input),
-                        tooltip: (input) => this.$utils.arrayLongest(input),
+                        formatText: (input) => Array.isArray(input) ? input.join(' | ') : input,
+                        tooltip: function (input) { return this.formatText(input) },
                     },
                     type: {
                         formatText: this.$utils.unArray,
@@ -280,6 +274,14 @@ export default {
                             }
                             return tooltip.join('\n');
                         },
+                        sortable: (a, b) => {
+                            /* make sort coherent with what's visually rendered */
+                            a = this.$utils.unArray(a);
+                            a = (a?.name ?? '') + ',' + (a?.iface ?? '');
+                            b = this.$utils.unArray(b);
+                            b = (b?.name ?? '') + ',' + (b?.iface ?? '');
+                            return AutoTable.utils.cmpString(a, b);
+                        }
                     },
                     macVendor: {
                         formatText: this.$utils.unArray,

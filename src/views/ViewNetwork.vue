@@ -228,36 +228,13 @@ function ipv4_isPrivate(x) {
 
 /* sort */
 
-function cmpDefault(a, b) {
-    return a > b ? 1 : (a < b ? -1 : 0);
-}
+const { makeCmpMultiFn, makeCmpKey, makeCmpFn, cmpDefault, cmpFloat, cmpInt } = AutoTable.utils;
 
-function cmpIntSplit(a, b) {
-    a = a.split(/[^0-9]+/);
-    b = b.split(/[^0-9]+/);
-
-    for (let i = 0, len = Math.max(a.length, b.length); i < len; i++) {
-        a[i] = parseInt(a[i], 10); /* type number */
-        b[i] = parseInt(b[i], 10); /* type number */
-        if (isNaN(a[i])) {
-            if (!isNaN(b[i]))
-                return 1;
-        }
-        else if (isNaN(b[i]))
-            return -1;
-        else {
-            let cmp = a[i] - b[i];
-            if (cmp != 0)
-                return cmp;
-        }
-    }
-    return 0;
-}
-
-function makeCmpKey(key, asc /* -1 or 1 */, cmpFn) {
-    cmpFn ||= cmpDefault;
-    return (a, b) => cmpFn(a[key], b[key]) * (asc || 1);
-}
+const cmpCidr = makeCmpMultiFn([
+    /* put "other" row last when sorting asc: non integer last */
+    { fn: makeCmpFn((e) => isNaN(parseInt(e)) ? 200 : 100), asc: 1 },
+    { fn: cmpInt, asc: 1 },
+]);
 
 /* intermediate */
 
@@ -472,7 +449,7 @@ function attachRoutersToNetworks(routers, networks) {
         if (!networks.net[net].routers)
             continue;
         networks.net[net].routers = Object.keys(networks.net[net].routers);
-        networks.net[net].routers.sort(cmpIntSplit);
+        networks.net[net].routers.sort(cmpInt);
         networks.net[net].vlans = Object.values(networks.net[net].vlans);
         networks.net[net].vlans.sort(makeCmpKey('weight', -1, cmpDefault));
         networks.net[net].vlans = networks.net[net].vlans.map((e) => e.id);
@@ -548,8 +525,20 @@ export default {
                         truncable: false,
                         copyable: false,
                     },
+                    cidr: {
+                        sortable: cmpCidr,
+                    },
+                    net: {
+                        sortable: cmpInt,
+                    },
                     mbits: {
                         enabled: false,
+                    },
+                    ipCount: {
+                        sortable: cmpInt,
+                    },
+                    ipCountOtherFit: {
+                        sortable: cmpInt,
                     },
                     ipUsage: {
                         formatText: (v) => v && Math.round(v) + '%',
@@ -562,9 +551,11 @@ export default {
                             }
                             return '';
                         },
+                        sortable: cmpFloat,
                     },
                     routers: {
                         formatText: (v) => v && v.join(', '),
+                        sortable: cmpInt,
                         order: 2000,
                     },
                     vlans: {
@@ -581,6 +572,7 @@ export default {
                             return out;
                         },
                         cssClass: (o) => o.vlans && o.vlans.length > 1 ? 'z-warning' : '',
+                        sortable: (a, b) => cmpInt(a?.[0]?.id, b?.[0]?.id),
                         order: 3000,
                     },
                 },
@@ -609,7 +601,7 @@ export default {
 
             for (let net in networks.net)
                 data.push({ flag: undefined, ...networks.net[net] });
-            data.sort(makeCmpKey('cidr', 1, cmpIntSplit));
+            data.sort(makeCmpKey('cidr', 1, cmpCidr));
             return data;
         },
         getData(entity, database) {
