@@ -65,9 +65,23 @@
         background-color: #fac8d1 !important;
         border-color: #ebbfbb !important;
     }
-
-    .col_peers .mdi:not(.cp-span) {
+    .cell_peers .mdi:not(.cp-span) {
         color: #1eb8ce;
+    }
+
+    .sizable {
+        .col_description {
+            min-width: 9vw;
+        }
+        .col_group {
+            width: 1vw;
+        }
+        .col_tagged {
+            min-width: 10vw;
+        }
+        .col_peers {
+            min-width: 10vw;
+        }
     }
 }
 </style>

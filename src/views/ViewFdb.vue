@@ -9,8 +9,21 @@
 </template>
 
 <style scoped>
-::v-deep .v-data-table__divider {
-    position: relative;
+/* default sizing */
+::v-deep .sizable .col_swName {
+    width: 15%;
+}
+::v-deep .sizable .col_fdbMac {
+    width: 8%;
+}
+::v-deep .sizable .col_fdbVlan {
+    width: 5%;
+}
+::v-deep .sizable .col_fdbMacDip {
+    width: 8%;
+}
+::v-deep .sizable .col_swIfTotalMac {
+    width: 5%;
 }
 </style>
 

@@ -7,59 +7,55 @@
 <style lang="scss" scoped>
 ::v-deep {
     /* color of icons in column flag */
-    .col_flag .mdi:not(.cp-span) {
+    .cell_flag .mdi:not(.cp-span) {
         color: gray;
     }
 
     /* color of icons in swport column */
-    .col_swPort .mdi:not(.cp-span) {
+    .cell_swPort .mdi:not(.cp-span) {
         color: #1eb8ce;
-    }
-
-    /* column default max width */
-    .col_size td {
-        max-width: 1px;
-        > span:not(.cp-span) {
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
     }
 
     /* personnalizable column width */
     .sizable {
-        max-width: 1px;
+        /* default max column width */
+        .v-data-table__divider {
+            max-width: 100px;
+        }
 
-        & .header_flag {
+        /* column specific constraints */
+        .col_flag {
             width: 1px;
         }
 
-        & .header_ip,
-        & .header_mac {
+        .col_ip,
+        .col_mac {
             max-width: 130px;
             width: 130px;
         }
 
-        & .header_swPort {
+        .col_swPort {
             max-width: inherit;
         }
 
         @media (min-width: 1200px) {
-            & .header_name,
-            & .header_description {
+            .col_name,
+            .col_description {
                 max-width: 200px;
             }
 
-            & .header_macVendor,
-            & .header_type {
+            .col_macVendor,
+            .col_type {
                 max-width: 100px;
             }
         }
 
         @media (min-width: 1500px) {
-            & .header_description {
+            .col_description {
                 max-width: 500px;
             }
         }
+
     }
 
     .additional-ports-counter {

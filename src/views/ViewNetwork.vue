@@ -95,7 +95,6 @@
 }
 ::v-deep #table-network .col_flag {
     color: #666;
-    width: 1px;
 }
 .z-vlan-sep {
     padding-left: 2px;
@@ -105,6 +104,29 @@
     padding-left: 4px;
     font-size: 0.65rem;
     color: #777;
+}
+
+/* default sizing */
+::v-deep .sizable .col_flag {
+    width: 1px; /* as small as possible */
+}
+::v-deep .sizable .col_net {
+    width: 10%;
+}
+::v-deep .sizable .col_ipCount {
+    width: 5%;
+}
+::v-deep .sizable .col_ipCountOtherFit {
+    width: 5%;
+}
+::v-deep .sizable .col_ipUsage {
+    width: 5%;
+}
+::v-deep .sizable .col_routers {
+    min-width: 100px;
+}
+::v-deep .sizable .col_vlans {
+    min-width: 100px;
 }
 </style>
 

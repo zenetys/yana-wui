@@ -107,6 +107,10 @@
 .commit-log .col_lines .added { color: green; }
 .commit-log .col_lines .removed { color: red; }
 
+.commit-log ::v-deep .sizable .col_subject {
+    width: 60%;
+}
+
 .commit-diff {
     height: calc(75vh - 76px - 12px);
     font-size: 0.66rem;
