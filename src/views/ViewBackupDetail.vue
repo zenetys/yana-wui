@@ -85,7 +85,6 @@
 }
 
 .commit-log ::v-deep .v-data-table__wrapper {
-    height: 25vh;
     height: calc(25vh - 25px);
 }
 
