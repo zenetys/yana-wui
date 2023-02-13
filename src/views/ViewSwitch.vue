@@ -25,13 +25,77 @@
             </tbody>
         </table>
 
-        <ZSwitch v-for="(slot, i) in slots" :config="slot.config" :ports="slot.ports" :key="i"/>
+        <div :class="`switch_container ${isShown ? '' : 'expand'}`" v-if="slots.length !== 1">
+            <span :class="`expand_arrow ${isShown ? 'active' : ''}`" @click="isShown = !isShown">
+                <span></span>
+                <span></span>
+            </span>
+            <ZSwitch :config="slot.config" v-for="(slot, i) in slots" :ports="slot.ports" :isDefault="i === 0 ? slot.isDefault : false" :key="i" :style="i < slots.length ? 'margin-bottom: 0.5rem' : ''"/>
+        </div>
+        <ZSwitch v-else :config="slots[0].config" :ports="slots[0].ports" :isDefault="slots[0].isDefault" style="margin-bottom: 0.5rem"/>
+
 
         <AutoTable :config="config" />
     </div>
 </template>
 
 <style scoped lang="scss">
+.expand_arrow {
+    width: 1.25rem;
+    height: 1.25rem;
+    display: inline-block;
+    margin: 0 1rem;
+
+    outline: none;
+    position: absolute;
+    right: 0;
+    top: 2.5rem;
+
+    span {
+        top: 0.5rem;
+        position: absolute;
+        width: 0.75rem;
+        height: 0.1rem;
+        background-color: rgba(0,0,0,0.5);
+        display: inline-block;
+        transition: all .3s ease!important;
+
+        &:first-of-type {
+            left: 0;
+            transform: rotate(45deg);
+
+        }
+
+        &:last-of-type {
+            right: 0;
+            transform: rotate(-45deg);
+        }
+    }
+
+    &.active {
+        span {
+            &:first-of-type {
+                transform: rotate(-45deg);
+            }
+
+            &:last-of-type {
+                transform: rotate(45deg);
+            }
+        }
+    }
+
+
+
+}
+.switch_container {
+    width: 57rem;
+    max-width: 100%;
+    position: relative;
+    &.expand {
+        max-height: 7rem;
+        overflow-y: hidden;
+    }
+}
 .device-info table {
     font-size: 12.8px;
     border-collapse: collapse;
@@ -144,6 +208,7 @@ export default {
     data() {
         return {
             slots: [],
+            isShown: false,
             device: {},
             config: {
                 id: 'table-switch',
