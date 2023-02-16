@@ -1,0 +1,82 @@
+<template>
+    <main class="switch group end">
+        <Group v-for="(group, i) in config" :key="i" class="group flex-col margins"
+               :ports="slicePorts(group)" :group="group"
+        />
+    </main>
+</template>
+
+<style >
+.end {
+    justify-content: flex-end;
+}
+.group {
+    display: flex;
+    flex-wrap: wrap;
+}
+.flex-col {
+    flex-direction: column;
+}
+.center {
+    justify-content: space-around;
+}
+.space {
+    margin-top: 0.5rem;
+}
+
+.switch {
+    width: 60rem;
+    max-width: 90vw;
+    max-height: 9rem;
+
+    border: 2px solid rgba(0,0,0, 0.15);
+    background-color: rgba(0,0,0, 0.025);
+    padding: 0.15rem 0.25rem 0;
+    box-sizing: content-box;
+}
+.section {
+    min-width: 30px;
+    height: 100px;
+}
+.margins {
+    padding: 0.25rem 0.25rem;
+}
+.switch > .section:nth-child(odd) {
+    margin: 0 1rem;
+}
+
+
+p {
+    font-size: 13px;
+}
+</style>
+
+<script>
+import Group from './Group.vue';
+
+export default {
+    name: 'ZSwitch',
+    components: {
+        Group
+    },
+    props: {
+        config: {
+            type: Array,
+        },
+        ports: {
+            type: Array,
+        },
+    },
+    data() {
+        return {
+            groups: [],
+        }
+    },
+    methods: {
+        slicePorts(group) {
+            const ports = this.ports.slice(group.from - 1, group.to);
+            return ports;
+        },
+    },
+};
+</script>
