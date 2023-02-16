@@ -64,6 +64,10 @@ const apiBaseDefinition = {
             url: '/entity/' + encodeURIComponent(entity) + '/devices',
             params: { database, id: deviceId },
         }),
+        getSwitch: (entity, database, deviceId) => ({
+            url: '/entity/' + encodeURIComponent(entity) + '/swspecs',
+            params: { database, id: deviceId },
+        }),
         getVlans: (entity, database) => ({
             url: '/entity/' + encodeURIComponent(entity) + '/vlans',
             params: { database },

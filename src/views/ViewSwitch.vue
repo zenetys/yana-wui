@@ -25,6 +25,8 @@
             </tbody>
         </table>
 
+        <ZSwitch v-for="(slot, i) in slots" :config="slot.config" :ports="slot.ports" :key="i"/>
+
         <AutoTable :config="config" />
     </div>
 </template>
@@ -131,14 +133,17 @@ function itemClass(item) {
 }
 
 import AutoTable from '@/components/AutoTable.vue';
+import ZSwitch from '@/components/ZSwitch.vue'
 
 export default {
     name: 'SwitchView',
     components: {
         AutoTable,
+        ZSwitch,
     },
     data() {
         return {
+            slots: [],
             device: {},
             config: {
                 id: 'table-switch',
@@ -298,8 +303,13 @@ export default {
 
             this.$api.base.getDevice(this.apiStateParams.entity,
                 this.apiStateParams.database, this.apiStateParams.id)
-                .then((data) => { this.device = data; })
+                .then((data) => { this.device = data;console.warn(data) })
                 .catch(() => { this.device = {}; })
+
+           this.$api.base.getSwitch(this.apiStateParams.entity,
+              this.apiStateParams.database, this.apiStateParams.id)
+              .then((data) => { this.slots = data;console.warn(data) })
+              .catch((e) => { console.warn(e) })
         },
     },
     watch: {
