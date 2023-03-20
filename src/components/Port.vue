@@ -2,7 +2,7 @@
     <article class="article margex"  :style="`${group.type === 'dual-lr' && port.type === 'dual' ? 'margin-right: 0.75rem' : ''} ${group.type === 'dual-ud' ? 'margin-right: 0.75rem' : ''}`">
         <p
             v-if="(isFirstLine && port.type !== 'dual') && group.type !== 'dual-ud'"
-            class="text-center m-0" :style="isFirstLine ? 'margin-bottom: 0.25rem' : ''"
+            class="text-center m-0" :style="isFirstLine ? 'margin-bottom: 0.3rem' : ''"
         >
             {{ group.type === 'console' ? '' : port.index }}
         </p>
@@ -57,7 +57,7 @@
     background-color: #a6aba6;
 }
 .margex {
-    margin: 0 0.05rem;
+    margin: 0 0.025rem;
 }
 
 .article {
@@ -107,9 +107,9 @@
 .groupement {
     position: absolute;
     content: '';
-    width: 67px;
+    width: 64px;
     height: 1rem;
-    top: -10px;
+    top: -7px;
     right: -4px;
     border-top: 2px solid rgb(239 232 0);
     border-right: 2px solid rgb(239 232 0);
@@ -120,10 +120,10 @@
 .groupement-ud {
     position: absolute;
     content: '';
-    width: 2.25rem;
-    height: 5rem;
+    width: 32px;
+    height: 80px;
     bottom: 0px;
-    right: -5px;
+    right: -3px;
     border: 2px solid rgb(239 232 0);
     pointer-events: none;
 }

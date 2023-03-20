@@ -31,13 +31,13 @@
 }
 
 .switch {
-    width: 60rem;
+    width: 53rem;
     max-width: 90vw;
     max-height: 9rem;
 
     border: 2px solid rgba(0,0,0, 0.15);
     background-color: rgba(0,0,0, 0.025);
-    padding: 0.15rem 0.25rem 0;
+    padding: 0 0.25rem;
     box-sizing: content-box;
 
     position: relative;
@@ -47,7 +47,7 @@
     height: 100px;
 }
 .margins {
-    padding: 0.25rem 0.25rem;
+    padding: 0.15rem 0.15rem;
 }
 .switch > .section:nth-child(odd) {
     margin: 0 1rem;
