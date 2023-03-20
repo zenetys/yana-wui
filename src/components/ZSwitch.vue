@@ -1,5 +1,6 @@
 <template>
     <main class="switch group end">
+        <span v-if="isDefault === true" class="mdi mdi-vlc is-def-warning" :title="`Attention: La configuration du switch est inconnue,\n ceci est une configuration par default`"></span>
         <Group v-for="(group, i) in config" :key="i" class="group flex-col margins"
                :ports="slicePorts(group)" :group="group"
         />
@@ -7,6 +8,11 @@
 </template>
 
 <style >
+.is-def-warning {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+}
 .end {
     justify-content: flex-end;
 }
@@ -33,6 +39,8 @@
     background-color: rgba(0,0,0, 0.025);
     padding: 0.15rem 0.25rem 0;
     box-sizing: content-box;
+
+    position: relative;
 }
 .section {
     min-width: 30px;
@@ -65,6 +73,9 @@ export default {
         },
         ports: {
             type: Array,
+        },
+        isDefault: {
+            type: Boolean,
         },
     },
     data() {
