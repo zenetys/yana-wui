@@ -9,7 +9,7 @@
 
         <div
             :class="`${portColors} ${!isFirstLine ? 'rotate' : ''} ${port.sfp ? 'sfp-port' : 'port'}`"
-            :style="dualUdCss"
+            :style="portCss"
             :title="`${port.sfp ? 'SFP' : '' }\nName:  ${port.name}\nStatus: ${getPortStatus}`"
         >
             <div :class="`${portColors} ${port.sfp ? 'sfp-top' : 'top'}`"></div>
@@ -19,7 +19,7 @@
         <p
             v-if="!isFirstLine || (isFirstLine && group.type === 'dual-ud')"
             :class="`${!isFirstLine ? 'mt-25' : ''} text-center m-0 index_${group.type}`"
-            :style="`${(port.type !== 'dual' && group.type === 'dual-lr') || (port.type === 'dual' && group.type === 'dual-ud') ? 'display: none': ''}`"
+            :style="portCss"
         >
             {{ group.type === 'console' ? '' : port.index }}
         </p>
@@ -70,7 +70,8 @@
     content: ' ';
     width: 30px;
     height: 20px;
-    border: 2px solid rgba(0, 0, 0, 0.2);
+    border: 2px solid var(--border-color, red);
+
     box-sizing: border-box;
 }
 .top {
@@ -83,6 +84,7 @@
     border-right: 2px solid rgba(0, 0, 0, 0.2);
     border-top: 2px solid rgba(0, 0, 0, 0.2);
     border-left: 2px solid rgba(0, 0, 0, 0.2);
+    border-color: inherit;
 }
 
 .sfp-port {
@@ -90,7 +92,7 @@
     content: ' ';
     width: 30px;
     height: 22px;
-    border: 2px solid rgba(0, 0, 0, 0.2);
+    border: 2px solid var(--border-color, red);
     box-sizing: border-box;
 }
 .sfp-top {
@@ -103,6 +105,7 @@
     border-right: 2px solid rgba(0, 0, 0, 0.2);
     border-top: 2px solid rgba(0, 0, 0, 0.2);
     border-left: 2px solid rgba(0, 0, 0, 0.2);
+    border-color: inherit;
 }
 .groupement {
     position: absolute;
@@ -154,14 +157,16 @@ export default {
         isFirstLine: Boolean,
     },
     computed: {
-            dualUdCss() {
+            portCss() {
+                let margins = '';
                  if (this.group.type === 'dual-ud' && this.isFirstLine) {
-                     return 'margin-top: 1.15rem';
+                     margins = 'margin-top: 1.15rem';
                  }
                  else if (this.group.type === 'dual-ud' && !this.isFirstLine) {
-                     return 'margin-top: 0.45rem';
+                     margins = 'margin-top: 0.45rem';
                  }
-                 return '';
+                const display = `${(this.port.type !== 'dual' && this.group.type === 'dual-lr') || (this.port.type === 'dual' && this.group.type === 'dual-ud') ? 'display: none': ''}`
+                return `${margins} ${display};--border-color: ${this.port.color || 'rgba(0,0,0,0.2)'}`
             },
             portColors() {
                 if (this.port.name === 'Unknown')
