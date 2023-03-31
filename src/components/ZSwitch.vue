@@ -25,7 +25,7 @@
     justify-content: space-around;
 }
 .space {
-    margin-top: 0.5rem;
+    margin-top: 0.25rem;
 }
 
 .switch {
@@ -33,7 +33,7 @@
     max-width: 90vw;
     max-height: 9rem;
 
-    border: 2px solid rgba(0,0,0, 0.15);
+    border: 1px solid rgba(0,0,0, 0.15);
     background-color: rgba(0,0,0, 0.025);
     padding: 0 0.25rem;
     box-sizing: content-box;

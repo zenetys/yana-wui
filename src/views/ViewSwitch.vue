@@ -30,9 +30,9 @@
                 <span></span>
                 <span></span>
             </span>
-            <ZSwitch :groups="slot.groups" v-for="(slot, i) in slots" :isDefault="slot.isDefault" :key="i" :style="i < slots.length ? 'margin-bottom: 0.5rem' : ''"/>
+            <ZSwitch :groups="slot.groups" v-for="(slot, i) in slots" :isDefault="slot.isDefault" :key="i" :style="i < slots.length ? 'margin-bottom: 0.25rem' : ''"/>
         </div>
-        <ZSwitch v-else :groups="slots[0].groups" :isDefault="slots[0].isDefault" style="margin-bottom: 0.5rem"/>
+        <ZSwitch v-else :groups="slots[0].groups" :isDefault="slots[0].isDefault" style="margin-bottom: 0.25rem"/>
 
 
         <AutoTable :config="config" />
@@ -92,7 +92,7 @@
     max-width: 100%;
     position: relative;
     &.expand {
-        max-height: 7rem;
+        max-height: 5rem;
         overflow-y: hidden;
     }
 }
