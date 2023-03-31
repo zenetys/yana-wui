@@ -30,9 +30,9 @@
                 <span></span>
                 <span></span>
             </span>
-            <ZSwitch :config="slot.config" v-for="(slot, i) in slots" :ports="slot.ports" :isDefault="i === 0 ? slot.isDefault : false" :key="i" :style="i < slots.length ? 'margin-bottom: 0.5rem' : ''"/>
+            <ZSwitch :groups="slot.groups" v-for="(slot, i) in slots" :isDefault="slot.isDefault" :key="i" :style="i < slots.length ? 'margin-bottom: 0.5rem' : ''"/>
         </div>
-        <ZSwitch v-else :config="slots[0].config" :ports="slots[0].ports" :isDefault="slots[0].isDefault" style="margin-bottom: 0.5rem"/>
+        <ZSwitch v-else :groups="slots[0].groups" :isDefault="slots[0].isDefault" style="margin-bottom: 0.5rem"/>
 
 
         <AutoTable :config="config" />

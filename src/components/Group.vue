@@ -24,38 +24,35 @@ export default {
         group: {
             type: Object,
         },
-        ports: {
-            type: Array,
-        },
     },
     computed: {
         getPorts() {
             let ports = [];
             if (this.group.type === 'dual-lr') {
                 // PUT SFP HERE SO ONLY ONE OF TWO PORTS IS SFP
-                const res = this.ports.map(item => { return { ...item, type: "dual", sfp: true } });
-                return [ ...this.ports, ...res ].sort((cur, next) => cur.index - next.index);
+                const res = this.group.ports.map(item => { return { ...item, type: "dual", sfp: true } });
+                return [ ...this.group.ports, ...res ].sort((cur, next) => cur.index - next.index);
             }
             else if (this.group.type === 'dual-ud') {
                 // PUTTING SFP OR DUAL IS USELSS THERE AS IT GETS FILTERED OUT
-                const res = [ ...this.ports, ...this.ports ].sort((cur, next) => cur.index - next.index);
+                const res = [ ...this.group.ports, ...this.group.ports ].sort((cur, next) => cur.index - next.index);
                 return res.filter((el, i) => upToDown(el, i, ports));
             }
             if (this.group.oneline) {
-                return this.ports;
+                return this.group.ports;
             }
             else if (this.group.oneline && this.group.sfp) {
-                return this.ports.map(item => { return { ...item, sfp: true } });
+                return this.group.ports.map(item => { return { ...item, sfp: true } });
             }
             switch (this.group.numerotation) {
                 case "left-right":
-                    ports = this.ports.filter((el, i) => leftToRight(el, i, this.ports));
+                    ports = this.group.ports.filter((el, i) => leftToRight(el, i, this.group.ports));
                     break;
                 case "up-down":
-                    ports = this.ports.filter((el, i) => upToDown(el, i, this.ports));
+                    ports = this.group.ports.filter((el, i) => upToDown(el, i, this.group.ports));
                     break;
                 case "down-up":
-                    ports = this.ports.filter((el, i) => !upToDown(el, i, this.ports));
+                    ports = this.group.ports.filter((el, i) => !upToDown(el, i, this.group.ports));
                     break;
             }
             if (this.group.sfp) {
@@ -68,19 +65,19 @@ export default {
             let ports = [];
             if (this.group.type === 'dual-ud') {
                 // PUT SFP HERE SO ONLY ONE OF TWO PORTS IS SFP
-                const res = this.ports.map(item => { return { ...item, type: "dual", sfp: true } });
-                const ports = [ ...this.ports, ...res ].sort((cur, next) => cur.index - next.index);
+                const res = this.group.ports.map(item => { return { ...item, type: "dual", sfp: true } });
+                const ports = [ ...this.group.ports, ...res ].sort((cur, next) => cur.index - next.index);
                 return ports.filter((el, i) => !upToDown(el, i, ports));
             }
             switch (this.group.numerotation) {
                 case "left-right":
-                    ports = this.ports.filter((el, i) => !leftToRight(el, i, this.ports));
+                    ports = this.group.ports.filter((el, i) => !leftToRight(el, i, this.group.ports));
                     break;
                 case "up-down":
-                    ports = this.ports.filter((el, i) => !upToDown(el, i, this.ports));
+                    ports = this.group.ports.filter((el, i) => !upToDown(el, i, this.group.ports));
                     break;
                 case "down-up":
-                    ports = this.ports.filter((el, i) => upToDown(el, i, this.ports));
+                    ports = this.group.ports.filter((el, i) => upToDown(el, i, this.group.ports));
                     break;
 
             }

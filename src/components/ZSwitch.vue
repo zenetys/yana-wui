@@ -1,9 +1,7 @@
 <template>
     <main class="switch group end">
         <span v-if="isDefault === true" class="mdi mdi-vlc is-def-warning" :title="`Attention: La configuration du switch est inconnue,\n ceci est une configuration par default`"></span>
-        <Group v-for="(group, i) in config" :key="i" class="group flex-col margins"
-               :ports="slicePorts(group)" :group="group"
-        />
+        <Group v-for="(group, i) in groups" :key="i" class="group flex-col margins" :group="group"/>
     </main>
 </template>
 
@@ -53,7 +51,6 @@
     margin: 0 1rem;
 }
 
-
 p {
     font-size: 13px;
 }
@@ -68,25 +65,11 @@ export default {
         Group
     },
     props: {
-        config: {
-            type: Array,
-        },
-        ports: {
+        groups: {
             type: Array,
         },
         isDefault: {
             type: Boolean,
-        },
-    },
-    data() {
-        return {
-            groups: [],
-        }
-    },
-    methods: {
-        slicePorts(group) {
-            const ports = this.ports.slice(group.from - 1, group.to);
-            return ports;
         },
     },
 };
