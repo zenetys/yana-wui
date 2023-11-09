@@ -224,6 +224,7 @@ tbody .v-data-table__divider span {
 
         .header-sort-icon {
             margin-left: 0.8em;
+            font-size: inherit;
         }
         .header-sort-icon--inactive {
             color: transparent;
