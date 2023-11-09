@@ -103,99 +103,101 @@
     font-size: 10px;
     padding: 0px 8px;
 }
+
 .menu {
-    position: relative
-}
-.icons-panel {
-    position: absolute;
-    right: 26px;
-    top: 4px;
-    z-index: 10;
-}
-.icons-panel > div {
-    background-color: #fcfcfc;
-    padding: 0 2px;
-}
-.v-btn.menu_button {
-    width: 20px;
-    min-width: inherit;
-    top: -1px;
-}
-.menu_modal {
-    background-color: rgba(255, 255, 255, 1);
-    width: 175px;
-    position: absolute;
-    top: 35px;
-    right: 26px;
-    z-index: 10;
-    padding: 0.7em;
-    filter: drop-shadow(0 4px 3px rgb(0 0 0 / 0.07)) drop-shadow(0 2px 2px rgb(0 0 0 / 0.06));
-}
-.menu-drag-class {
-    background-color: rgba(0, 0, 0, 0.3)
-}
-.menu_row {
-    margin-bottom: 0.20em;
-}
-.menu_row > span {
-    font-size: 12px;
-}
-.menu_row > :nth-child(1) {
-    width: 20%;
-}
-.menu_row > :nth-child(2) {
-    width: 50%;
-}
-.menu_row > :nth-child(3) {
-    width: 30%;
-    text-align: right;
-}
-.v-btn.export_button {
-    width: 20px;
-    min-width: inherit;
-    top: -1px;
-}
-.flex {
-    display: flex;
-}
-.justify-between {
-    justify-content: space-between;
-}
-.disabled {
-    color: rgba(0, 0, 0, 0.5);
-}
-.items-center {
-    align-items: center;
-}
-.color-white {
-    background-color: #fcfcfc!important;
-}
-.v-btn.primary_button {
-    background-color: #3f51b5;
-    color: #ffffff;
-    height: 23px;
-}
-p {
-    margin: 0;
-    font-size: inherit;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;
-}
-button,
-input {
-    outline: none;
-}
-input[type="text"] {
-    max-width: 70%;
-    line-height: 1em;
-    border-bottom: 1px dashed black;
-    padding-right: 3px;
-}
-input[type="checkbox"] {
-    accent-color: #0f6e84;
     position: relative;
-    top: 2px;
+
+    .icons-panel {
+        position: absolute;
+        right: 26px;
+        top: 4px;
+        z-index: 10;
+    }
+    .icons-panel > div {
+        background-color: #fcfcfc;
+        padding: 0 2px;
+    }
+    .v-btn.menu_button {
+        width: 20px;
+        min-width: inherit;
+        top: -1px;
+    }
+    .menu_modal {
+        background-color: rgba(255, 255, 255, 1);
+        width: 175px;
+        position: absolute;
+        top: 35px;
+        right: 26px;
+        z-index: 10;
+        padding: 0.7em;
+        filter: drop-shadow(0 4px 3px rgb(0 0 0 / 0.07)) drop-shadow(0 2px 2px rgb(0 0 0 / 0.06));
+    }
+    .menu-drag-class {
+        background-color: rgba(0, 0, 0, 0.3)
+    }
+    .menu_row {
+        margin-bottom: 0.20em;
+    }
+    .menu_row > span {
+        font-size: 12px;
+    }
+    .menu_row > :nth-child(1) {
+        width: 20%;
+    }
+    .menu_row > :nth-child(2) {
+        width: 50%;
+    }
+    .menu_row > :nth-child(3) {
+        width: 30%;
+        text-align: right;
+    }
+    .v-btn.export_button {
+        width: 20px;
+        min-width: inherit;
+        top: -1px;
+    }
+    .flex {
+        display: flex;
+    }
+    .justify-between {
+        justify-content: space-between;
+    }
+    .disabled {
+        color: rgba(0, 0, 0, 0.5);
+    }
+    .items-center {
+        align-items: center;
+    }
+    .color-white {
+        background-color: #fcfcfc!important;
+    }
+    .v-btn.primary_button {
+        background-color: #3f51b5;
+        color: #ffffff;
+        height: 23px;
+    }
+    p {
+        margin: 0;
+        font-size: inherit;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+    }
+    button,
+    input {
+        outline: none;
+    }
+    input[type="text"] {
+        max-width: 70%;
+        line-height: 1em;
+        border-bottom: 1px dashed black;
+        padding-right: 3px;
+    }
+    input[type="checkbox"] {
+        accent-color: #0f6e84;
+        position: relative;
+        top: 2px;
+    }
 }
 </style>
 
