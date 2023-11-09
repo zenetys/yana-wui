@@ -5,7 +5,7 @@
 </template>
 
 <style lang="scss" scoped>
-::v-deep {
+*::v-deep {
     /* color of icons in column flag */
     .cell_flag .mdi:not(.cp-span) {
         color: gray;
