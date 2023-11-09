@@ -64,14 +64,14 @@
 
 <script>
 import axios from 'axios';
-axios.buildFullPath = require('axios/lib/core/buildFullPath');
-axios.buildURL = require('axios/lib/helpers/buildURL');
+import { default as axiosBuildFullPath } from 'axios/lib/core/buildFullPath';
+import { default as axiosBuildURL } from 'axios/lib/helpers/buildURL';
 
 function axiosError2URL(e) {
     const method = e.config.method.toUpperCase();
     return (method === 'POST' || method === 'PUT' || method === 'PATCH')
-        ? (method + ' ' + axios.buildFullPath(e.config.baseURL, e.config.url))
-        : (method + ' ' + axios.buildFullPath(e.config.baseURL, axios.buildURL(e.config.url, e.config.params)));
+        ? (method + ' ' + axiosBuildFullPath(e.config.baseURL, e.config.url))
+        : (method + ' ' + axiosBuildFullPath(e.config.baseURL, axiosBuildURL(e.config.url, e.config.params)));
 }
 
 function loopWhile(actionCb, whileCb, delay) {

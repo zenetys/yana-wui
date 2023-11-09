@@ -67,7 +67,7 @@
                     <img
                         class="py-1 pl-4 d-flex justify-start align-center"
                         height="40"
-                        src="assets/images/zenetys-fg-black-bg-full-transparent_LD.png"
+                        src="/zenetys.png"
                         alt="" />
                 </router-link>
             </v-toolbar-title>

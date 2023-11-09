@@ -1,57 +1,32 @@
 {
-  "name": "yana",
-  "version": "0.1.0",
-  "private": true,
+  "name": "yana-wui",
+  "license": "MIT",
+  "repository": {
+      "type": "git",
+      "url": "https://github.com/zenetys/yana-wui"
+  },
+  "type": "module",
   "scripts": {
-    "serve": "NODE_OPTIONS=--openssl-legacy-provider vue-cli-service serve",
-    "build": "NODE_OPTIONS=--openssl-legacy-provider vue-cli-service build",
-    "lint": "NODE_OPTIONS=--openssl-legacy-provider vue-cli-service lint"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
   },
   "dependencies": {
     "@fontsource/roboto": "^4.5.1",
-    "@mdi/font": "^6.5.95",
+    "@mdi/font": "^7.2.96",
     "axios": "^0.24.0",
     "chart.js": "2.9.3",
     "chartjs-plugin-colorschemes": "^0.4.0",
     "chartjs-plugin-zoom": "^0.7.7",
-    "core-js": "^3.6.5",
-    "vue": "^2.6.11",
+    "vue": "^2.7.0",
     "vue-chartjs": "^3.5.1",
     "vue-router": "^3.2.0",
-    "vuetify": "^2.4.0"
+    "vuetify": "^2.6.15"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "~4.5.0",
-    "@vue/cli-plugin-eslint": "~4.5.0",
-    "@vue/cli-plugin-router": "~4.5.0",
-    "@vue/cli-plugin-vuex": "~4.5.0",
-    "@vue/cli-service": "~4.5.0",
-    "babel-eslint": "^10.1.0",
-    "eslint": "^6.7.2",
-    "eslint-plugin-vue": "^6.2.2",
-    "sass": "~1.32.0",
-    "sass-loader": "^10.0.0",
-    "vue-cli-plugin-vuetify": "~2.4.5",
-    "vue-template-compiler": "^2.6.11",
-    "vuetify-loader": "^1.7.0"
-  },
-  "eslintConfig": {
-    "root": true,
-    "env": {
-      "node": true
-    },
-    "extends": [
-      "plugin:vue/essential",
-      "eslint:recommended"
-    ],
-    "parserOptions": {
-      "parser": "babel-eslint"
-    },
-    "rules": {}
-  },
-  "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "not dead"
-  ]
+    "@rollup/plugin-alias": "^5.0.0",
+    "@vitejs/plugin-vue2": "^2.2.0",
+    "sass": "^1.63.6",
+    "vite": "^4.3.0"
+  }
 }
