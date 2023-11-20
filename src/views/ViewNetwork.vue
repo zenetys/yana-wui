@@ -172,24 +172,25 @@ function ipv4_parse(input) {
         return bytes;
     };
 
-    const cap = /^(?<ip>\d+\.\d+\.\d+\.\d+)(?<hasMask>\/((?<mbits>\d+)|(?<mask>\d+\.\d+\.\d+\.\d+)))?$/.exec(input);
+    const cap = /^(\d+\.\d+\.\d+\.\d+)(\/((\d+)|(\d+\.\d+\.\d+\.\d+)))?$/.exec(input);
+    const groups = { ip: 1, hasMask: 2, mbits: 4, mask: 5 };
     if (!cap)
         return null;
 
     const out = { raw: input };
-    out.ip = bytes(cap.groups.ip);
+    out.ip = bytes(cap[groups.ip]);
     if (!out.ip)
         return null;
-    if (!cap.groups.hasMask)
-        cap.groups.mbits = 32;
-    if (cap.groups.mbits) {
-        out.mbits = Number(cap.groups.mbits);
+    if (!cap[groups.hasMask])
+        cap[groups.mbits] = 32;
+    if (cap[groups.mbits]) {
+        out.mbits = Number(cap[groups.mbits]);
         if (isNaN(out.mbits) || out.mbits < 0 || out.mbits > 32)
             return null;
         out.mask = ipv4_bits2mask(out.mbits);
     }
-    else /*if (cap.groups.mask)*/ {
-        out.mask = bytes(cap.groups.mask);
+    else /*if (cap[groups.mask])*/ {
+        out.mask = bytes(cap[groups.mask]);
         if (!out.mask)
             return null;
         out.bits = ipv4_mask2bits(out.mask);
@@ -376,9 +377,9 @@ function getRouters(devices, rarp2) {
     function getIfaceVlanId(ifnames) {
         for (let name of (ifnames ?? [])) {
             name = name.toLowerCase();
-            const match = /^(vl(an(if)?)?|[a-z0-9/_-]+\.)(?<vlanId>\d+)$/.exec(name);
+            const match = /^(vl(an(if)?)?|[a-z0-9/_-]+\.)(\d+)$/.exec(name);
             if (match)
-                return Number(match.groups.vlanId);
+                return Number(match[4]);
         }
         return undefined;
     }
