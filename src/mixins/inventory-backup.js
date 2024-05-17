@@ -74,15 +74,5 @@ export default {
         console.log('inventory-backup: register callbacks');
         this.config.dataReady.push(this.onTableDataReadyForBackup);
         this.flagFormatCallbacks.push(this.attachBackupFlag);
-        if (!window.openTerminal) {
-            const url = this.$api.jsonConfig.TTYD_URL || './ttyd';
-            window.openTerminal = function (escapedTarget) {
-                window.open(
-                    url + '?arg=' + escapedTarget,
-                    'ttyd: ' + unescape(escapedTarget),
-                    'location=no,toolbar=no,directories=no,menubar=no,resizable=yes,' +
-                        'scrollbars=yes,status=no,width=800,height=600');
-            }
-        }
     },
 }

@@ -12,6 +12,23 @@
                             >{{ deviceName }}</router-link
                         >
                         <span class="secondary-names">{{ deviceSecondaryNames }}</span>
+                        <template v-for="(rl, i) in infoButtons">
+                            <router-link
+                                :key="i"
+                                :title="rl.label"
+                                v-if="rl.to && rl.if()"
+                                :to="rl.to()"
+                                class="z-flag elevation-1"
+                                ><span class="mdi" :class="rl.icon"/></router-link
+                            >
+                            <a v-else-if="rl.click && rl.if()"
+                                :key="i"
+                               :title="rl.label"
+                                @click="rl.click"
+                                class="z-flag elevation-1"
+                                ><span class="mdi" :class="rl.icon"></span></a
+                            >
+                        </template>
                     </td>
                 </tr>
                 <tr>
@@ -112,6 +129,20 @@
 
     span.secondary-names {
         color: #666;
+        & + * {
+            margin-left: 10px;
+        }
+    }
+
+    .z-flag {
+        color: grey;
+        padding: 0px 1px;
+        & + * {
+            margin-left: 3px;
+        }
+        &:hover {
+            background-color: #f7f7f7;
+        }
     }
 }
 
@@ -210,6 +241,7 @@ export default {
             slots: [],
             isShown: false,
             device: {},
+            infoButtons: [],
             config: {
                 id: 'table-switch',
                 api: '',

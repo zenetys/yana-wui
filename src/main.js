@@ -19,8 +19,10 @@ Vue.prototype.$ev = Ev;
 /* Imports related to optional features */
 import ViewInventory from '@/views/ViewInventory.vue';
 import ViewMain from '@/views/ViewMain.vue';
+import ViewSwitch from '@/views/ViewSwitch.vue';
 import mixinMainBackup from '@/mixins/main-backup.js';
 import mixinInventoryBackup from '@/mixins/inventory-backup.js';
+import mixinSwitchBackup from '@/mixins/switch-backup.js';
 import backupRoutes from '@/router/backup.js'
 
 async function init() {
@@ -45,6 +47,7 @@ async function init() {
         console.log('main: enable backup addon');
         ViewInventory.mixins = [...ViewInventory.mixins || [], mixinInventoryBackup];
         ViewMain.mixins = [...ViewMain.mixins || [], mixinMainBackup];
+        ViewSwitch.mixins = [...ViewSwitch.mixins || [], mixinSwitchBackup];
         for (let route of backupRoutes)
             router.addRoute('ViewMain', route);
     }
